@@ -10,12 +10,28 @@
             }
         }
     } > ()
+
+    const categoryColors: Record<string, string> = {
+        gpu:'bg-red-600',
+        case: 'bg-blue-600',
+        cooling: 'bg-purple-600',
+        cpu: 'bg-green-600',
+        motherboard: 'bg-yellow-600',
+        ram: 'bg-orange-600',
+        'ssd/hdd': 'bg-lime-600',
+        psu: 'bg-indigo-600',
+    }
+
 </script>
 
 <template>
-    <span class="text-xs font-semibold text-blue-600 uppercase tracking-wider">
-        {{ product.category.name }}
-    </span>
+
+    <div :class="[categoryColors[product.category.name.toLowerCase()] ?? 'bg-gray-600', 'text-center rounded-2xl w-fit px-3']">
+        <span class="text-xs font-semibold text-white uppercase tracking-wider">
+            {{ product.category.name }}
+        </span>
+    </div>
+
 
     <h2 class="text-lg font-bold mt-2 mb-2 leading-tight">
         {{ product.name }}
