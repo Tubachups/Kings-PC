@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+use App\Http\Controllers\ShopController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -10,8 +11,12 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('dashboard', function () {
+Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+
+
 
 require __DIR__.'/settings.php';
