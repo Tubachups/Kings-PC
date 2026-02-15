@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import ProductCard from './ProductCard.vue';
 import {Delete, Crown} from "lucide-vue-next";
 import NavigationMenu from '@/components/ui/navigation-menu/NavigationMenu.vue';
@@ -19,10 +19,19 @@ const props = defineProps<{
 }>()
 
 const searchQuery = ref("");
+const debouncedQuery = ref("")
+let timeout: ReturnType<typeof setTimeout>;
 
 const handleClear = () => {
     searchQuery.value = "";
 }
+
+watch(searchQuery, (val) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        debouncedQuery.value = val;
+    }, 400);
+})
 
 </script>
 
@@ -49,7 +58,7 @@ const handleClear = () => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
             <div
-                v-for="product in products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))"
+                v-for="product in products.filter(p => p.name.toLowerCase().includes(debouncedQuery.toLowerCase()))"
                 :key="product.id"
                 class="border rounded-lg p-4 shadow-sm hover:shadow-md transition"
             >
