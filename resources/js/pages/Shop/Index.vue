@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import ProductCard from './ProductCard.vue';
-import {Delete} from "lucide-vue-next";
+import {Delete, Crown} from "lucide-vue-next";
+import NavigationMenu from '@/components/ui/navigation-menu/NavigationMenu.vue';
+import NavBar from './NavBar.vue';
 
 
 const props = defineProps<{
@@ -26,20 +28,24 @@ const handleClear = () => {
 
 <template>
 
+    <NavBar />
+
     <div class="container mx-auto p-6">
 
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold">All PC Components</h1>
-            <div class="flex items-center gap-2">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold mb-9 md:mb-0">All PC Components</h1>
+            <div class="flex w-full md:w-auto items-center gap-2">
                 <input
                     type="text"
-                    class="p-2 outline-amber-50 border border-amber-50 rounded-2xl"
+                    class="p-2 outline-amber-50 border border-amber-50 rounded-2xl w-full md:w-96"
                     placeholder="Search item..."
                     v-model="searchQuery"
                 />
                 <button class="p-2" v-on:click="handleClear"><Delete /></button>
             </div>
         </div>
+
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
             <div
@@ -51,5 +57,6 @@ const handleClear = () => {
             </div>
 
         </div>
+
     </div>
 </template>
