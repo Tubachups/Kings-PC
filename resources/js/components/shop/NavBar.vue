@@ -1,0 +1,103 @@
+<script setup lang="ts">
+import {
+    CircleCheckIcon,
+    CircleHelpIcon,
+    CircleIcon,
+    ShoppingCart,
+    CircleUserRound,
+    Crown,
+} from 'lucide-vue-next';
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger, 
+    navigationMenuTriggerStyle,
+} from '@/components/ui/navigation-menu';
+import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+
+const page = usePage();
+const categories = computed(() => page.props.categories);
+</script>
+
+<template>
+    <div class="sticky top-0 z-10 flex h-16 flex-row items-center px-6 md:px-16">
+        <div class="flex w-1/2 flex-row">
+            <span class="flex w-1/2 flex-row font-bold md:w-1/4">
+                <Crown class="mx-2" />
+                KINGS PC
+            </span>
+        </div>
+        <NavigationMenu :viewport="false" class="ml-auto">
+            <div>
+                <NavigationMenuList>
+                    <NavigationMenuItem>
+                        <NavigationMenuLink
+                            as-child
+                            :class="navigationMenuTriggerStyle()"
+                        >
+                            <Link href="/">Home</Link>
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+
+                    <NavigationMenuItem>
+                        <NavigationMenuTrigger>
+                            <NavigationMenuLink
+                                as-child
+                                :class="navigationMenuTriggerStyle()"
+                            >
+                                <Link href="/components">Components</Link>
+                            </NavigationMenuLink>
+                        </NavigationMenuTrigger>
+                        <NavigationMenuContent>
+                            <ul class="grid w-[200px] gap-4">
+                                <li v-for="category in categories" :key="category.id">
+                                    <NavigationMenuLink as-child>
+                                        <Link :href="'/' + category.slug">{{category.name.toUpperCase()}}</Link>
+                                    </NavigationMenuLink>
+                                </li>
+                            </ul>
+                        </NavigationMenuContent>
+                    </NavigationMenuItem>
+
+                    <NavigationMenuItem>
+                        <NavigationMenuLink
+                            as-child
+                            :class="navigationMenuTriggerStyle()"
+                        >
+                            <a href="/docs">Contacts</a>
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+
+                    <NavigationMenuItem>
+                        <NavigationMenuLink
+                            as-child
+                            :class="navigationMenuTriggerStyle()"
+                        >
+                            <a href="/docs"
+                                ><ShoppingCart
+                                    style="width: 48px; height: 48px"
+                            /></a>
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+
+                    <NavigationMenuItem>
+                        <NavigationMenuLink
+                            as-child
+                            :class="navigationMenuTriggerStyle()"
+                        >
+                            <Link href="/login"
+                                ><CircleUserRound
+                                    style="width: 48px; height: 48px"
+                            /></Link>
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+                </NavigationMenuList>
+            </div>
+        </NavigationMenu>
+    </div>
+</template>

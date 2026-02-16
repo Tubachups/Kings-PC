@@ -23,6 +23,8 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admi
 
 // All guests can access the shop and category pages, so we don't apply any auth middleware here.
 Route::get('/', [ShopController::class, 'index'])->name('shop');
-Route::get('/{category:slug}', [ShopController::class, 'showByCategory'])->name('shop.category');
+Route::get('/components', [ShopController::class, 'components'])->name('components');
+Route::get ('/{category:slug}', [ShopController::class, 'showByCategory'])->name('shop.category');
+
 
 require __DIR__.'/settings.php';
