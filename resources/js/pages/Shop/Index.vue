@@ -23,6 +23,7 @@ const props = defineProps<{
     }>
 }>()
 
+
 const searchQuery = ref<string>("");
 
 </script>
@@ -39,7 +40,7 @@ const searchQuery = ref<string>("");
             <Link href="" class="text-md">See more...</Link>
         </div>
 
-        <ProductsCarousel class="basis-1/6"/>
+        <ComponentsCarousel class="basis-1/6"/>
     </div>
 
     <div class="bg-black mx-auto p-6 w-full flex flex-row justify-center gap-6">

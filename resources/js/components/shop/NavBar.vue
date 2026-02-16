@@ -13,10 +13,15 @@ import {
     NavigationMenuItem,
     NavigationMenuLink,
     NavigationMenuList,
-    NavigationMenuTrigger,
+    NavigationMenuTrigger, 
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue'
+import { usePage } from '@inertiajs/vue3'
+
+const page = usePage();
+const categories = computed(() => page.props.categories);
 </script>
 
 <template>
@@ -40,20 +45,19 @@ import { Link } from '@inertiajs/vue3';
                     </NavigationMenuItem>
 
                     <NavigationMenuItem>
-                        <NavigationMenuTrigger
-                            >Components</NavigationMenuTrigger
-                        >
+                        <NavigationMenuTrigger>
+                            <NavigationMenuLink
+                                as-child
+                                :class="navigationMenuTriggerStyle()"
+                            >
+                                <Link href="/components">Components</Link>
+                            </NavigationMenuLink>
+                        </NavigationMenuTrigger>
                         <NavigationMenuContent>
                             <ul class="grid w-[200px] gap-4">
-                                <li>
+                                <li v-for="category in categories" :key="category.id">
                                     <NavigationMenuLink as-child>
-                                        <a href="#">GPU</a>
-                                    </NavigationMenuLink>
-                                    <NavigationMenuLink as-child>
-                                        <a href="#">Case</a>
-                                    </NavigationMenuLink>
-                                    <NavigationMenuLink as-child>
-                                        <a href="#">Motherboard</a>
+                                        <Link :href="'/' + category.slug">{{category.name.toUpperCase()}}</Link>
                                     </NavigationMenuLink>
                                 </li>
                             </ul>

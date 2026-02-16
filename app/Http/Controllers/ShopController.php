@@ -10,10 +10,16 @@ use App\Models\Product;
 class ShopController extends Controller
 {
     //
-    public function index()
+    public function index() 
+    {
+        return Inertia::render('Shop/Index', [
+        ]);
+    }
+
+    public function components()
     {
         $products = Product::where('is_active', true)->with('category')->get();
-        return Inertia::render('Shop/Index', [
+        return Inertia::render('Shop/Components', [
             'products' => $products,
         ]);
     }
