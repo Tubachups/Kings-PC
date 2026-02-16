@@ -15,8 +15,11 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/', [ShopController::class, 'index'])->name('shop');
 
+
+// All guests can access the shop and category pages, so we don't apply any auth middleware here.
+Route::get('/', [ShopController::class, 'index'])->name('shop');
+Route::get ('/{category:slug}', [ShopController::class, 'showByCategory'])->name('shop.category');
 
 
 require __DIR__.'/settings.php';
