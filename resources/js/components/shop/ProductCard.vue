@@ -5,6 +5,7 @@
             name: string
             price: number
             specs: Record < string, string >
+            image_url: string
             category: {
                 name: string
             }
@@ -31,6 +32,12 @@
             {{ product.category.name }}
         </span>
     </div>
+
+    <img
+    :src="product.image_url"
+    :alt="product.name"
+    class="aspect-square w-full my-2 object-cover rounded-lg"
+    />  
 
 
     <h2 class="text-lg font-bold mt-2 mb-2 leading-tight">

@@ -25,7 +25,7 @@ class ShopController extends Controller
     }
 
     public function showByCategory(Category $category)
-    {
+    {   
         $products = $category->products()->where('is_active', true)->with('category')->get();
         return Inertia::render('Shop/Category', [
             'products' => $products,
