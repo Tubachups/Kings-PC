@@ -9,6 +9,9 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
+import Layout from '@/layouts/MainLayout.vue';
+
+defineOptions({ layout: Layout });
 
 defineProps<{
     status?: string;

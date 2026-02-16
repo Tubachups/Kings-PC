@@ -12,6 +12,10 @@ import { index as productsIndex, create as productsCreate } from '@/actions/App/
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
 
+const totalProducts = computed(() => page.props.totalProducts ?? '-');
+const lowStockCount = computed(() => page.props.lowStockCount ?? '-');
+const totalCustomers = computed(() => page.props.totalCustomers ?? '-');
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
@@ -37,7 +41,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
             <!-- Admin Quick Actions -->
             <div v-if="user?.is_admin" class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
+                <Card class="p-2">
                     <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle class="text-sm font-medium">
                             Total Products
@@ -45,14 +49,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <Package class="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-2xl font-bold">-</div>
+                        <div class="text-2xl font-bold">{{ totalProducts }}</div>
                         <p class="text-xs text-muted-foreground">
                             Active inventory items
                         </p>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card class="p-2">
                     <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle class="text-sm font-medium">
                             Total Orders
@@ -67,7 +71,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card class="p-2">
                     <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle class="text-sm font-medium">
                             Total Customers
@@ -75,14 +79,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <Users class="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-2xl font-bold">-</div>
+                        <div class="text-2xl font-bold">{{ totalCustomers }}</div>
                         <p class="text-xs text-muted-foreground">
                             Registered users
                         </p>
                     </CardContent>
                 </Card>
 
-                <Card>
+                <Card class="p-2">
                     <CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle class="text-sm font-medium">
                             Low Stock Items
@@ -90,7 +94,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <Settings class="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div class="text-2xl font-bold">-</div>
+                        <div class="text-2xl font-bold">{{ lowStockCount }}</div>
                         <p class="text-xs text-muted-foreground">
                             Items below 10 units
                         </p>
@@ -100,7 +104,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
             <!-- Admin Actions -->
             <div v-if="user?.is_admin">
-                <Card>
+                <Card class="p-3">
                     <CardHeader>
                         <CardTitle>Quick Actions</CardTitle>
                         <CardDescription>
@@ -132,7 +136,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
             <!-- Customer View -->
             <div v-else>
-                <Card>
+                <Card class='p-3'>
                     <CardHeader>
                         <CardTitle>Welcome to PC Parts Store</CardTitle>
                         <CardDescription>

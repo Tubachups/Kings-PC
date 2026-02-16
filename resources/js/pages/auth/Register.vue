@@ -9,6 +9,9 @@ import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
+import Layout from '@/layouts/MainLayout.vue';
+
+defineOptions({ layout: Layout });
 </script>
 
 <template>
