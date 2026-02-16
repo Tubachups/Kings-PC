@@ -5,7 +5,7 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use App\Http\Controllers\ShopController;
 
-Route::get('/', function () {
+Route::get('/home', function () {
     return Inertia::render('Welcome', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
@@ -15,7 +15,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+Route::get('/', [ShopController::class, 'index'])->name('shop');
 
 
 
