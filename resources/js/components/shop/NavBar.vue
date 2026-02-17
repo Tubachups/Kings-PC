@@ -69,7 +69,7 @@ const categories = computed(() => page.props.categories);
                             as-child
                             :class="navigationMenuTriggerStyle()"
                         >
-                            <a href="/docs">Contacts</a>
+                            <a href="/contacts">Contacts</a>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 

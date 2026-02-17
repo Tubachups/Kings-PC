@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admi
 // All guests can access the shop and category pages, so we don't apply any auth middleware here.
 Route::get('/', [ShopController::class, 'index'])->name('shop');
 Route::get('/components', [ShopController::class, 'components'])->name('components');
+Route::get('/contacts', [ShopController::class, 'contacts'])->name('contacts');
 Route::get ('/{category:slug}', [ShopController::class, 'showByCategory'])->name('shop.category');
 
 
