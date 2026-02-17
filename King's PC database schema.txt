@@ -12,9 +12,16 @@ DB Schema for table:
 1. Category -> products (one-to-many)
 2. Products -> category (many-to-one)
 
+TODO: (dan)
+1. Cart functionalities
+2. Cart table schema
+3. 
+
 
 Done by 2ba:
 1. render view by categories using links ('/cpu', '/gpu')
+
+
 
 
 
