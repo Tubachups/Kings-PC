@@ -4,4 +4,17 @@ Main Parts of Computer
 3. RAM
 4. SSD/HDD
 5. PSU
+6. GPU
+7. Case
+8. Cooling
+
+DB Schema for table:
+1. Category -> products (one-to-many)
+2. Products -> category (many-to-one)
+
+
+Done by 2ba:
+1. render view by categories using links ('/cpu', '/gpu')
+
+
 

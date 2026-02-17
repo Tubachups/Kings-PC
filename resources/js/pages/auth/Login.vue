@@ -11,6 +11,9 @@ import AuthBase from '@/layouts/AuthLayout.vue';
 import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
+import Layout from '@/layouts/MainLayout.vue';
+
+defineOptions({ layout: Layout });
 
 defineProps<{
     status?: string;
