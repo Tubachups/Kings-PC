@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ShopController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
@@ -27,10 +28,14 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admi
     Route::resource('products', ProductController::class);
 });
 
+Route::resource('cart', CartController::class);
+
 // All guests can access the shop and category pages, so we don't apply any auth middleware here.
 Route::get('/', [ShopController::class, 'index'])->name('shop');
 Route::get('/components', [ShopController::class, 'components'])->name('components');
+Route::get('/contacts', [ShopController::class, 'contacts'])->name('contacts');
 Route::get ('/{category:slug}', [ShopController::class, 'showByCategory'])->name('shop.category');
+
 
 
 require __DIR__.'/settings.php';

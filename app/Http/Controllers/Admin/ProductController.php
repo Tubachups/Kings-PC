@@ -52,7 +52,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|string',
+            'image' => 'nullable|mimes:jpg,jpeg,png|max:2048', //image upload
             'specs' => 'required|string', // Accept JSON string from frontend
             'is_active' => 'boolean',
         ]);
@@ -60,14 +60,16 @@ class ProductController extends Controller
         // Generate slug from name
         $validated['slug'] = Str::slug($validated['name']);
 
-        // Map image to image_url for database
-        if (isset($validated['image'])) {
-            $validated['image_url'] = $validated['image'];
-            unset($validated['image']);
+        // handle file upload (only if present)
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('components', 'public');
+            $validated['image_url'] = $path;
         }
 
         // Decode specs JSON string to array
         $validated['specs'] = json_decode($validated['specs'], true);
+
+        unset($validated['image']);
 
         Product::create($validated);
 

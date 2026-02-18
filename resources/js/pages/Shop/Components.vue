@@ -16,6 +16,7 @@ const props = defineProps<{
         name: string
         price: number
         specs: Record<string, string>
+        image_url: string
         category: {
             name: string
         }
@@ -35,12 +36,12 @@ const searchQuery = ref<string>("");
         </div>
 
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
 
             <div
                 v-for="product in products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))"
                 :key="product.id"
-                class="border rounded-lg p-4 shadow-sm hover:shadow-md transition"
+                class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-fit"
             >
                 <ProductCard :product="product" />
             </div>

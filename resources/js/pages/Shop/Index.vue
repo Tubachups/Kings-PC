@@ -7,7 +7,9 @@ import SearchBar from '@/components/shop/SearchBar.vue';
 import BannerCarousel from '@/components/shop/BannerCarousel.vue';
 import ProductsCarousel from '@/components/shop/ProductsCarousel.vue';
 import ReviewsCarousel from '@/components/shop/ReviewsCarousel.vue';
+import ComponentsCarousel from '@/components/shop/ComponentsCarousel.vue';
 import Layout from '@/layouts/MainLayout.vue';
+import { Link } from '@inertiajs/vue3'
 
 defineOptions({ layout: Layout });
 
@@ -29,7 +31,7 @@ const searchQuery = ref<string>("");
 </script>
 
 <template>
-    
+
     <div class="container mx-auto p-6 w-full flex justify-center">
         <BannerCarousel />
     </div>
@@ -37,7 +39,7 @@ const searchQuery = ref<string>("");
     <div class="container mx-auto p-6 w-full flex flex-col justify-center">
         <div class="flex flex-row justify-between items-baseline mb-2">
             <div class="text-3xl font-bold underline">Components</div>
-            <Link href="" class="text-md">See more...</Link>
+            <Link href="/components" class="text-md">See more...</Link>
         </div>
 
         <ComponentsCarousel class="basis-1/6"/>
@@ -50,7 +52,7 @@ const searchQuery = ref<string>("");
                 <span class="text-1xl">See More</span>
             </div>
             <div class="mx-4 mb-2 flex justify-center items-center">
-                <ProductsCarousel class="basis-1/2"/>    
+                <ProductsCarousel class="basis-1/2"/>
             </div>
         </div>
         <div class="bg-amber-100 container w-1/2 rounded-2xl mx-6 min-w-0 flex flex-col">
@@ -59,7 +61,7 @@ const searchQuery = ref<string>("");
                 <span class="text-1xl">See More</span>
             </div>
             <div class="mx-4 mb-2 flex justify-center items-center">
-                <ProductsCarousel class="basis-1/2"/>    
+                <ProductsCarousel class="basis-1/2"/>
             </div>
         </div>
     </div>

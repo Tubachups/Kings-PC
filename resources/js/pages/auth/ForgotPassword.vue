@@ -13,6 +13,7 @@ import Layout from '@/layouts/MainLayout.vue';
 
 defineOptions({ layout: Layout });
 
+
 defineProps<{
     status?: string;
 }>();

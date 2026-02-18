@@ -16,6 +16,13 @@ class ShopController extends Controller
         ]);
     }
 
+    public function contacts()
+    {   
+        return Inertia::render('Shop/Contacts', [
+
+        ]);
+    }
+
     public function components()
     {
         $products = Product::where('is_active', true)->with('category')->get();
@@ -25,10 +32,11 @@ class ShopController extends Controller
     }
 
     public function showByCategory(Category $category)
-    {
+    {   
         $products = $category->products()->where('is_active', true)->with('category')->get();
         return Inertia::render('Shop/Category', [
             'products' => $products,
         ]);
     }
+
 }

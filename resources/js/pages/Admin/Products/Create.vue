@@ -33,7 +33,7 @@ const form = useForm({
     price: '',
     category_id: null as number | null,
     stock: '',
-    image: '',
+    image: null as File | null,
     specs: JSON.stringify({}, null, 2),
     is_active: true,
 });
@@ -149,16 +149,29 @@ watch(() => form.category_id, (newCategoryId) => {
                         </div>
 
                         <div class="space-y-2">
-                            <Label for="image">Image URL</Label>
-                            <Input
+                            <Label for="image" class="text-sm font-medium">Product Image</Label>
+                            
+                            <input
                                 id="image"
-                                v-model="form.image"
-                                type="text"
-                                placeholder="https://example.com/image.jpg"
+                                type="file"
+                                accept="image/png, image/jpeg"
+                                @change="e => form.image = (e.target as HTMLInputElement).files?.[0] ?? null"
+                                class="block w-full text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-black file:text-white
+                                    hover:file:bg-gray-800
+                                    cursor:pointer border border-gray-300 rounded-md shadow-sm"
                             />
+                            
                             <InputError :message="form.errors.image" />
+                            
+                            <p v-if="form.image" class="text-xs text-green-600">
+                                Selected: {{ (form.image as File).name }}
+                            </p>
                         </div>
-
+                        
                         <div class="space-y-2">
                             <Label for="specs">Specifications</Label>
                             <Textarea

@@ -12,6 +12,7 @@ import { store } from '@/routes/register';
 import Layout from '@/layouts/MainLayout.vue';
 
 defineOptions({ layout: Layout });
+
 </script>
 
 <template>
