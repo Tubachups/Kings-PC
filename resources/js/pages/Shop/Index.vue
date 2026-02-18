@@ -42,28 +42,7 @@ const searchQuery = ref<string>("");
             <Link href="/components" class="text-md">See more...</Link>
         </div>
 
-        <ComponentsCarousel class="basis-1/6"/>
-    </div>
-
-    <div class="bg-black mx-auto p-6 w-full flex flex-row justify-center gap-6">
-        <div class="bg-amber-100 container w-1/2 rounded-2xl mx-6 min-w-0 flex flex-col">
-            <div class="py-4 px-8 flex flex-row justify-between items-baseline">
-                <span class="text-2xl font-bold">DESKTOPS</span>
-                <span class="text-1xl">See More</span>
-            </div>
-            <div class="mx-4 mb-2 flex justify-center items-center">
-                <ProductsCarousel class="basis-1/2"/>
-            </div>
-        </div>
-        <div class="bg-amber-100 container w-1/2 rounded-2xl mx-6 min-w-0 flex flex-col">
-            <div class="py-4 px-8 flex flex-row justify-between items-baseline">
-                <span class="text-2xl font-bold">LAPTOPS</span>
-                <span class="text-1xl">See More</span>
-            </div>
-            <div class="mx-4 mb-2 flex justify-center items-center">
-                <ProductsCarousel class="basis-1/2"/>
-            </div>
-        </div>
+        <ComponentsCarousel class="basis-1/6 "/>
     </div>
 
     <div class="container mx-auto p-6 w-full flex justify-center flex-col items-center">
