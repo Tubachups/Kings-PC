@@ -16,12 +16,20 @@ import {
     NavigationMenuTrigger, 
     navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
+import { Badge } from '@/components/ui/badge'
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 
 const page = usePage();
 const categories = computed(() => page.props.categories);
+const totalItems = computed(() => {
+    const cart = page.props.cart || {};
+
+    return Object.values(cart).reduce((total, qty) => {
+        return total + parseInt(qty);
+    }, 0);
+});
 </script>
 
 <template>
@@ -76,12 +84,19 @@ const categories = computed(() => page.props.categories);
                     <NavigationMenuItem>
                         <NavigationMenuLink
                             as-child
-                            :class="navigationMenuTriggerStyle()"
+                            :class="navigationMenuTriggerStyle(), 'relative inline-block'"
                         >
                             <a href="/cart"
                                 ><ShoppingCart
                                     style="width: 48px; height: 48px"
                             /></a>
+
+                            <Badge 
+                                variant="destructive" 
+                                class="absolute -top-1 right-4 flex h-5 w-5 items-center justify-center rounded-full p-0 text-[10px]"
+                            >
+                               {{ totalItems }}
+                            </Badge>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 
