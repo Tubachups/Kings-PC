@@ -78,7 +78,7 @@ const categories = computed(() => page.props.categories);
                             as-child
                             :class="navigationMenuTriggerStyle()"
                         >
-                            <a href="/docs"
+                            <a href="/cart"
                                 ><ShoppingCart
                                     style="width: 48px; height: 48px"
                             /></a>
