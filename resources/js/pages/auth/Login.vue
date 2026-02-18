@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
+import { Form, Head, usePage } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,8 @@ import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import Layout from '@/layouts/MainLayout.vue';
+import { redirect } from '@/routes/google';
+
 
 defineOptions({ layout: Layout });
 
@@ -49,8 +51,8 @@ defineProps<{
                         id="email"
                         type="email"
                         name="email"
-                        required
                         autofocus
+                        required
                         :tabindex="1"
                         autocomplete="email"
                         placeholder="email@example.com"
@@ -72,9 +74,9 @@ defineProps<{
                     </div>
                     <Input
                         id="password"
+                        required
                         type="password"
                         name="password"
-                        required
                         :tabindex="2"
                         autocomplete="current-password"
                         placeholder="Password"
@@ -109,5 +111,16 @@ defineProps<{
                 <TextLink :href="register()" :tabindex="5">Sign up</TextLink>
             </div>
         </Form>
+        <div>
+            <Button
+                as="a"
+                variant="outline"
+                class="w-full"
+                :tabindex="6"
+                :href="redirect().url"
+            >
+                Log in with Google
+            </Button>
+        </div>
     </AuthBase>
 </template>
