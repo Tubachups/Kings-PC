@@ -20,6 +20,8 @@ TODO: (dan)
 
 Done by 2ba:
 1. render view by categories using links ('/cpu', '/gpu')
+2. minimal CRUD feature for admin dashboard
+
 
 
 

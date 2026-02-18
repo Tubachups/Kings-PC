@@ -3,9 +3,11 @@
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ShopController;
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+use App\Models\User;
 
 Route::get('/home', function () {
     return Inertia::render('Welcome', [
@@ -14,7 +16,11 @@ Route::get('/home', function () {
 })->name('home');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('Dashboard', [
+        'totalProducts' => Product::count(),
+        'lowStockCount' => Product::where('stock', '<', 10)->count(),
+        'totalCustomers' => User::where('is_admin', false)->count(),
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Admin only
