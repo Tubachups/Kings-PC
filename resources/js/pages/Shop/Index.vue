@@ -31,7 +31,7 @@ const searchQuery = ref<string>("");
 </script>
 
 <template>
-    
+
     <div class="container mx-auto p-6 w-full flex justify-center">
         <BannerCarousel />
     </div>
@@ -52,7 +52,7 @@ const searchQuery = ref<string>("");
                 <span class="text-1xl">See More</span>
             </div>
             <div class="mx-4 mb-2 flex justify-center items-center">
-                <ProductsCarousel class="basis-1/2"/>    
+                <ProductsCarousel class="basis-1/2"/>
             </div>
         </div>
         <div class="bg-amber-100 container w-1/2 rounded-2xl mx-6 min-w-0 flex flex-col">
@@ -61,7 +61,7 @@ const searchQuery = ref<string>("");
                 <span class="text-1xl">See More</span>
             </div>
             <div class="mx-4 mb-2 flex justify-center items-center">
-                <ProductsCarousel class="basis-1/2"/>    
+                <ProductsCarousel class="basis-1/2"/>
             </div>
         </div>
     </div>
