@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
+
 
 class CartItem extends Model
 {
@@ -25,18 +25,17 @@ class CartItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public static function addToCart($user_id, $product_id, $quantity)
+    public static function addToCart($user_id, $id, $quantity)
     {
-        Log::alert('asdasdada');
         return self::updateOrCreate(
-            ['user_id' => $user_id, 'product_id' => $product_id],
+            ['user_id' => $user_id, 'product_id' => $id],
             ['quantity' => $quantity]
         );
+        
     }
 
     public static function removeFromCart($user_id, $product_id)
     {
-        Log::info("SQL Attempt: User $user_id, Product $product_id");
         return self::where('user_id', $user_id)
                     ->where('product_id', $product_id)
                     ->delete();

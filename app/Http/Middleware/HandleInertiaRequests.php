@@ -54,7 +54,7 @@ class HandleInertiaRequests extends Middleware
                 return Category::select('id', 'name', 'slug')->get();
             }),
             'cart' => function () {
-                if(!Auth::check()) return null;
+                if(!Auth::check()) return [];
 
                 $user_id = Auth::id();
                 $redisKey = "cart:user:" . $user_id;
@@ -62,18 +62,20 @@ class HandleInertiaRequests extends Middleware
                 $redisCart = Redis::hgetall($redisKey);
 
                 if(empty($redisCart)) {
-                    $dbItems = CartItem::where('user_id', $user_id)->get();
+                    $dbItems = CartItem::where('user_id', $user_id)
+                        ->pluck('quantity', 'product_id')   
+                        ->toArray();
                     
-                    if($dbItems->isNotEmpty()) {
-                        foreach($dbItems as $item) {
-                            Redis::hset($redisKey, $item->product_id, $item->quantity);
-                        }
+                    if(!empty($dbItems)) {
 
-                        return $dbItems->pluck('quantity', 'product_id')->toArray();
+                        Redis::hmset($redisKey, $dbItems);
+
+                        return array_map('intval', $dbItems);
                     }
+                    return [];
                 }
 
-                return $redisCart;
+                return array_map('intval', $redisCart);
             }
         ];
     }

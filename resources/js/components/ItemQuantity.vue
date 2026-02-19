@@ -7,21 +7,48 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field'
+import { ref, watch } from 'vue';
+import { debounce } from 'lodash';
+import { router } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 
-interface Props {
-    defaultValue: number
-}
+const props = defineProps<{
+    defaultValue: number;
+    productId: number;
+}>();
 
-const props = defineProps<Props>();
+// 1. Keep a strictly local version
+const localQty = ref(props.defaultValue);
 
+// 2. The sync logic
+const syncWithServer = debounce((newQty: number) => {
+    router.put(`/cart/${props.productId}`, { 
+        quantity: newQty 
+    }, {
+        preserveScroll: true,
+        showProgress: false,
+        preserveState: true,
+        only: ['cart', 'cart_items'],
+    });
+}, 500);
+
+
+watch(localQty, (newVal) => {
+    syncWithServer(newVal);
+});
+
+
+watch(() => props.defaultValue, (newVal) => {
+    localQty.value = newVal;
+});
 </script>
 
 <template>
-  <NumberField id="qty" :default-value="props.defaultValue" :min="0">
+  <NumberField id="qty" v-model="localQty" :min="1">
     <Label for="qty"></Label>
     <NumberFieldContent>
       <NumberFieldDecrement />
-      <NumberFieldInput />
+      <NumberFieldInput readonly/>
       <NumberFieldIncrement />
     </NumberFieldContent>
   </NumberField>

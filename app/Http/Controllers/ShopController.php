@@ -26,9 +26,9 @@ class ShopController extends Controller
 
     public function components()
     {
-        $products = Product::where('is_active', true)->with('category')->get();
+        // $products = Product::where('is_active', true)->with('category')->get();
         return Inertia::render('Shop/Components', [
-            'products' => $products,
+            'products' => Inertia::lazy(fn () => Product::where('is_active', true)->with('category')->get()),
         ]);
     }
 

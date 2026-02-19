@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\RemoveCartFromJob;
 use App\Jobs\SyncCartToDatabase;
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -15,7 +16,9 @@ class CartController extends Controller
 
     public function index()
     {
-        return Inertia::render('Shop/Cart', []);
+        return Inertia::render('Shop/Cart', [
+            'cart_items' => Inertia::lazy(fn () => CartItem::where('user_id', Auth::id())->with('product')->get())
+        ]);
     }
 
 
@@ -51,18 +54,18 @@ class CartController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
-            'quantity'   => 'required|integer|min:1|max:99',
-        ]);
+        $start = microtime(true);
 
-        $userId = Auth::id() ?? 1;
-        Log::alert('asdasdas');
+        $user_id = Auth::id() ?? 1;
 
-        Redis::hset("cart:user:" . $userId, $validated['product_id'], $validated['quantity']);
-        SyncCartToDatabase::dispatch($userId, $validated['product_id'], $validated['quantity']);
+        Redis::hset("cart:user:" . $user_id, $id, $request->quantity);
+        SyncCartToDatabase::dispatch($user_id, $id, $request->quantity);
 
-        return back()->with('success', 'Item added to cart.');
+        $end = microtime(true);
+        $executionTime = $end - $start;
+
+        Log::info('Cart update execution time: ' . $executionTime . ' seconds');
+        return back();
     }
 
 

@@ -20,12 +20,12 @@ import { Badge } from '@/components/ui/badge'
 import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue'
 import { usePage } from '@inertiajs/vue3'
+import { Category } from '@/types/product';
 
 const page = usePage();
-const categories = computed(() => page.props.categories);
+const categories = computed(() => page.props.categories as Category[]);
 const totalItems = computed(() => {
     const cart = page.props.cart || {};
-
     return Object.values(cart).reduce((total, qty) => {
         return total + parseInt(qty);
     }, 0);
@@ -58,7 +58,7 @@ const totalItems = computed(() => {
                                 as-child
                                 :class="navigationMenuTriggerStyle()"
                             >
-                                <Link href="/components">Components</Link>
+                                <Link href="/components" :only="['products']">Components</Link>
                             </NavigationMenuLink>
                         </NavigationMenuTrigger>
                         <NavigationMenuContent>
@@ -86,7 +86,7 @@ const totalItems = computed(() => {
                             as-child
                             :class="navigationMenuTriggerStyle(), 'relative inline-block'"
                         >
-                            <a href="/cart"
+                            <a href="/cart" :only="['cart_items']"
                                 ><ShoppingCart
                                     style="width: 48px; height: 48px"
                             /></a>
