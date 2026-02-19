@@ -6,6 +6,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Auth\FacebookController;
 use App\Models\Product;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -35,6 +36,9 @@ Route::resource('cart', CartController::class);
 // Google OAuth routes
 Route::get('/auth/google/redirect', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
 Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
+
+// Testimonials
+Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
 // All guests can access the shop and category pages, so we don't apply any auth middleware here.
 Route::get('/', [ShopController::class, 'index'])->name('shop');

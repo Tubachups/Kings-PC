@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
+import Autoplay from 'embla-carousel-autoplay';
 import {
     Carousel,
     CarouselContent,
@@ -42,7 +43,7 @@ const images = [
 
 <template>
 
-  <Carousel class="w-full" :opts="{ align: 'start' }">
+  <Carousel class="w-full" :opts="{ align: 'start', loop: true }" :plugins="[Autoplay({ delay: 3000 })]">
     <CarouselContent class="w-full">
       <CarouselItem
         v-for="(category, idx) in categories"
