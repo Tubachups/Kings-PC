@@ -11,7 +11,6 @@ import { router } from '@inertiajs/vue3';
 
 defineOptions({ layout: Layout });
 onMounted(() => {
-    // This triggers the lazy prop to actually load
     router.reload({ only: ['products'] });
 });
 

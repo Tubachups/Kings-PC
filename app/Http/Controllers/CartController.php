@@ -55,15 +55,11 @@ class CartController extends Controller
     public function update(Request $request, $id)
     {
         $start = microtime(true);
-
         $user_id = Auth::id() ?? 1;
-
         Redis::hset("cart:user:" . $user_id, $id, $request->quantity);
         SyncCartToDatabase::dispatch($user_id, $id, $request->quantity);
-
         $end = microtime(true);
         $executionTime = $end - $start;
-
         Log::info('Cart update execution time: ' . $executionTime . ' seconds');
         return back();
     }
@@ -71,10 +67,14 @@ class CartController extends Controller
 
     public function destroy(Request $request, string $id)
     {
+        $start = microtime(true);
         $user_id = Auth::id() ?? 1;
         $product_id = $request->product_id ?? $id;
         Redis::hdel("cart:user:{$user_id}", $product_id);
         RemoveCartFromJob::dispatch($user_id, $product_id);
-        return back()->with('success', 'Item removed from cart.');
+        $end = microtime(true);
+        $executionTime = $end - $start;
+        Log::info('Cart delete execution time: ' . $executionTime . ' seconds');
+        return back();
     }
 }

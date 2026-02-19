@@ -17,10 +17,8 @@ const props = defineProps<{
     productId: number;
 }>();
 
-// 1. Keep a strictly local version
 const localQty = ref(props.defaultValue);
 
-// 2. The sync logic
 const syncWithServer = debounce((newQty: number) => {
     router.put(`/cart/${props.productId}`, { 
         quantity: newQty 
