@@ -20,7 +20,7 @@ const updateCartQuantity = (product: Product) => {
         preserveState: true,
         only: ['cart', 'product'],
         showProgress: false,
-        onSuccess: () => {
+        onStart: () => {
             toast.success("Cart Updated", {
                 description: `${product.name} is now in your cart.`,
             });
@@ -79,7 +79,7 @@ const categoryColors: Record<string, string> = {
         </ul>
     </div>
 
-    <button @click="updateCartQuantity(product)" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300">
+    <button @click="updateCartQuantity(product)" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
         Add to Cart
     </button>
 </template>
