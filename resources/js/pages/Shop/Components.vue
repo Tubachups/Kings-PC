@@ -24,6 +24,11 @@ const props = defineProps<{
         category: {
             name: string
         }
+        description: string
+        category_id: number
+        stock: number
+        image: string
+        is_active: boolean
     }>
 }>()
 

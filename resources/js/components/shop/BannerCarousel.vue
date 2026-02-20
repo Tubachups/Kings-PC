@@ -47,11 +47,11 @@ const images = [
         ]"
     >
         <CarouselContent>
-            <CarouselItem v-for="image in images" :key="id" class="basis-full">
+            <CarouselItem v-for="image in images" :key="image.id" class="basis-full">
                 <div class="">
                     <Card>
                         <CardContent
-                            class="flex h-[200px] items-center justify-center p-0 md:h-[300px]"
+                            class="flex h-50 items-center justify-center p-0 md:h-75"
                         >
                             <img
                                 :src="image.imageUrl"
@@ -63,7 +63,7 @@ const images = [
                 </div>
             </CarouselItem>
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious class="left-2" />
+        <CarouselNext class="right-2 md:right-1"/>
     </Carousel>
 </template>

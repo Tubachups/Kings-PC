@@ -43,21 +43,21 @@ const images = [
 
 <template>
 
-  <Carousel class="w-full" :opts="{ align: 'start', loop: true }" :plugins="[Autoplay({ delay: 3000 })]">
-    <CarouselContent class="w-full">
+  <Carousel  :opts="{ align: 'start', loop: true }" :plugins="[Autoplay({ delay: 2500 })]">
+    <CarouselContent class="">
       <CarouselItem
         v-for="(category, idx) in categories"
         :key="category.id"
-        :class="cn(props.class ?? 'basis-1/4')"
+        class=" sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/6 2xl:basis-1/8"
       >
       <Link :href="'/' + category.slug">
-          <div class="p-1">
+          <div class="p-1 sm:p-0">
             <Card>
               <CardContent class="relative p-0 h-40 md:h-56 overflow-hidden">
                 <img
                   :src="images[idx]"
                   :alt="category.name"
-                  class="w-full h-full object-cover"
+                  class=" object-cover w-full h-full transition-transform duration-300 hover:scale-105"
                 />
                 <div class="absolute bottom-2 left-2 bg-black/60 text-white px-2 py-1 rounded text-sm">
                   {{ category.name }}
@@ -69,8 +69,8 @@ const images = [
       </CarouselItem>
     </CarouselContent>
 
-    <CarouselPrevious />
-    <CarouselNext />
+    <CarouselPrevious class="left-2 " />
+    <CarouselNext class="right-2 md:right-1" />
   </Carousel>
 
 </template>
