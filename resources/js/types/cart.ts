@@ -4,12 +4,14 @@ export interface CartItem {
     product_id: number,
     quantity: number,
     variant: string | null,
-    product: {
-        id: number,
-        name: string,
-        description: string,
-        price: number,
-        stock: number,
-        image_url: string
-    }
+    product: Product
+}
+
+export interface Product {
+    id: number,
+    name: string,
+    description: string,
+    price: number,
+    stock: number,
+    image_url: string
 }

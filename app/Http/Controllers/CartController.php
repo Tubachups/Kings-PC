@@ -87,7 +87,6 @@ class CartController extends Controller
         $user_id = Auth::id();
         Redis::del("cart:user:{$user_id}");
         ClearCart::dispatch($user_id);
-
         return back();
     }
 }

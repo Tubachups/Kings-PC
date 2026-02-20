@@ -52,7 +52,7 @@ const categoryColors: Record<string, string> = {
 
 <template>
 
-    <div :class="[categoryColors[product.category?.name?.toLowerCase()] ?? 'bg-gray-600', 'text-center rounded-2xl w-fit px-3']">
+    <div :class="[categoryColors[product.category.name.toLowerCase()] ?? 'bg-gray-600', 'text-center rounded-2xl w-fit px-3']">
         <span class="text-xs font-semibold text-white uppercase tracking-wider">
             {{ product.category?.name }}
         </span>

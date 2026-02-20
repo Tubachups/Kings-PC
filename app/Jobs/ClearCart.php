@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\CartItem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Redis;
 
 class ClearCart implements ShouldQueue
 {
@@ -23,7 +24,19 @@ class ClearCart implements ShouldQueue
      */
     public function handle(): void
     {
-        
+        CartItem::clearCart($this->user_id);
+        $redisKey = "cart:user:{$this->user_id}";
+        $currentDbState = CartItem::getCartForRedis($this->user_id);
 
+        Redis::pipeline(function ($pipe) use ($redisKey, $currentDbState) {
+            $pipe->del($redisKey);
+            foreach ($currentDbState as $field => $value) {
+                $pipe->hset($redisKey, $field, $value);
+            }
+            if (!empty($currentDbState)) {
+                $pipe->expire($redisKey, 43200);
+            }
+        });
+        
     }
 }
