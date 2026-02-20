@@ -2,8 +2,8 @@
 import CartItems from '@/components/shop/CartItems.vue';
 import Layout from '@/layouts/MainLayout.vue';
 import { CartItem } from '@/types/cart';
-import { onMounted } from 'vue';
-import { router } from '@inertiajs/vue3';
+import { computed, onMounted } from 'vue';
+import { router, usePage } from '@inertiajs/vue3';
 import Card from '@/components/ui/card/Card.vue';
 import CardHeader from '@/components/ui/card/CardHeader.vue';
 import CardTitle from '@/components/ui/card/CardTitle.vue';
@@ -12,17 +12,9 @@ import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue';
 
 defineOptions({ layout: Layout });
 
-const props = defineProps<{
-    cart_items?: CartItem[]; 
-}>();
+const page = usePage();
 
-onMounted(() => {
-    router.reload({ only: ['cart_items'] });
-});
-
-const tags = Array.from({ length: 50 }).map(
-  (_, i, a) => `v1.2.0-beta.${a.length - i}`,
-)
+const cart_items = computed(() => page.props.cart || [])
 
 </script>
 

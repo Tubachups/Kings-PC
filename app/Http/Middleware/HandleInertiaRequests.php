@@ -6,6 +6,7 @@ use App\Models\CartItem;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Inertia\Middleware;
 
@@ -61,21 +62,22 @@ class HandleInertiaRequests extends Middleware
 
                 $redisCart = Redis::hgetall($redisKey);
 
-                if(empty($redisCart)) {
-                    $dbItems = CartItem::where('user_id', $user_id)
-                        ->pluck('quantity', 'product_id')   
-                        ->toArray();
-                    
-                    if(!empty($dbItems)) {
+                if (empty($redisCart)) {
+                    $dbItems = CartItem::with('product')->where('user_id', $user_id)->get();
 
-                        Redis::hmset($redisKey, $dbItems);
+                    if ($dbItems->isEmpty()) return [];
 
-                        return array_map('intval', $dbItems);
-                    }
-                    return [];
+                    return $dbItems->map(fn($item) => [
+                        'quantity' => $item->quantity,
+                        'product'  => $item->product
+                    ])->toArray();
                 }
 
-                return array_map('intval', $redisCart);
+                return collect($redisCart)
+                    ->map(fn($itemJson) => json_decode($itemJson, true))
+                    ->filter()  
+                    ->values()
+                    ->toArray();
             }
         ];
     }

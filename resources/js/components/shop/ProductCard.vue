@@ -11,10 +11,14 @@ const {product} = defineProps<{
 } > ()
 
 const updateCartQuantity = (product: Product) => {
-    const cart = page.props.cart as Record<number, number>;
-    const currentQty = cart[product.id] || 0;
+    const cart = page.props.cart as any[];
+
+    const existingItem = cart.find(item => item?.product?.id === product.id);
+
+    const currentQty = existingItem ? existingItem.quantity : 0;
+
     router.put(`/cart/${product.id}`, {
-        quantity: currentQty + 1
+        quantity: Number(currentQty) + 1
     } , {
         preserveScroll: true,
         preserveState: true,

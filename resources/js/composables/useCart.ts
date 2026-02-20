@@ -17,10 +17,11 @@ export function useCart() {
     const page = usePage()
 
     const deleteCartItem = (item: CartItem) => {
-        router.delete(`/cart/${item.product_id}`, {
+        router.delete(`/cart/${item.product.id}`, {
             preserveScroll: true,
-            
-            only: ['cart', 'cart_items'],
+            showProgress: false,
+            preserveState: false,
+            only: ['cart'],
             onSuccess: () => {
                 toast.success("Cart Updated", {
                     description: `${item.product.name} is now removed from your cart.`,
@@ -28,6 +29,7 @@ export function useCart() {
             }
         })
     }
+
 
     return deleteCartItem
 }

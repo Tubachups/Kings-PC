@@ -25,9 +25,23 @@ import { Category } from '@/types/product';
 const page = usePage();
 const categories = computed(() => page.props.categories as Category[]);
 const totalItems = computed(() => {
-    const cart = page.props.cart || {};
-    return Object.values(cart).reduce((total, qty) => {
-        return total + parseInt(qty);
+const cart = page.props.cart;
+    // 1. Safety check: If cart is null/undefined, return 0
+    if (!cart) return 0;
+
+    // 2. Normalize the data: Ensure we are working with an Array
+    // Redis data via Inertia can sometimes arrive as a keyed Object
+    const items = Array.isArray(cart) ? cart : Object.values(cart);
+
+    // 3. Sum every item's quantity
+    return items.reduce((total, item) => {
+        // Handle both "Rich" objects {quantity: 5, product: {}} 
+        // and simple values (just in case)
+        const qty = (typeof item === 'object' && item !== null) 
+            ? parseInt(item.quantity) 
+            : parseInt(item);
+
+        return total + (isNaN(qty) ? 0 : qty);
     }, 0);
 });
 </script>
