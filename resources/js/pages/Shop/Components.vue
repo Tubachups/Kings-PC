@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import ProductCard from "@/components/shop/ProductCard.vue";
 import {Delete, Crown} from "lucide-vue-next";
 import NavigationMenu from '@/components/ui/navigation-menu/NavigationMenu.vue';
@@ -7,8 +7,12 @@ import SearchBar from '@/components/shop/SearchBar.vue';
 import BannerCarousel from '@/components/shop/BannerCarousel.vue';
 import ProductsCarousel from '@/components/shop/ProductsCarousel.vue';
 import Layout from '@/layouts/MainLayout.vue';
+import { router } from '@inertiajs/vue3';
 
 defineOptions({ layout: Layout });
+onMounted(() => {
+    router.reload({ only: ['products'] });
+});
 
 const props = defineProps<{
     products: Array<{
@@ -39,7 +43,7 @@ const searchQuery = ref<string>("");
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
 
             <div
-                v-for="product in products.filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))"
+                v-for="product in (products || []).filter(p => p.name.toLowerCase().includes(searchQuery.toLowerCase()))"
                 :key="product.id"
                 class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-fit"
             >

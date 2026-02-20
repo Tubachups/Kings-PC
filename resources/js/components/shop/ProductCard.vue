@@ -1,35 +1,56 @@
 <script setup lang="ts">
-    const {product} = defineProps<{
-        product: {
-            id: number
-            name: string
-            price: number
-            specs: Record < string, string >
-            image_url: string
-            category: {
-                name: string
-            }
-        }
-    } > ()
+import { Product } from '@/types/product';
+import { router, usePage } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 
-    const categoryColors: Record<string, string> = {
-        gpu:'bg-red-600',
-        case: 'bg-blue-600',
-        cooling: 'bg-purple-600',
-        cpu: 'bg-green-600',
-        motherboard: 'bg-yellow-600',
-        ram: 'bg-orange-600',
-        'ssd/hdd': 'bg-lime-600',
-        psu: 'bg-indigo-600',
-    }
+const page = usePage();
+
+
+const {product} = defineProps<{
+    product: Product
+} > ()
+
+const updateCartQuantity = (product: Product) => {
+    const cart = page.props.cart as Record<number, number>;
+    const currentQty = cart[product.id] || 0;
+    router.put(`/cart/${product.id}`, {
+        quantity: currentQty + 1
+    } , {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['cart', 'product'],
+        showProgress: false,
+        onStart: () => {
+            toast.success("Cart Updated", {
+                description: `${product.name} is now in your cart.`,
+            });
+        },
+        onError: (error) => {
+            toast.error("Error occured!");
+            console.error(error);
+        }
+    });
+}
+
+
+const categoryColors: Record<string, string> = {
+    gpu:'bg-red-600',
+    case: 'bg-blue-600',
+    cooling: 'bg-purple-600',
+    cpu: 'bg-green-600',
+    motherboard: 'bg-yellow-600',
+    ram: 'bg-orange-600',
+    'ssd/hdd': 'bg-lime-600',
+    psu: 'bg-indigo-600',
+}
 
 </script>
 
 <template>
 
-    <div :class="[categoryColors[product.category.name.toLowerCase()] ?? 'bg-gray-600', 'text-center rounded-2xl w-fit px-3']">
+    <div :class="[categoryColors[product.category?.name?.toLowerCase()] ?? 'bg-gray-600', 'text-center rounded-2xl w-fit px-3']">
         <span class="text-xs font-semibold text-white uppercase tracking-wider">
-            {{ product.category.name }}
+            {{ product.category?.name }}
         </span>
     </div>
 
@@ -58,7 +79,7 @@
         </ul>
     </div>
 
-    <button class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300">
+    <button @click="updateCartQuantity(product)" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
         Add to Cart
     </button>
 </template>

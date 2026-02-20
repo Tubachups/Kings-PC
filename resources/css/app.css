@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-
+@import "../../node_modules/vue-sonner/lib/index.css";
 @import 'tw-animate-css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

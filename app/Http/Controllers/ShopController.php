@@ -6,6 +6,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Product;
+use Illuminate\Support\Facades\Redis;
 
 class ShopController extends Controller
 {
@@ -25,9 +26,9 @@ class ShopController extends Controller
 
     public function components()
     {
-        $products = Product::where('is_active', true)->with('category')->get();
+        // $products = Product::where('is_active', true)->with('category')->get();
         return Inertia::render('Shop/Components', [
-            'products' => $products,
+            'products' => Inertia::lazy(fn () => Product::where('is_active', true)->with('category')->get()),
         ]);
     }
 
@@ -37,6 +38,12 @@ class ShopController extends Controller
         return Inertia::render('Shop/Category', [
             'products' => $products,
         ]);
+    }
+
+    public function redis()
+    {
+        Redis::set('test_key', 'Redis is working!');
+        return Redis::get('test_key');
     }
 
 }
