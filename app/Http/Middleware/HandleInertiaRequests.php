@@ -2,8 +2,12 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\CartItem;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -42,10 +46,39 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+            ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'categories' => cache()->remember('global_categories', 3600, function () {
                 return Category::select('id', 'name', 'slug')->get();
             }),
+            'cart' => function () {
+                if(!Auth::check()) return [];
+
+                $user_id = Auth::id();
+                $redisKey = "cart:user:" . $user_id;
+
+                $redisCart = Redis::hgetall($redisKey);
+
+                if (empty($redisCart)) {
+                    $dbItems = CartItem::with('product')->where('user_id', $user_id)->get();
+
+                    if ($dbItems->isEmpty()) return [];
+
+                    return $dbItems->map(fn($item) => [
+                        'quantity' => $item->quantity,
+                        'product'  => $item->product
+                    ])->toArray();
+                }
+
+                return collect($redisCart)
+                    ->map(fn($itemJson) => json_decode($itemJson, true))
+                    ->filter()  
+                    ->values()
+                    ->toArray();
+            }
         ];
     }
 }

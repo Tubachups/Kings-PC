@@ -23,6 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        $middleware->validateCsrfTokens(except: [
+            'cart',
+            'cart/*' 
+        ]);
+
         $middleware->alias([
             'is_admin' => IsAdmin::class,
         ]);

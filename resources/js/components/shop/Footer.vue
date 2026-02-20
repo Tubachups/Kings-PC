@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { Facebook } from 'lucide-vue-next';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faPhone, faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import {  faFacebookSquare } from '@fortawesome/free-brands-svg-icons';
+
+library.add(faPhone, faEnvelope, faFacebookSquare);
 
 const email = ref('');
 
@@ -96,18 +99,16 @@ const pages = [
 
                     <!-- Social Icons -->
                     <div>
-                        <a
-                            href="https://www.facebook.com/profile.php?id=100063578996223"
-                            class="flex items-center gap-4"
-                        >
-                            <Facebook
-                                class="h-5 w-5 text-gray-500 transition-colors hover:text-gray-700"
-                            />
-                        </a>
-                        <div>
-                            <FontAwesomeIcon :icon="faPhone" /> 0943 404 1792
+                        <div class="flex">
+                            <font-awesome-icon icon="fa-brands fa-facebook-square" size="lg"/>
+                            <a href="https://www.facebook.com/profile.php?id=100063578996223" target="_blank"> King's PC</a>
                         </div>
-
+                        <div>
+                            <FontAwesomeIcon :icon="faPhone" />0943 404 1792
+                        </div>
+                        <div>
+                            <FontAwesomeIcon :icon="faEnvelope" /> kingedward0723@yahoo.com.ph
+                        </div>
                     </div>
                 </div>
 
@@ -137,7 +138,7 @@ const pages = [
                             }}</span>
                             <a
                                 href="#"
-                                class="text-2xl font-light text-black transition-colors hover:text-gray-600"
+                                class="text-xl font-light text-black transition-colors hover:text-gray-600"
                             >
                                 {{ link.label }}
                             </a>
@@ -159,7 +160,7 @@ const pages = [
                             }}</span>
                             <a
                                 href="#"
-                                class="text-2xl font-light text-black transition-colors hover:text-gray-600"
+                                class="text-xl font-light text-black transition-colors hover:text-gray-600"
                             >
                                 {{ page.label }}
                             </a>

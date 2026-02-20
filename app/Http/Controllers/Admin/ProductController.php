@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 use \Illuminate\Support\Str;
@@ -65,6 +66,8 @@ class ProductController extends Controller
             $path = $request->file('image')->store('components', 'public');
             $validated['image_url'] = $path;
         }
+
+        Log::info($path);
 
         // Decode specs JSON string to array
         $validated['specs'] = json_decode($validated['specs'], true);
