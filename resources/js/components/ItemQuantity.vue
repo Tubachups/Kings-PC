@@ -7,21 +7,49 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field'
+import { ref, watch } from 'vue';
+import { debounce } from 'lodash';
+import { router } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 
-interface Props {
-    defaultValue: number
-}
+const props = defineProps<{
+    productId: number;
+}>();
+const model = defineModel<number>({default: 1});
 
-const props = defineProps<Props>();
+const syncWithServer = debounce((newQty: number) => {
+    if (!newQty || newQty < 1) return;
+    
+    router.put(`/cart/${props.productId}`, { 
+        quantity: newQty 
+    }, {
+        preserveScroll: true,
+        showProgress: false,
+        only: ['cart', 'cart_items'],
+        onSuccess: () => {
+            toast.success("Cart Updated", {
+                description: `Item quantity updated.`,
+            });
+        }
+
+    });
+}, 500);
+
+
+watch(model, (newVal, oldVal) => {
+    if (newVal === oldVal) return; 
+    syncWithServer(newVal);
+});
+
 
 </script>
 
 <template>
-  <NumberField id="qty" :default-value="props.defaultValue" :min="0">
+  <NumberField id="qty" v-model="model" :min="1">
     <Label for="qty"></Label>
     <NumberFieldContent>
       <NumberFieldDecrement />
-      <NumberFieldInput />
+      <NumberFieldInput readonly/>
       <NumberFieldIncrement />
     </NumberFieldContent>
   </NumberField>
