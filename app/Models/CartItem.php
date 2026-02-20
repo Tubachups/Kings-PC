@@ -34,6 +34,26 @@ class CartItem extends Model
         
     }
 
+    public static function getCartForRedis($user_id)
+    {
+        $items = self::where('user_id', $user_id)->with('product')->get();
+
+        $payload = [];
+        foreach ($items as $item) {
+            $payload[$item->product_id] = json_encode([
+                'quantity'  => $item->quantity,
+                'product'   => [
+                    'id'        => $item->product->id,
+                    'name'      => $item->product->name,
+                    'price'     => $item->product->price,
+                    'image_url' => $item->product->image_url,
+                ]
+            ]);
+        }
+
+        return $payload;
+    }
+
     public static function removeFromCart($user_id, $product_id)
     {
         return self::where('user_id', $user_id)

@@ -17,7 +17,6 @@ class CartController extends Controller
     public function index()
     {
         return Inertia::render('Shop/Cart', [
-            'cart_items' => Inertia::lazy(fn () => CartItem::where('user_id', Auth::id())->with('product')->get())
         ]);
     }
 
@@ -56,8 +55,9 @@ class CartController extends Controller
     {
         $start = microtime(true);
         $user_id = Auth::id() ?? 1;
-        Redis::hset("cart:user:" . $user_id, $id, $request->quantity);
-        SyncCartToDatabase::dispatch($user_id, $id, $request->quantity);
+        $quantity = (int) $request->input('quantity');
+        Redis::hset("cart:user:" . $user_id, $id, $quantity);
+        SyncCartToDatabase::dispatch($user_id, $id, $quantity);
         $end = microtime(true);
         $executionTime = $end - $start;
         Log::info('Cart update execution time: ' . $executionTime . ' seconds');
@@ -69,12 +69,20 @@ class CartController extends Controller
     {
         $start = microtime(true);
         $user_id = Auth::id() ?? 1;
-        $product_id = $request->product_id ?? $id;
-        Redis::hdel("cart:user:{$user_id}", $product_id);
+        $product_id = (int) $id;
+
+        Redis::hdel("cart:user:{$user_id}", (string) $product_id);
+        
         RemoveCartFromJob::dispatch($user_id, $product_id);
+
         $end = microtime(true);
-        $executionTime = $end - $start;
-        Log::info('Cart delete execution time: ' . $executionTime . ' seconds');
+        Log::info('Cart delete execution time: ' . ($end - $start) . ' seconds');
+        
         return back();
+    }
+
+    public function clear($id)
+    {
+        
     }
 }

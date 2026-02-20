@@ -13,36 +13,39 @@ import { router } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
 
 const props = defineProps<{
-    defaultValue: number;
     productId: number;
 }>();
-
-const localQty = ref(props.defaultValue);
+const model = defineModel<number>({default: 1});
 
 const syncWithServer = debounce((newQty: number) => {
+    if (!newQty || newQty < 1) return;
+    
     router.put(`/cart/${props.productId}`, { 
         quantity: newQty 
     }, {
         preserveScroll: true,
         showProgress: false,
-        preserveState: true,
         only: ['cart', 'cart_items'],
+        onSuccess: () => {
+            toast.success("Cart Updated", {
+                description: `Item quantity updated.`,
+            });
+        }
+
     });
 }, 500);
 
 
-watch(localQty, (newVal) => {
+watch(model, (newVal, oldVal) => {
+    if (newVal === oldVal) return; 
     syncWithServer(newVal);
 });
 
 
-watch(() => props.defaultValue, (newVal) => {
-    localQty.value = newVal;
-});
 </script>
 
 <template>
-  <NumberField id="qty" v-model="localQty" :min="1">
+  <NumberField id="qty" v-model="model" :min="1">
     <Label for="qty"></Label>
     <NumberFieldContent>
       <NumberFieldDecrement />

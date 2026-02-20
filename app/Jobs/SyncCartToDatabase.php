@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\CartItem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 
 class SyncCartToDatabase implements ShouldQueue
@@ -25,10 +26,24 @@ class SyncCartToDatabase implements ShouldQueue
      */
     public function handle(): void
     {
-        $currentDbState = CartItem::addToCart($this->user_id, $this->id, $this->quantity);
-        Redis::del("cart:user:" . $this->user_id);
+        CartItem::addToCart($this->user_id, $this->id, $this->quantity);
+
+        $currentDbState = CartItem::getCartForRedis($this->user_id);
+
+        $redisKey = "cart:user:" . $this->user_id;
+
+        $currentDbState = CartItem::getCartForRedis($this->user_id);
+
+        Redis::del($redisKey);
+
         if (!empty($currentDbState)) {
-            Redis::hmset("cart:user:" . $this->user_id, $currentDbState);
+            Redis::pipeline(function ($pipe) use ($redisKey, $currentDbState) {
+                $pipe->del($redisKey);
+                foreach ($currentDbState as $field => $value) {
+                    $pipe->hset($redisKey, $field, $value);
+                }
+                $pipe->expire($redisKey, 43200);
+            });
         }
     }
 }

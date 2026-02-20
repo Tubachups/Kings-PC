@@ -13,8 +13,6 @@ defineProps<{
     items: CartItem[]
 }>();
 
-const page = usePage();
-
 const deleteCartItem = useCart()
 </script>
 
@@ -47,7 +45,7 @@ const deleteCartItem = useCart()
                                 <p class="flex flex-col">
                                     <div class="flex-3">
                                         <ItemQuantity
-                                            :defaultValue="item.quantity"
+                                            v-model="item.quantity"
                                             :productId="item.product.id"
                                         />
                                     </div>

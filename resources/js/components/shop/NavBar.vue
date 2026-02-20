@@ -35,10 +35,20 @@ import { Category } from '@/types/product';
 const page = usePage();
 const categories = computed(() => page.props.categories as Category[]);
 const totalItems = computed(() => {
-    const cart = page.props.cart || {};
-    return Object.values(cart).reduce((total: any, qty: any) => {
-        return total + parseInt(qty);
+const cart = page.props.cart;
+
+    if (!cart) return 0;
+
+    const items = Array.isArray(cart) ? cart : Object.values(cart);
+
+    return items.reduce((total, item) => {
+        const qty = (typeof item === 'object' && item !== null) 
+            ? parseInt(item.quantity) 
+            : parseInt(item);
+
+        return total + (isNaN(qty) ? 0 : qty);
     }, 0);
+    
 });
 </script>
 
