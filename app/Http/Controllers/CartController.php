@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ClearCart;
 use App\Jobs\RemoveCartFromJob;
 use App\Jobs\SyncCartToDatabase;
 use App\Models\CartItem;
@@ -81,8 +82,12 @@ class CartController extends Controller
         return back();
     }
 
-    public function clear($id)
+    public function clear()
     {
-        
+        $user_id = Auth::id();
+        Redis::del("cart:user:{$user_id}");
+        ClearCart::dispatch($user_id);
+
+        return back();
     }
 }

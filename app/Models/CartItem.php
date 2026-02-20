@@ -60,4 +60,10 @@ class CartItem extends Model
                     ->where('product_id', $product_id)
                     ->delete();
     }
+
+    public static function clearCart($user_id)
+    {
+        return self::where('user_id', $user_id)
+                    ->delete();
+    }
 }
