@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admi
     Route::resource('products', ProductController::class);
 });
 
+Route::delete('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::resource('cart', CartController::class);
 
 // Google OAuth routes

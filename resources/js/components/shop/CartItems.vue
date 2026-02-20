@@ -13,14 +13,14 @@ defineProps<{
     items: CartItem[]
 }>();
 
-const deleteCartItem = useCart()
+const { deleteCartItem, clearCart } = useCart()
 </script>
 
 <template>
     <ScrollArea class="h-full w-full rounded-md border">
         <div class="p-4">
             <h4 class="mb-4 flex flex-row text-sm leading-none font-medium">
-                <div class="flex flex-1 justify-center">total: </div>
+                <div class="flex flex-1 justify-center p-6"><button @click="clearCart()" class="bg-red-500 p-2 rounded text-white">Clear Cart</button></div>
                 <div class="flex flex-1 justify-center p-6">Item</div>
                 <div class="flex flex-1 justify-center p-6">Quantity</div>
                 <div class="flex flex-1 justify-center p-6">Price</div>

@@ -54,7 +54,7 @@ class HandleInertiaRequests extends Middleware
             'categories' => cache()->remember('global_categories', 3600, function () {
                 return Category::select('id', 'name', 'slug')->get();
             }),
-            'cart' => function () {
+            'cart' => (function () {
                 if(!Auth::check()) return [];
 
                 $user_id = Auth::id();
@@ -78,7 +78,7 @@ class HandleInertiaRequests extends Middleware
                     ->filter()  
                     ->values()
                     ->toArray();
-            }
+            })
         ];
     }
 }

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import CartItems from '@/components/shop/CartItems.vue';
 import Layout from '@/layouts/MainLayout.vue';
-import { CartItem } from '@/types/cart';
 import { computed, onMounted } from 'vue';
 import { router, usePage } from '@inertiajs/vue3';
 import Card from '@/components/ui/card/Card.vue';

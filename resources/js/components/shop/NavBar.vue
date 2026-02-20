@@ -31,25 +31,11 @@ import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { Category } from '@/types/product';
+import { useCartStore } from '@/stores/cartStore';
 
 const page = usePage();
 const categories = computed(() => page.props.categories as Category[]);
-const totalItems = computed(() => {
-const cart = page.props.cart;
-
-    if (!cart) return 0;
-
-    const items = Array.isArray(cart) ? cart : Object.values(cart);
-
-    return items.reduce((total, item) => {
-        const qty = (typeof item === 'object' && item !== null) 
-            ? parseInt(item.quantity) 
-            : parseInt(item);
-
-        return total + (isNaN(qty) ? 0 : qty);
-    }, 0);
-    
-});
+const cartStore = useCartStore()
 </script>
 
 <template>
@@ -120,11 +106,11 @@ const cart = page.props.cart;
                             <Link href="/cart" :only="['cart_items']">
                                 <ShoppingCart class="h-5 w-5" />
                                 <Badge
-                                    v-if="totalItems > 0"
+                                    v-if="cartStore.totalItems > 0"
                                     variant="destructive"
                                     class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full p-0 text-[10px]"
                                 >
-                                    {{ totalItems }}
+                                    {{ cartStore.totalItems }}
                                 </Badge>
                             </Link>
                         </NavigationMenuLink>
@@ -147,11 +133,11 @@ const cart = page.props.cart;
                 <Link href="/cart" :only="['cart_items']" class="relative">
                     <ShoppingCart class="h-6 w-6" />
                     <Badge
-                        v-if="totalItems > 0"
+                        v-if="cartStore.totalItems > 0"
                         variant="destructive"
                         class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full p-0 text-[10px]"
                     >
-                        {{ totalItems }}
+                        {{cartStore.totalItems }}
                     </Badge>
                 </Link>
 

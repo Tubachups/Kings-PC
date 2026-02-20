@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useCartStore } from '@/stores/cartStore';
 import { Product } from '@/types/product';
 import { router, usePage } from '@inertiajs/vue3';
 import { toast } from 'vue-sonner';
@@ -9,20 +10,33 @@ const page = usePage();
 const {product} = defineProps<{
     product: Product
 } > ()
-
+const cartStore = useCartStore()
 const updateCartQuantity = (product: Product) => {
-    const cart = page.props.cart as any[];
-
-    const existingItem = cart.find(item => item?.product?.id === product.id);
-
+    const existingItem = cartStore.items.find(item => item?.product?.id === product.id);
     const currentQty = existingItem ? existingItem.quantity : 0;
+    const newQty = currentQty + 1
+
+    if (existingItem) {
+        cartStore.updateQuantity(product.id, newQty)
+    } else {
+            cartStore.addItem({
+            product_id: product.id,
+            quantity: newQty,
+            product: {
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image_url: product.image_url
+            }
+        })
+    }
 
     router.put(`/cart/${product.id}`, {
-        quantity: Number(currentQty) + 1
+        quantity: newQty
     } , {
         preserveScroll: true,
         preserveState: true,
-        only: ['cart', 'product'],
+        except: ['cart'],
         showProgress: false,
         onStart: () => {
             toast.success("Cart Updated", {
@@ -30,6 +44,7 @@ const updateCartQuantity = (product: Product) => {
             });
         },
         onError: (error) => {
+            cartStore.updateQuantity(product.id, currentQty)
             toast.error("Error occured!");
             console.error(error);
         }

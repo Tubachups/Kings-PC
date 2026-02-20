@@ -1,6 +1,6 @@
+import { useCartStore } from "@/stores/cartStore";
 import { router, usePage } from "@inertiajs/vue3";
 import { toast } from "vue-sonner";
-
 interface Product {
     id: number;
     name: string;
@@ -15,8 +15,11 @@ interface CartItem {
 }
 
 export function useCart() {
+    const cartStore = useCartStore()
     const page = usePage()
+    const user = page.props.auth.user.id;
     const pendingDeletes = new Set<number>()
+
     const deleteCartItem = (item: CartItem) => {
         const cart = page.props.cart as CartItem[]
         pendingDeletes.add(item.product.id)
@@ -25,7 +28,7 @@ export function useCart() {
             preserveScroll: true,
             showProgress: false,
             preserveState: true,
-            only: ['cart', 'cart_items'],
+            only: ['cart', 'CartItem'],
             onError: () => {
                 pendingDeletes.delete(item.product.id)
                 page.props.cart = (page.props.cart as CartItem[]).concat(
@@ -46,6 +49,20 @@ export function useCart() {
         })
     }
 
+    const clearCart = () => {
+        cartStore.clearItems()
+        router.delete("/cart/clear", {
+            preserveScroll: true,
+            showProgress: false,
+            preserveState: true,
+            onSuccess: () => {
+                toast.success("Cart Updated", {
+                    description: `Your Cart is now clear.`,
+                });
+            }
+        })
+    }
 
-    return deleteCartItem
+
+    return {deleteCartItem, clearCart}
 }
