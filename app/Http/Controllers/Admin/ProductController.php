@@ -7,9 +7,9 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use \Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -17,15 +17,10 @@ class ProductController extends Controller
     {
         $products = Product::query()
             ->with('category')
-            ->when($request->input('search'), function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            })
-            ->when($request->input('category'), function ($query, $category) {
-                $query->where('category_id', $category);
-            })
+            ->when($request->input('name'), fn ($q, $name) => $q->where('name', 'like', "%{$name}%"))
+            ->when($request->input('category'), fn ($q, $category) => $q->whereHas('category', fn ($cq) => $cq->where('name', 'like', "%{$category}%")))
             ->latest()
-            ->paginate()
+            ->paginate(15)
             ->withQueryString();
 
         $categories = Category::all();
@@ -33,7 +28,7 @@ class ProductController extends Controller
         return Inertia::render('Admin/Products/Index', [
             'products' => $products,
             'categories' => $categories,
-            'filters' => $request->only(['search', 'category']),
+            'filters' => $request->only(['name', 'category']),
         ]);
     }
 
@@ -53,7 +48,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|mimes:jpg,jpeg,png|max:2048', //image upload
+            'image' => 'nullable|mimes:jpg,jpeg,png|max:2048', // image upload
             'specs' => 'required|string', // Accept JSON string from frontend
             'is_active' => 'boolean',
         ]);
@@ -109,7 +104,6 @@ class ProductController extends Controller
 
         // Generate slug from name
         $validated['slug'] = Str::slug($validated['name']);
-
 
         // Map image to image_url for database
         if (isset($validated['image'])) {
