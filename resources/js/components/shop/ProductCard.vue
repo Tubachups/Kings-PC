@@ -2,10 +2,16 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCart } from '@/composables/useCart';
 import { Product } from '@/types/product';
-import { router, usePage } from '@inertiajs/vue3';
-import { toast } from 'vue-sonner';
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
-const page = usePage();
+
+const filteredImageUrl = computed(() => {
+    if (!product?.image_url) return '';
+    return product.image_url.startsWith('/storage')
+        ? product.image_url.replace(/^\/storage/, '')
+        : product.image_url;
+});
 
 // Added isLoading prop and made product optional so you can render skeletons safely
 const { product, isLoading = false } = defineProps<{
@@ -79,7 +85,7 @@ const categoryColors: Record<string, string> = {
         </div>
 
         <img
-            :src="product.image_url"
+            :src="filteredImageUrl"
             :alt="product.name"
             class="my-2 aspect-square w-full rounded-lg object-cover"
         />

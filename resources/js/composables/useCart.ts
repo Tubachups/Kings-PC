@@ -8,8 +8,6 @@ import { storeToRefs } from "pinia";
 export function useCart() {
     const cartStore = useCartStore()
     const page = usePage()
-    const user = page.props.auth.user.id;
-    const pendingDeletes = new Set<number>()
     const { items } = storeToRefs(cartStore)
 
     const updateQuantity = (product: Product, newQty: number) => {

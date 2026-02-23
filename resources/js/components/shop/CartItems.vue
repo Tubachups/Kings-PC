@@ -4,8 +4,16 @@ import { Separator } from '@/components/ui/separator';
 import ItemQuantity from '../ItemQuantity.vue';
 import { Trash2Icon } from 'lucide-vue-next';
 import { useCart } from '@/composables/useCart';
+import { computed } from 'vue';
 
 const { deleteCartItem, clearCart, items } = useCart()
+
+function filteredImageUrl(imageUrl: string) {
+    if (!imageUrl) return '';
+    return imageUrl.startsWith('/storage')
+        ? imageUrl.replace(/^\/storage/, '')
+        : imageUrl;
+}
 </script>
 
 <template>
@@ -21,7 +29,7 @@ const { deleteCartItem, clearCart, items } = useCart()
                 <div class="flex flex-1 flex-row">
                     <div class="flex-1">
                         <img
-                            :src="item.product.image_url"
+                            :src="filteredImageUrl(item.product.image_url)"
                             :alt="item.product.name"
                             class="my-2 aspect-square w-full rounded-lg object-cover"
                         />

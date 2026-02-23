@@ -23,7 +23,7 @@ watch(() => page.props.cart, (newCart) => {
 <template>
     <main>
         <NavBar />
-        <Toaster position="bottom-right" richColors/>
+        <Toaster position="top-center" richColors/>
         <Transition name="slide" mode="out-in">
             <div :key="$page.component">
                 <slot />

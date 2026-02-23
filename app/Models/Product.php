@@ -36,10 +36,4 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    protected function imageUrl(): Attribute
-    {
-        return Attribute::make(
-            get: fn (?string $value) => $value ? Storage::url($value) : null,
-        );
-    }
 }
