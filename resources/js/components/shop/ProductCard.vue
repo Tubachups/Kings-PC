@@ -1,56 +1,21 @@
 <script setup lang="ts">
-import { useCartStore } from '@/stores/cartStore';
+import { useCart } from '@/composables/useCart';
 import { Product } from '@/types/product';
-import { router, usePage } from '@inertiajs/vue3';
-import { toast } from 'vue-sonner';
-
-const page = usePage();
-
 
 const {product} = defineProps<{
     product: Product
 } > ()
-const cartStore = useCartStore()
-const updateCartQuantity = (product: Product) => {
-    const existingItem = cartStore.items.find(item => item?.product?.id === product.id);
-    const currentQty = existingItem ? existingItem.quantity : 0;
-    const newQty = currentQty + 1
 
-    if (existingItem) {
-        cartStore.updateQuantity(product.id, newQty)
-    } else {
-            cartStore.addItem({
-            product_id: product.id,
-            quantity: newQty,
-            product: {
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                image_url: product.image_url
-            }
-        })
-    }
+const { updateQuantity, items } = useCart();
 
-    router.put(`/cart/${product.id}`, {
-        quantity: newQty
-    } , {
-        preserveScroll: true,
-        preserveState: true,
-        except: ['cart'],
-        showProgress: false,
-        onStart: () => {
-            toast.success("Cart Updated", {
-                description: `${product.name} is now in your cart.`,
-            });
-        },
-        onError: (error) => {
-            cartStore.updateQuantity(product.id, currentQty)
-            toast.error("Error occured!");
-            console.error(error);
-        }
-    });
+const handleAddToCart = () => {
+    const existingItem = items.value.find(i => i.product.id === product.id);
+
+    const newQty = existingItem ? existingItem.quantity + 1 : 1;
+
+    updateQuantity(product, newQty);
+
 }
-
 
 const categoryColors: Record<string, string> = {
     gpu:'bg-red-600',
@@ -98,7 +63,7 @@ const categoryColors: Record<string, string> = {
         </ul>
     </div>
 
-    <button @click="updateCartQuantity(product)" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
+    <button @click="handleAddToCart" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
         Add to Cart
     </button>
 </template>

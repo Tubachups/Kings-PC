@@ -2,18 +2,10 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import ItemQuantity from '../ItemQuantity.vue';
-import { computed, ref } from 'vue';
-import { CartItem } from '@/types/cart';
 import { Trash2Icon } from 'lucide-vue-next';
-import { router, usePage } from '@inertiajs/vue3';
-import { toast } from 'vue-sonner';
 import { useCart } from '@/composables/useCart';
 
-defineProps<{
-    items: CartItem[]
-}>();
-
-const { deleteCartItem, clearCart } = useCart()
+const { deleteCartItem, clearCart, items } = useCart()
 </script>
 
 <template>
@@ -25,7 +17,7 @@ const { deleteCartItem, clearCart } = useCart()
                 <div class="flex flex-1 justify-center p-6">Quantity</div>
                 <div class="flex flex-1 justify-center p-6">Price</div>
             </h4>
-            <template v-for="item in items" key="id">
+            <template v-for="item in items" :key="item.id">
                 <div class="flex flex-1 flex-row">
                     <div class="flex-1">
                         <img
@@ -45,8 +37,7 @@ const { deleteCartItem, clearCart } = useCart()
                                 <p class="flex flex-col">
                                     <div class="flex-3">
                                         <ItemQuantity
-                                            v-model="item.quantity"
-                                            :productId="item.product.id"
+                                            :item="item"
                                         />
                                     </div>
                                     <div class="flex-1">

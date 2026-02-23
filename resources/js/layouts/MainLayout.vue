@@ -13,7 +13,9 @@ const cartStore = useCartStore()
 cartStore.setItems(page.props.cart as CartItem[])
 
 watch(() => page.props.cart, (newCart) => {
-    cartStore.setItems(newCart as CartItem[])
+    if (!cartStore.isSyncing) {
+        cartStore.setItems(newCart as CartItem[])
+    }
 }, { deep: true })
 
 </script>
@@ -22,7 +24,26 @@ watch(() => page.props.cart, (newCart) => {
     <main>
         <NavBar />
         <Toaster position="bottom-right" richColors/>
-        <slot />
+        <Transition name="slide" mode="out-in">
+            <div :key="$page.component">
+                <slot />
+            </div>
+        </Transition>
         <Footer />
     </main>
 </template>
+
+<style>
+.slide-enter-active,
+.slide-leave-active {
+    transition: all 0.2s ease;
+}
+.slide-enter-from {
+    opacity: 0;
+    filter: blur(4px);
+}
+.slide-leave-to {
+    opacity: 0;
+    filter: blur(4px);
+}
+</style>

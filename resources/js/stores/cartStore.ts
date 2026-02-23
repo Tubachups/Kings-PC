@@ -3,29 +3,42 @@ import { CartItem } from '@/types/cart';
 
 export const useCartStore = defineStore('cart', {
     state: () => ({
-        items: [] as CartItem[]
+        items: [] as CartItem[],
+        isSyncing: false
     }),
 
     getters: {
-        totalItems: (state) => 
-            state.items.reduce((t, i) => t + i.quantity, 0),
+        totalItems: (state) => {
+            return state.items.reduce((acc, item) => acc + (item.quantity || 0), 0);
+        },
         subTotal:   (state) =>
             state.items.reduce((t, i) => t + i.quantity * i.product.price, 0),
     },
 
     actions: {
         setItems(items: CartItem[]) {
-            this.items = items
-        },
+            this.items = items.filter(item => typeof item === 'object' && item !== null);        },
         addItem(item: CartItem) {
-            this.items.push(item)
+            // Use == instead of === to avoid string/number ID mismatches
+            const existingItem = this.items.find(i => i.id == item.id);
+
+            if (existingItem) {
+                existingItem.quantity += item.quantity;
+            } else {
+                this.items.push({ ...item });
+            }
         },
-        removeItem(productId: number) {
+        updateLocalQuantity(productId: number, quantity: number) {
+            const item = this.items.find(i => i.product.id === productId);
+            if (item) {
+                item.quantity = quantity
+            }
+        },
+        removeLocalItem(productId: number) {
             this.items = this.items.filter(i => i.product.id !== productId)
         },
-        updateQuantity(productId: number, quantity: number) {
-            const item = this.items.find(i => i.product.id === productId)
-            if (item) item.quantity = quantity
+        setSyncing(status: boolean) {
+            this.isSyncing = status
         },
         clearItems() {
             this.items = []

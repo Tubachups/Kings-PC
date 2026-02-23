@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import {
-    CircleCheckIcon,
-    CircleHelpIcon,
-    CircleIcon,
     ShoppingCart,
     CircleUserRound,
     Crown,
-    Menu, // <-- Added for mobile hamburger icon
+    Menu, 
 } from 'lucide-vue-next';
 import {
     NavigationMenu,
@@ -21,8 +18,6 @@ import {
     Sheet,
     SheetContent,
     SheetTrigger,
-    SheetHeader,
-    SheetTitle,
     SheetClose,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -31,11 +26,15 @@ import { Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { Category } from '@/types/product';
-import { useCartStore } from '@/stores/cartStore';
+import { useCart } from '@/composables/useCart';
+import PopoverContent from '../ui/popover/PopoverContent.vue';
+import Popover from '../ui/popover/Popover.vue';
+import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
+import TotalCard from './TotalCard.vue';
 
 const page = usePage();
 const categories = computed(() => page.props.categories as Category[]);
-const cartStore = useCartStore()
+const { totalItems, items } = useCart();
 </script>
 
 <template>
@@ -99,22 +98,23 @@ const cartStore = useCartStore()
                     </NavigationMenuItem>
 
                     <NavigationMenuItem>
-                        <NavigationMenuLink
-                            as-child
-                            :class="[navigationMenuTriggerStyle(), 'relative']"
-                        >
-                            <Link href="/cart" :only="['cart_items']">
-                                <ShoppingCart class="h-5 w-5" />
-                                <Badge
-                                    v-if="cartStore.totalItems > 0"
-                                    variant="destructive"
-                                    class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full p-0 text-[10px]"
-                                >
-                                    {{ cartStore.totalItems }}
-                                </Badge>
-                            </Link>
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
+                        <Popover>
+                            <PopoverTrigger as-child>
+                                <Button variant="ghost" class="relative p-2 cursor-pointer">
+                                    <ShoppingCart class="h-5 w-5" />
+                                    <Badge v-if="totalItems > 0" variant="destructive" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full p-0 text-[10px]">
+                                        {{ totalItems }}
+                                    </Badge>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <TotalCard :items="items" />
+                                <Link href="/cart" class="w-full m-2">
+                                    <Button class="w-full">View Cart & Checkout</Button>
+                                </Link>
+                            </PopoverContent>
+                        </Popover>
+                        </NavigationMenuItem>
 
                     <NavigationMenuItem>
                         <NavigationMenuLink
@@ -130,14 +130,14 @@ const cartStore = useCartStore()
             </NavigationMenu>
 
             <div class="flex items-center gap-4 md:hidden">
-                <Link href="/cart" :only="['cart_items']" class="relative">
+                <Link href="/cart" :only="['cart']" class="relative">
                     <ShoppingCart class="h-6 w-6" />
                     <Badge
-                        v-if="cartStore.totalItems > 0"
+                        v-if="totalItems > 0"
                         variant="destructive"
                         class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full p-0 text-[10px]"
                     >
-                        {{cartStore.totalItems }}
+                        {{totalItems}}
                     </Badge>
                 </Link>
 

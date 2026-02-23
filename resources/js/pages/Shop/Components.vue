@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import ProductCard from "@/components/shop/ProductCard.vue";
-import {Delete, Crown} from "lucide-vue-next";
-import NavigationMenu from '@/components/ui/navigation-menu/NavigationMenu.vue';
 import SearchBar from '@/components/shop/SearchBar.vue';
-import BannerCarousel from '@/components/shop/BannerCarousel.vue';
-import ProductsCarousel from '@/components/shop/ProductsCarousel.vue';
 import Layout from '@/layouts/MainLayout.vue';
 import { router } from '@inertiajs/vue3';
 
