@@ -1,13 +1,18 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import ProductCard from "@/components/shop/ProductCard.vue";
-// Added ChevronDown for the accordion toggle icon
-import { Delete, Crown, ChevronDown } from "lucide-vue-next";
-import NavigationMenu from '@/components/ui/navigation-menu/NavigationMenu.vue';
+import { ChevronDown } from "lucide-vue-next";
 import SearchBar from '@/components/shop/SearchBar.vue';
-import BannerCarousel from '@/components/shop/BannerCarousel.vue';
-import ProductsCarousel from '@/components/shop/ProductsCarousel.vue';
 import Layout from '@/layouts/MainLayout.vue';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationFirst,
+    PaginationItem,
+    PaginationLast,
+} from '@/components/ui/pagination';
+import { Button } from '@/components/ui/button';
 import { router } from '@inertiajs/vue3';
 
 defineOptions({ layout: Layout });
@@ -61,6 +66,9 @@ onMounted(() => {
     });
 });
 
+const PER_PAGE = 15;
+const currentPage = ref<number>(1);
+
 // Updated to filter by both search query AND selected categories
 const filteredProducts = computed(() => {
     if (!props.products) return [];
@@ -73,6 +81,18 @@ const filteredProducts = computed(() => {
 
         return matchesSearch && matchesCategory;
     });
+});
+
+const totalPages = computed(() => Math.ceil(filteredProducts.value.length / PER_PAGE));
+
+const paginatedProducts = computed(() => {
+    const start = (currentPage.value - 1) * PER_PAGE;
+    return filteredProducts.value.slice(start, start + PER_PAGE);
+});
+
+// Reset to page 1 when filters change
+watch([searchQuery, selectedCategories], () => {
+    currentPage.value = 1;
 });
 </script>
 
@@ -132,12 +152,12 @@ const filteredProducts = computed(() => {
                 </template>
 
                 <template v-else>
-                    <div v-if="filteredProducts.length === 0" class="col-span-full text-center py-12 text-gray-500">
+                    <div v-if="paginatedProducts.length === 0" class="col-span-full text-center py-12 text-gray-500">
                         No products found matching your current filters.
                     </div>
 
                     <div
-                        v-for="product in filteredProducts"
+                        v-for="product in paginatedProducts"
                         :key="product.id"
                         class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-full flex flex-col"
                     >
@@ -146,6 +166,50 @@ const filteredProducts = computed(() => {
                 </template>
 
             </main>
+        </div>
+
+        <div v-if="!isLoading && filteredProducts.length > PER_PAGE" class="mt-8 flex flex-col items-center gap-2">
+            <p class="text-muted-foreground text-sm">
+                Showing
+                <span class="font-medium">{{ (currentPage - 1) * PER_PAGE + 1 }}</span>–<span class="font-medium">{{ Math.min(currentPage * PER_PAGE, filteredProducts.length) }}</span>
+                of <span class="font-medium">{{ filteredProducts.length }}</span> results
+            </p>
+            <Pagination
+                :total="filteredProducts.length"
+                :items-per-page="PER_PAGE"
+                :default-page="currentPage"
+                :sibling-count="1"
+                show-edges
+                @update:page="currentPage = $event"
+            >
+                <PaginationContent v-slot="{ items }">
+                    <PaginationItem :value="1" class="mr-3">
+                        <PaginationFirst />
+                    </PaginationItem>
+                    <template v-for="(item, index) in items" :key="index">
+                        <PaginationItem v-if="item.type === 'page'" :value="item.value">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                :class="[
+                                    'mx-1 rounded-md transition-colors duration-150',
+                                    item.value === currentPage
+                                        ? 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary'
+                                        : 'border border-gray-200 bg-white text-black hover:bg-muted',
+                                ]"
+                            >
+                                {{ item.value }}
+                            </Button>
+                        </PaginationItem>
+                        <PaginationItem v-else :value="0">
+                            <PaginationEllipsis />
+                        </PaginationItem>
+                    </template>
+                    <PaginationItem :value="totalPages" class="ml-3">
+                        <PaginationLast />
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
         </div>
 
     </div>

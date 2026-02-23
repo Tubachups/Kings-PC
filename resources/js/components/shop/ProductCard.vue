@@ -15,31 +15,35 @@ const { product, isLoading = false } = defineProps<{
 const updateCartQuantity = (product: Product) => {
     const cart = page.props.cart as any[];
 
-    const existingItem = cart.find(item => item?.product?.id === product.id);
+    const existingItem = cart.find((item) => item?.product?.id === product.id);
 
     const currentQty = existingItem ? existingItem.quantity : 0;
 
-    router.put(`/cart/${product.id}`, {
-        quantity: Number(currentQty) + 1
-    } , {
-        preserveScroll: true,
-        preserveState: true,
-        only: ['cart', 'product'],
-        showProgress: false,
-        onStart: () => {
-            toast.success("Cart Updated", {
-                description: `${product.name} is now in your cart.`,
-            });
+    router.put(
+        `/cart/${product.id}`,
+        {
+            quantity: Number(currentQty) + 1,
         },
-        onError: (error) => {
-            toast.error("Error occured!");
-            console.error(error);
-        }
-    });
-}
+        {
+            preserveScroll: true,
+            preserveState: true,
+            only: ['cart', 'product'],
+            showProgress: false,
+            onStart: () => {
+                toast.success('Cart Updated', {
+                    description: `${product.name} is now in your cart.`,
+                });
+            },
+            onError: (error) => {
+                toast.error('Error occured!');
+                console.error(error);
+            },
+        },
+    );
+};
 
 const categoryColors: Record<string, string> = {
-    gpu:'bg-red-600',
+    gpu: 'bg-red-600',
     case: 'bg-blue-600',
     cooling: 'bg-purple-600',
     cpu: 'bg-green-600',
@@ -47,36 +51,47 @@ const categoryColors: Record<string, string> = {
     ram: 'bg-orange-600',
     'ssd/hdd': 'bg-lime-600',
     psu: 'bg-indigo-600',
-}
-
+};
 </script>
 
 <template>
     <template v-if="isLoading">
-        <Skeleton class="h-6 w-20 rounded-2xl mb-1" />
+        <Skeleton class="mb-1 h-6 w-20 rounded-2xl" />
 
-        <Skeleton class="aspect-square w-full my-2 rounded-lg" />
+        <Skeleton class="my-2 aspect-square w-full rounded-lg" />
 
-        <Skeleton class="h-6 w-3/4 mt-2 mb-2" />
+        <Skeleton class="mt-2 mb-2 h-6 w-3/4" />
 
-        <Skeleton class="h-7 w-1/3 mb-4" />
+        <Skeleton class="mb-4 h-7 w-1/3" />
 
-        <div class="bg-gray-50 rounded p-3 text-sm mb-4">
-            <Skeleton class="h-5 w-1/2 mb-3" />
-            <div class="border-t border-gray-200 pt-2 space-y-2 mt-2">
-                <div v-for="i in 4" :key="`spec-skel-${i}`" class="flex justify-between py-1">
+        <div class="mb-4 rounded bg-gray-50 p-3 text-sm">
+            <Skeleton class="mb-3 h-5 w-1/2" />
+            <div class="mt-2 space-y-2 border-t border-gray-200 pt-2">
+                <div
+                    v-for="i in 4"
+                    :key="`spec-skel-${i}`"
+                    class="flex justify-between py-1"
+                >
                     <Skeleton class="h-4 w-1/3" />
                     <Skeleton class="h-4 w-1/4" />
                 </div>
             </div>
         </div>
 
-        <Skeleton class="h-10 w-full rounded mt-auto" />
+        <Skeleton class="mt-auto h-10 w-full rounded" />
     </template>
 
     <template v-else-if="product">
-        <div :class="[categoryColors[product.category?.name.toLowerCase()] ?? 'bg-gray-600', 'text-center rounded-2xl w-fit px-3 mb-1']">
-            <span class="text-xs font-semibold text-white uppercase tracking-wider">
+        <div
+            :class="[
+                categoryColors[product.category?.name.toLowerCase()] ??
+                    'bg-gray-600',
+                'mb-1 w-fit rounded-2xl px-3 text-center',
+            ]"
+        >
+            <span
+                class="text-xs font-semibold tracking-wider text-white uppercase"
+            >
                 {{ product.category?.name }}
             </span>
         </div>
@@ -84,28 +99,47 @@ const categoryColors: Record<string, string> = {
         <img
             :src="product.image_url"
             :alt="product.name"
-            class="aspect-square w-full my-2 object-cover rounded-lg"
+            class="my-2 aspect-square w-full rounded-lg object-cover"
         />
 
-        <h2 class="text-lg font-bold mt-2 mb-2 leading-tight">
+        <h2 class="mt-2 mb-2 text-lg leading-tight font-bold">
             {{ product.name }}
         </h2>
 
-        <p class="text-xl text-green-600 font-extrabold mb-4">
+        <p class="mb-4 text-xl font-extrabold text-green-600">
             ₱{{ product.price }}
         </p>
 
-        <div class="bg-gray-50 rounded p-3 text-sm mb-4">
-            <h3 class="font-bold border-b pb-1 mb-2 text-gray-700">Specifications</h3>
+        <div class="mb-4 rounded bg-gray-50 p-3 text-sm">
+            <h3 class="mb-2 border-b pb-1 font-bold text-gray-700">
+                Specifications
+            </h3>
             <ul>
-                <li v-for="(value, key) in product.specs" :key="key" class="flex justify-between py-1">
-                    <span class="capitalize text-gray-600">{{ String(key).replace('_', ' ') }}:</span>
-                    <span class="font-medium text-gray-900">{{ value }}</span>
-                </li>
+                <template v-for="(value, key) in product.specs" :key="key">
+                    <li
+                        v-if="
+                            !(
+                                String(key).toLowerCase() === 'tdp' &&
+                                product.category?.name?.toLowerCase() === 'cpu'
+                            )
+                        "
+                        class="flex justify-between py-1"
+                    >
+                        <span class="text-gray-600 capitalize"
+                            >{{ String(key).replace('_', ' ') }}:</span
+                        >
+                        <span class="font-medium text-gray-900">{{
+                            value
+                        }}</span>
+                    </li>
+                </template>
             </ul>
         </div>
 
-        <button @click="updateCartQuantity(product)" class="w-full bg-blue-600 mt-auto text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
+        <button
+            @click="updateCartQuantity(product)"
+            class="mt-auto w-full rounded bg-blue-600 py-2 font-bold text-white transition duration-300 hover:bg-blue-700 active:scale-95 active:bg-blue-700"
+        >
             Add to Cart
         </button>
     </template>

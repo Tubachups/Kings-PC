@@ -3,22 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Models\Product;
 use Illuminate\Support\Facades\Redis;
+use Inertia\Inertia;
 
 class ShopController extends Controller
 {
     //
-    public function index() 
+    public function index()
     {
         return Inertia::render('Shop/Index', [
         ]);
     }
 
     public function contacts()
-    {   
+    {
         return Inertia::render('Shop/Contacts', [
 
         ]);
@@ -33,17 +32,16 @@ class ShopController extends Controller
     }
 
     public function showByCategory(Category $category)
-    {   
-        $products = $category->products()->where('is_active', true)->with('category')->get();
+    {
         return Inertia::render('Shop/Category', [
-            'products' => $products,
+            'products' => $category->products()->where('is_active', true)->with('category')->get(),
         ]);
     }
 
     public function redis()
     {
         Redis::set('test_key', 'Redis is working!');
+
         return Redis::get('test_key');
     }
-
 }
