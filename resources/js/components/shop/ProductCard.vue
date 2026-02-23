@@ -70,20 +70,6 @@ const categoryColors: Record<string, string> = {
     </template>
 
     <template v-else-if="product">
-        <div
-            :class="[
-                categoryColors[product.category?.name.toLowerCase()] ??
-                    'bg-gray-600',
-                'mb-1 w-fit rounded-2xl px-3 text-center',
-            ]"
-        >
-            <span
-                class="text-xs font-semibold tracking-wider text-white uppercase"
-            >
-                {{ product.category?.name }}
-            </span>
-        </div>
-
         <img
             :src="filteredImageUrl"
             :alt="product.name"
