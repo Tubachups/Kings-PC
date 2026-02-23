@@ -34,18 +34,23 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admi
 Route::resource('cart', CartController::class);
 
 // Google OAuth routes
-Route::get('/auth/google/redirect', [GoogleController::class, 'redirectToGoogle'])->name('google.redirect');
-Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');
+Route::controller(GoogleController::class)->group(function () {
+    Route::get('/auth/google/redirect', 'redirectToGoogle')->name('google.redirect');
+    Route::get('/auth/google/callback', 'handleGoogleCallback')->name('google.callback');
+});
+
 
 // Testimonials
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
 
-// All guests can access the shop and category pages, so we don't apply any auth middleware here.
-Route::get('/', [ShopController::class, 'index'])->name('shop');
-Route::get('/components', [ShopController::class, 'components'])->name('components');
-Route::get('/contacts', [ShopController::class, 'contacts'])->name('contacts');
-Route::get('/redis', [ShopController::class, 'redis']);
-Route::get ('/{category:slug}', [ShopController::class, 'showByCategory'])->name('shop.category');
+// Shop (guest) routes
+Route::controller(ShopController::class)->group(function () {
+    Route::get('/', 'index')->name('shop');
+    Route::get('/contacts', 'contacts')->name('contacts');
+    Route::get('/components', 'components')->name('components');
+    Route::get('/redis', 'redis');
+    Route::get('/{category:slug}', 'showByCategory')->name('shop.category');
+});
 
 
 require __DIR__.'/settings.php';
