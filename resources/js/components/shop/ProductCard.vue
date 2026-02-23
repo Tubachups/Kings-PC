@@ -2,7 +2,6 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCart } from '@/composables/useCart';
 import { Product } from '@/types/product';
-import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 
@@ -16,7 +15,7 @@ const filteredImageUrl = computed(() => {
 // Added isLoading prop and made product optional so you can render skeletons safely
 const { product, isLoading = false } = defineProps<{
     product: Product;
-    isLoading?: boolean;
+    isLoading: boolean;
 }>();
 
 const { updateQuantity, items } = useCart();
@@ -30,16 +29,6 @@ const handleAddToCart = () => {
 
 }
 
-const categoryColors: Record<string, string> = {
-    gpu: 'bg-red-600',
-    case: 'bg-blue-600',
-    cooling: 'bg-purple-600',
-    cpu: 'bg-green-600',
-    motherboard: 'bg-yellow-600',
-    ram: 'bg-orange-600',
-    'ssd/hdd': 'bg-lime-600',
-    psu: 'bg-indigo-600',
-};
 </script>
 
 <template>

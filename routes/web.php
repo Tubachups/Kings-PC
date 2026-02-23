@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShopController;
 use App\Models\Product;
@@ -26,9 +27,10 @@ Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admi
     Route::resource('products', ProductController::class);
 
 });
-Route::get('/checkout', function () {
-    return Inertia::render('Shop/Checkout');
-});
+Route::get('/checkout', [CheckoutController::class, 'index']);
+Route::post('/checkout/review', [CheckoutController::class, 'validateStepOne']);
+Route::get('/checkout/review', fn() => redirect('/checkout'));
+
 Route::delete('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::resource('cart', CartController::class);
 
@@ -37,6 +39,7 @@ Route::controller(GoogleController::class)->group(function () {
     Route::get('/auth/google/redirect', 'redirectToGoogle')->name('google.redirect');
     Route::get('/auth/google/callback', 'handleGoogleCallback')->name('google.callback');
 });
+
 
 // Testimonials
 Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
