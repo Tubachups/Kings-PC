@@ -2,34 +2,34 @@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import ItemQuantity from '../ItemQuantity.vue';
-import { computed, ref } from 'vue';
-import { CartItem } from '@/types/cart';
 import { Trash2Icon } from 'lucide-vue-next';
-import { router, usePage } from '@inertiajs/vue3';
-import { toast } from 'vue-sonner';
 import { useCart } from '@/composables/useCart';
+import { computed } from 'vue';
 
-defineProps<{
-    items: CartItem[]
-}>();
+const { deleteCartItem, clearCart, items } = useCart()
 
-const deleteCartItem = useCart()
+function filteredImageUrl(imageUrl: string) {
+    if (!imageUrl) return '';
+    return imageUrl.startsWith('/storage')
+        ? imageUrl.replace(/^\/storage/, '')
+        : imageUrl;
+}
 </script>
 
 <template>
     <ScrollArea class="h-full w-full rounded-md border">
         <div class="p-4">
             <h4 class="mb-4 flex flex-row text-sm leading-none font-medium">
-                <div class="flex flex-1 justify-center">total: </div>
+                <div class="flex flex-1 justify-center p-6"><button @click="clearCart()" class="bg-red-500 p-2 rounded text-white">Clear Cart</button></div>
                 <div class="flex flex-1 justify-center p-6">Item</div>
                 <div class="flex flex-1 justify-center p-6">Quantity</div>
                 <div class="flex flex-1 justify-center p-6">Price</div>
             </h4>
-            <template v-for="item in items" key="id">
+            <template v-for="item in items" :key="item.id">
                 <div class="flex flex-1 flex-row">
                     <div class="flex-1">
                         <img
-                            :src="item.product.image_url"
+                            :src="filteredImageUrl(item.product.image_url)"
                             :alt="item.product.name"
                             class="my-2 aspect-square w-full rounded-lg object-cover"
                         />
@@ -45,8 +45,7 @@ const deleteCartItem = useCart()
                                 <p class="flex flex-col">
                                     <div class="flex-3">
                                         <ItemQuantity
-                                            v-model="item.quantity"
-                                            :productId="item.product.id"
+                                            :item="item"
                                         />
                                     </div>
                                     <div class="flex-1">

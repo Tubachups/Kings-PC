@@ -24,8 +24,12 @@ Route::get('/dashboard', function () {
 // Admin only
 Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('products', ProductController::class);
-});
 
+});
+Route::get('/checkout', function () {
+    return Inertia::render('Shop/Checkout');
+});
+Route::delete('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::resource('cart', CartController::class);
 
 // Google OAuth routes

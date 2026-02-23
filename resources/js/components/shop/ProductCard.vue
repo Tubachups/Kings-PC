@@ -1,46 +1,34 @@
 <script setup lang="ts">
 import { Skeleton } from '@/components/ui/skeleton';
+import { useCart } from '@/composables/useCart';
 import { Product } from '@/types/product';
-import { router, usePage } from '@inertiajs/vue3';
-import { toast } from 'vue-sonner';
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
-const page = usePage();
+
+const filteredImageUrl = computed(() => {
+    if (!product?.image_url) return '';
+    return product.image_url.startsWith('/storage')
+        ? product.image_url.replace(/^\/storage/, '')
+        : product.image_url;
+});
 
 // Added isLoading prop and made product optional so you can render skeletons safely
 const { product, isLoading = false } = defineProps<{
-    product?: Product;
+    product: Product;
     isLoading?: boolean;
 }>();
 
-const updateCartQuantity = (product: Product) => {
-    const cart = page.props.cart as any[];
+const { updateQuantity, items } = useCart();
 
-    const existingItem = cart.find((item) => item?.product?.id === product.id);
+const handleAddToCart = () => {
+    const existingItem = items.value.find(i => i.product.id === product.id);
 
-    const currentQty = existingItem ? existingItem.quantity : 0;
+    const newQty = existingItem ? existingItem.quantity + 1 : 1;
 
-    router.put(
-        `/cart/${product.id}`,
-        {
-            quantity: Number(currentQty) + 1,
-        },
-        {
-            preserveScroll: true,
-            preserveState: true,
-            only: ['cart', 'product'],
-            showProgress: false,
-            onStart: () => {
-                toast.success('Cart Updated', {
-                    description: `${product.name} is now in your cart.`,
-                });
-            },
-            onError: (error) => {
-                toast.error('Error occured!');
-                console.error(error);
-            },
-        },
-    );
-};
+    updateQuantity(product, newQty);
+
+}
 
 const categoryColors: Record<string, string> = {
     gpu: 'bg-red-600',
@@ -82,22 +70,8 @@ const categoryColors: Record<string, string> = {
     </template>
 
     <template v-else-if="product">
-        <div
-            :class="[
-                categoryColors[product.category?.name.toLowerCase()] ??
-                    'bg-gray-600',
-                'mb-1 w-fit rounded-2xl px-3 text-center',
-            ]"
-        >
-            <span
-                class="text-xs font-semibold tracking-wider text-white uppercase"
-            >
-                {{ product.category?.name }}
-            </span>
-        </div>
-
         <img
-            :src="product.image_url"
+            :src="filteredImageUrl"
             :alt="product.name"
             class="my-2 aspect-square w-full rounded-lg object-cover"
         />
@@ -136,11 +110,8 @@ const categoryColors: Record<string, string> = {
             </ul>
         </div>
 
-        <button
-            @click="updateCartQuantity(product)"
-            class="mt-auto w-full rounded bg-blue-600 py-2 font-bold text-white transition duration-300 hover:bg-blue-700 active:scale-95 active:bg-blue-700"
-        >
-            Add to Cart
-        </button>
+    <button @click="handleAddToCart" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
+        Add to Cart
+    </button>
     </template>
 </template>
