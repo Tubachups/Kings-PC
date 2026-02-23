@@ -2,14 +2,11 @@
 import type {
     ColumnDef,
     SortingState,
-    ColumnFiltersState,
 } from '@tanstack/vue-table';
 import {
     FlexRender,
     getCoreRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
-    getFilteredRowModel,
     useVueTable,
 } from '@tanstack/vue-table';
 
@@ -21,18 +18,42 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationFirst,
+    PaginationItem,
+    PaginationLast,
+} from '@/components/ui/pagination';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { valueUpdater } from '@/lib/utils';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { router } from '@inertiajs/vue3';
+
+interface PaginationMeta {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number;
+    to: number;
+}
 
 const props = defineProps<{
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    meta?: PaginationMeta;
+    filters?: {
+        name?: string;
+        category?: string;
+    };
 }>();
 
 const sorting = ref<SortingState>([]);
-const columnFilters = ref<ColumnFiltersState>([]);
+const nameFilter = ref<string>(props.filters?.name ?? '');
+const categoryFilter = ref<string>(props.filters?.category ?? '');
 
 const table = useVueTable({
     get data() {
@@ -42,35 +63,57 @@ const table = useVueTable({
         return props.columns;
     },
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    manualPagination: true,
+    manualFiltering: true,
     onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
-    onColumnFiltersChange: (updaterOrValue) =>
-        valueUpdater(updaterOrValue, columnFilters),
     state: {
         get sorting() {
             return sorting.value;
         },
-        get columnFilters() {
-            return columnFilters.value;
-        },
     },
 });
+
+function goToPage(page: number) {
+    router.get(
+        window.location.pathname,
+        { ...Object.fromEntries(new URLSearchParams(window.location.search)), page },
+        { preserveState: true, preserveScroll: true },
+    );
+}
+
+let debounceTimer: ReturnType<typeof setTimeout>;
+
+function applyFilters() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        router.get(
+            window.location.pathname,
+            {
+                name: nameFilter.value || undefined,
+                category: categoryFilter.value || undefined,
+                page: 1,
+            },
+            { preserveState: true, preserveScroll: true },
+        );
+    }, 200);
+}
+
+watch([nameFilter, categoryFilter], applyFilters);
 </script>
 
 <template>
     <div class="w-full">
-        <div class="flex items-center py-4">
+        <div class="flex items-center gap-2 py-4">
             <Input
                 class="max-w-sm"
                 placeholder="Filter products..."
-                :model-value="
-                    (table.getColumn('name')?.getFilterValue() as string) ?? ''
-                "
-                @update:model-value="
-                    table.getColumn('name')?.setFilterValue($event)
-                "
+                v-model="nameFilter"
+            />
+            <Input
+                class="max-w-sm"
+                placeholder="Filter by category..."
+                v-model="categoryFilter"
             />
         </div>
         <div class="rounded-md border">
@@ -125,23 +168,49 @@ const table = useVueTable({
                 </TableBody>
             </Table>
         </div>
-        <div class="flex items-center justify-end space-x-2 py-4">
-            <Button
-                variant="outline"
-                size="sm"
-                :disabled="!table.getCanPreviousPage()"
-                @click="table.previousPage()"
-            >
-                Previous
-            </Button>
-            <Button
-                variant="outline"
-                size="sm"
-                :disabled="!table.getCanNextPage()"
-                @click="table.nextPage()"
-            >
-                Next
-            </Button>
+
+        <div v-if="meta" class="flex flex-col md:flex-row items-center justify-around gap-4 py-4">
+            <p class="text-muted-foreground text-sm mb-2 md:mb-0">
+                Showing <span class="font-medium">{{ meta.from }}</span>–<span class="font-medium">{{ meta.to }}</span> of <span class="font-medium">{{ meta.total }}</span> results
+            </p>
+            <div class="w-full md:w-auto">
+                <Pagination
+                    :total="meta.total"
+                    :items-per-page="meta.per_page"
+                    :default-page="meta.current_page"
+                    :sibling-count="1"
+                    show-edges
+                    @update:page="goToPage"
+                >
+                    <PaginationContent v-slot="{ items }" >
+                        <PaginationItem :value="0" class="mr-3">
+                            <PaginationFirst />
+                        </PaginationItem>
+                        <template v-for="(item, index) in items" :key="index" >
+                            <PaginationItem v-if="item.type === 'page'" :value="item.value" >
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    :class="[
+                                        'rounded-md transition-colors duration-150',
+                                        item.value === meta.current_page ? 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary' : 'bg-white text-black hover:bg-muted border border-gray-200',
+                                        'mx-1'
+                                    ]"
+                                >
+                                    {{ item.value }}
+                                </Button>
+                            </PaginationItem>
+                            <PaginationItem v-else :value="0" >
+                                <PaginationEllipsis />
+                            </PaginationItem>
+                        </template>
+
+                        <PaginationItem :value="meta.last_page"class="ml-3" >
+                            <PaginationLast />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+            </div>
         </div>
     </div>
 </template>

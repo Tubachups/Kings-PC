@@ -14,11 +14,17 @@ import type { Category, Product } from '@/types/product'
 interface Props {
     products: {
         data: Product[];
+        current_page: number;
+        last_page: number;
+        per_page: number;
+        total: number;
+        from: number;
+        to: number;
     };
     categories: Array<Category>;
     filters: {
-        search?: string;
-        category?: number;
+        name?: string;
+        category?: string;
     };
 }
 
@@ -177,7 +183,19 @@ const breadcrumbs = [
                 </Link>
             </div>
 
-            <DataTable :columns="columns" :data="products.data" />
+            <DataTable
+                :columns="columns"
+                :data="products.data"
+                :meta="{
+                    current_page: products.current_page,
+                    last_page: products.last_page,
+                    per_page: products.per_page,
+                    total: products.total,
+                    from: products.from,
+                    to: products.to,
+                }"
+                :filters="filters"
+            />
         </div>
     </AppLayout>
 </template>
