@@ -29,10 +29,16 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function order_items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
     public static function createOrder($request)
     {
         return self::create([
                 'user_id'           => Auth::id(),
+                'status'            => "Order Placed",
                 'total'             => 0,
                 'order_number' => "KPC - " . strtoupper(Str::random(8)),
                 'shipping_address'  => [
