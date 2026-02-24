@@ -54,24 +54,6 @@ class CheckoutController extends Controller
         ]);
     }
 
-    public static function validateStepOne(Request $request) {
-
-        $freshItems = collect($request->cart)->map(function ($item) {
-            $product = Product::find($item['product']['id']);
-            return [
-                'id'        => $product->id,
-                'price'     => $product->price,
-                'name'      => $product->name,
-                'quantity'  => $item['quantity']
-            ];
-        });
-
-        return Inertia::render('Shop/Checkout', [
-            'freshCart'   => $freshItems,
-            'shippingFee' => 150.00,
-        ]);
-    }
-
     public static function checkoutConfirm(Request $request) {
         $redis_key = "cart:user:" . Auth::id();
         $cart_items = Redis::hgetall($redis_key);

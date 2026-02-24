@@ -2,6 +2,7 @@
 import { Skeleton } from '@/components/ui/skeleton';
 import { useCart } from '@/composables/useCart';
 import { Product } from '@/types/product';
+import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 
@@ -11,6 +12,8 @@ const filteredImageUrl = computed(() => {
         ? product.image_url.replace(/^\/storage/, '')
         : product.image_url;
 });
+
+const page = usePage();
 
 // Added isLoading prop and made product optional so you can render skeletons safely
 const { product, isLoading = false } = defineProps<{
@@ -99,7 +102,7 @@ const handleAddToCart = () => {
             </ul>
         </div>
 
-    <button @click="handleAddToCart" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
+    <button v-if="page.props.auth && page.props.auth.user" @click="handleAddToCart" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
         Add to Cart
     </button>
     </template>

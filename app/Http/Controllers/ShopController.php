@@ -38,10 +38,11 @@ class ShopController extends Controller
         ]);
     }
 
-    public function redis()
+    public function builds()
     {
-        Redis::set('test_key', 'Redis is working!');
+        return Inertia::render('Shop/Builds' [
 
-        return Redis::get('test_key');
+        ]);
     }
+
 }

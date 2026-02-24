@@ -46,7 +46,7 @@ class Order extends Model
                     'region'    => $request->region,
                     'province'  => $request->province,
                     'city'      => $request->city,
-                    'barangay'  => $request->baranggay,
+                    'barangay'  => $request->barangay,
                 ],
                 'billing_address'   => [
                     'address'   => $request->address,

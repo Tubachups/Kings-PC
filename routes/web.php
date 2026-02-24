@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ShopController;
 use App\Models\Product;
@@ -57,7 +58,7 @@ Route::middleware(['auth', 'cart.not_empty'])->prefix('checkout')->name('checkou
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
     Route::post('/confirm', [CheckoutController::class, 'checkoutConfirm'])->name('confirm');
 });
-
+Route::get('/orders', [OrdersController::class, 'index'])->name('orders');
 Route::delete('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::resource('cart', CartController::class);
 
@@ -76,6 +77,7 @@ Route::controller(ShopController::class)->group(function () {
     Route::get('/', 'index')->name('shop');
     Route::get('/contacts', 'contacts')->name('contacts');
     Route::get('/components', 'components')->name('components');
+    Route::get('/builds', 'builds')->name('builds');
     // Route::get('/redis', 'redis');
     Route::get('/{category:slug}', 'showByCategory')->name('shop.category');
 });
