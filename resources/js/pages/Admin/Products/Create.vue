@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { computed } from 'vue';
 import { dashboard } from '@/routes';
@@ -15,12 +16,11 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import InputError from '@/components/InputError.vue';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ref, watch } from 'vue';
 import type { Category } from '@/types/product'
-import { specsTemplates } from '@/utils/specsTemplates';
+import { specsTemplates, specsCategoryNames } from '@/utils/specsTemplates';
 
 interface Props {
     categories: Category[];
@@ -41,7 +41,15 @@ const form = useForm({
 // Helper for Select binding
 
 function submit() {
-    form.post(productsStore().url);
+    const data = {
+        ...form.data(),
+        is_active: form.is_active === true,
+    };
+    form.transform(() => data).post(productsStore().url, {
+        onSuccess: () => {
+            toast.success(`${form.name} created successfully!`);
+        },
+    });
 }
 
 const breadcrumbs = [
@@ -54,6 +62,13 @@ const categoryIdString = computed({
     get: () => form.category_id !== null ? String(form.category_id) : '',
     set: (val: string) => {
         form.category_id = val ? Number(val) : null;
+    },
+});
+
+const isActiveString = computed({
+    get: () => form.is_active ? '1' : '0',
+    set: (val: string) => {
+        form.is_active = val === '1';
     },
 });
 
@@ -150,7 +165,7 @@ watch(() => form.category_id, (newCategoryId) => {
 
                         <div class="space-y-2">
                             <Label for="image" class="text-sm font-medium">Product Image</Label>
-                            
+
                             <input
                                 id="image"
                                 type="file"
@@ -164,14 +179,14 @@ watch(() => form.category_id, (newCategoryId) => {
                                     hover:file:bg-gray-800
                                     cursor:pointer border border-gray-300 rounded-md shadow-sm"
                             />
-                            
+
                             <InputError :message="form.errors.image" />
-                            
+
                             <p v-if="form.image" class="text-xs text-green-600">
                                 Selected: {{ (form.image as File).name }}
                             </p>
                         </div>
-                        
+
                         <div class="space-y-2">
                             <Label for="specs">Specifications</Label>
                             <Textarea
@@ -183,20 +198,33 @@ watch(() => form.category_id, (newCategoryId) => {
                             <p class="text-xs text-muted-foreground">
                                 Specifications will auto-populate based on the selected category. You can edit the JSON structure as needed.
                             </p>
+
+                            <!-- JSON Format Reference -->
+                            <div v-if="form.category_id" class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                                <p class="text-xs font-semibold text-blue-900 mb-2">
+                                    📋 JSON Format Reference for {{ specsCategoryNames[String(form.category_id)] }}:
+                                </p>
+                                <pre class="text-xs bg-white p-2 rounded border border-blue-100 overflow-x-auto">{{ form.specs }}</pre>
+                                <p class="text-xs text-blue-800 mt-2">
+                                    Follow this structure and adjust values as needed. Ensure valid JSON format.
+                                </p>
+                            </div>
+
                             <InputError :message="form.errors.specs" />
                         </div>
 
-                        <div class="flex items-center space-x-2">
-                            <Checkbox
-                                id="is_active"
-                                v-model:checked="form.is_active"
-                            />
-                            <Label
-                                for="is_active"
-                                class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                Active (Product will be visible in the shop)
-                            </Label>
+                        <div class="space-y-2">
+                            <Label for="is_active">Status *</Label>
+                            <Select v-model="isActiveString">
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="1">Active (Visible in shop)</SelectItem>
+                                    <SelectItem value="0">Inactive (Hidden from shop)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.is_active" />
                         </div>
 
                         <div class="flex gap-2 pt-4">

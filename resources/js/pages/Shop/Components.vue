@@ -94,19 +94,24 @@ const paginatedProducts = computed(() => {
 watch([searchQuery, selectedCategories], () => {
     currentPage.value = 1;
 });
+
+const handlePageChange = (page: number): void => {
+    currentPage.value = page;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 </script>
 
 <template>
     <div class="container mx-auto p-4 xl:p-6">
 
         <div class="flex flex-col md:flex-row justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold mb-9 md:mb-0">All PC Components</h1>
+            <h1 class="text-2xl md:text-3xl font-bold mb-9 md:mb-0">All PC Components</h1>
             <SearchBar v-model="searchQuery"/>
         </div>
 
         <div class="flex flex-col md:flex-row gap-6">
 
-            <aside class="w-45 hidden lg:block">
+            <aside class="w-40 hidden lg:block">
                 <div class="border rounded-lg shadow-sm bg-white overflow-hidden">
                     <button
                         @click="isCategoryOpen = !isCategoryOpen"
@@ -139,7 +144,7 @@ watch([searchQuery, selectedCategories], () => {
                 </div>
             </aside>
 
-            <main class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch border border-red-400">
+            <main class="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 items-stretch ">
 
                 <template v-if="isLoading">
                     <div
@@ -180,7 +185,7 @@ watch([searchQuery, selectedCategories], () => {
                 :default-page="currentPage"
                 :sibling-count="1"
                 show-edges
-                @update:page="currentPage = $event"
+                @update:page="handlePageChange"
             >
                 <PaginationContent v-slot="{ items }">
                     <PaginationItem :value="1" class="mr-3">

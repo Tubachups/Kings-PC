@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { Link, usePage } from '@inertiajs/vue3';
+import { BookOpen, Folder, LayoutGrid, Package, Plus, ShoppingCart } from 'lucide-vue-next';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -15,7 +15,12 @@ import {
 } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import AppLogo from './AppLogo.vue';
-import { dashboard } from '@/routes';
+import { dashboard, shop } from '@/routes';
+import { index as productsIndex, create as productsCreate } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import { computed } from 'vue';
+
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
 
 const mainNavItems: NavItem[] = [
     {
@@ -24,6 +29,29 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
 ];
+
+const quickLinkItems = computed(() => {
+    if (!user.value?.is_admin) {
+        return [];
+    }
+    return [
+        {
+            title: 'Manage Products',
+            href: productsIndex().url,
+            icon: Package,
+        },
+        {
+            title: 'Add New Product',
+            href: productsCreate().url,
+            icon: Plus,
+        },
+        {
+            title: 'View Shop',
+            href: shop().url,
+            icon: ShoppingCart,
+        },
+    ];
+});
 
 const footerNavItems: NavItem[] = [
     {
@@ -55,6 +83,7 @@ const footerNavItems: NavItem[] = [
 
         <SidebarContent>
             <NavMain :items="mainNavItems" />
+            <NavMain v-if="quickLinkItems.length > 0" :items="quickLinkItems" label="Quick Actions" />
         </SidebarContent>
 
         <SidebarFooter>

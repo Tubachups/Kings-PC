@@ -6,24 +6,14 @@ import { Button } from '@/components/ui/button';
 import DataTable from '@/components/ui/data-table/DataTable.vue';
 import { h, ref } from 'vue';
 import type { ColumnDef } from '@tanstack/vue-table';
-import type { AcceptableValue } from 'reka-ui';
-import { ArrowUpDown, Pencil, Trash2, Plus, Archive } from 'lucide-vue-next';
+import { ArrowUpDown, RotateCcw, Trash2 } from 'lucide-vue-next';
 import { dashboard } from '@/routes';
 import {
     index as productsIndex,
-    create as productsCreate,
-    edit as productsEdit,
-    destroy as productsDestroy,
-    updateStatus as productsUpdateStatus,
     archived as productsArchived,
+    restore as productsRestore,
+    forceDelete as productsForceDelete,
 } from '@/actions/App/Http/Controllers/Admin/ProductController';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import type { Category, Product } from '@/types/product';
 
 interface Props {
@@ -36,10 +26,8 @@ interface Props {
         from: number;
         to: number;
     };
-    categories: Array<Category>;
     filters: {
         name?: string;
-        category?: string;
     };
 }
 
@@ -64,20 +52,16 @@ function sortableHeader(label: string) {
         );
 }
 
-function updateProductStatus(product: Product, value: AcceptableValue) {
-    router.patch(
-        productsUpdateStatus(product.id).url,
-        { is_active: String(value) === '1' },
-        { preserveScroll: true },
-    );
+function restoreProduct(product: Product) {
+    router.patch(productsRestore(product.id).url, {}, { preserveScroll: true });
 }
 
-function deleteProduct(product: Product) {
-    toast(`Archive "${product.name}"?`, {
-        description: 'You can restore it later from Archived Products.',
+function permanentlyDeleteProduct(product: Product) {
+    toast(`Permanently delete "${product.name}"?`, {
+        description: 'This cannot be undone.',
         cancel: {
-            label: 'Archive',
-            onClick: () => router.delete(productsDestroy(product.id).url),
+            label: 'Delete',
+            onClick: () => router.delete(productsForceDelete(product.id).url, { preserveScroll: true }),
         },
         action: {
             label: 'Cancel',
@@ -93,22 +77,38 @@ function toggleProductSelection(product: Product) {
     }
 }
 
-function bulkArchive() {
+function bulkRestore() {
     const ids = Array.from(selectedProducts.value);
     if (ids.length === 0) return;
 
-    toast(`Archive ${ids.length} product(s)?`, {
-        description: 'You can restore them later from Archived Products.',
+    router.post(
+        '/admin/products/bulk-restore',
+        { ids },
+        {
+            onSuccess: () => {
+                selectedProducts.value.clear();
+                toast.success(`${ids.length} product(s) restored successfully!`);
+            },
+        },
+    );
+}
+
+function bulkDelete() {
+    const ids = Array.from(selectedProducts.value);
+    if (ids.length === 0) return;
+
+    toast(`Permanently delete ${ids.length} product(s)?`, {
+        description: 'This cannot be undone.',
         cancel: {
-            label: 'Archive',
+            label: 'Delete',
             onClick: () => {
                 router.post(
-                    '/admin/products/bulk-archive',
+                    '/admin/products/bulk-force-delete',
                     { ids },
                     {
                         onSuccess: () => {
                             selectedProducts.value.clear();
-                            toast.success(`${ids.length} product(s) archived successfully!`);
+                            toast.success(`${ids.length} product(s) permanently deleted!`);
                         },
                     },
                 );
@@ -118,25 +118,6 @@ function bulkArchive() {
             label: 'Cancel',
         },
     });
-}
-
-function bulkUpdateStatus(is_active: boolean) {
-    const ids = Array.from(selectedProducts.value);
-    if (ids.length === 0) return;
-
-    const status = is_active ? 'activate' : 'inactivate';
-    const statusLabel = is_active ? 'Activate' : 'Inactivate';
-
-    router.post(
-        '/admin/products/bulk-update-status',
-        { ids, is_active },
-        {
-            onSuccess: () => {
-                selectedProducts.value.clear();
-                toast.success(`${ids.length} product(s) ${statusLabel.toLowerCase()}d successfully!`);
-            },
-        },
-    );
 }
 
 const columns: ColumnDef<Product>[] = [
@@ -169,35 +150,8 @@ const columns: ColumnDef<Product>[] = [
     },
     {
         accessorKey: 'stock',
-        header: sortableHeader('Stock'),
-        cell: ({ row }) => {
-            const stock = parseInt(row.getValue('stock'));
-            return h('div', { class: stock < 10 ? 'text-destructive font-medium' : '' }, stock.toString());
-        },
-    },
-    {
-        accessorKey: 'is_active',
-        header: 'Status',
-        cell: ({ row }) => {
-            const product = row.original;
-
-            return h(
-                Select,
-                {
-                    modelValue: product.is_active ? '1' : '0',
-                    'onUpdate:modelValue': (value: AcceptableValue) => updateProductStatus(product, value),
-                },
-                {
-                    default: () => [
-                        h(SelectTrigger, { class: 'w-36' }, () => h(SelectValue, { placeholder: 'Status' })),
-                        h(SelectContent, {}, () => [
-                            h(SelectItem, { value: '1' }, () => 'Active'),
-                            h(SelectItem, { value: '0' }, () => 'Inactive'),
-                        ]),
-                    ],
-                },
-            );
-        },
+        header: 'Stock',
+        cell: ({ row }) => h('div', {}, parseInt(row.getValue('stock')).toString()),
     },
     {
         id: 'actions',
@@ -206,16 +160,15 @@ const columns: ColumnDef<Product>[] = [
             const product = row.original;
 
             return h('div', { class: 'flex gap-2' }, [
-                h(Link, { href: productsEdit(product.id).url }, () =>
-                    h(Button, { variant: 'outline', size: 'sm' }, () => [
-                        h(Pencil, { class: 'mr-2 h-4 w-4' }),
-                        'Edit',
-                    ]),
+                h(
+                    Button,
+                    { variant: 'outline', size: 'sm', onClick: () => restoreProduct(product) },
+                    () => [h(RotateCcw, { class: 'mr-2 h-4 w-4' }), 'Restore'],
                 ),
                 h(
                     Button,
-                    { variant: 'destructive', size: 'sm', onClick: () => deleteProduct(product) },
-                    () => [h(Archive, { class: 'mr-2 h-4 w-4' }), 'Archive'],
+                    { variant: 'destructive', size: 'sm', onClick: () => permanentlyDeleteProduct(product) },
+                    () => [h(Trash2, { class: 'mr-2 h-4 w-4' }), 'Delete Permanently'],
                 ),
             ]);
         },
@@ -225,46 +178,38 @@ const columns: ColumnDef<Product>[] = [
 const breadcrumbs = [
     { title: 'Dashboard', href: dashboard().url },
     { title: 'Products', href: productsIndex().url },
+    { title: 'Archived', href: productsArchived().url },
 ];
 </script>
 
 <template>
-    <Head title="Manage Products" />
+    <Head title="Archived Products" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold tracking-tight">
-                        Manage Products
+                        Archived Products
                     </h1>
                     <p class="text-muted-foreground">
-                        Manage your PC parts inventory
+                        Restore or permanently delete archived products
                     </p>
                 </div>
                 <div class="flex gap-2">
                     <template v-if="selectedProducts.size > 0">
-                        <Button @click="bulkUpdateStatus(true)" variant="outline" size="sm">
-                            Activate ({{ selectedProducts.size }})
+                        <Button @click="bulkRestore" variant="outline">
+                            <RotateCcw class="mr-2 h-4 w-4" />
+                            Restore ({{ selectedProducts.size }})
                         </Button>
-                        <Button @click="bulkUpdateStatus(false)" variant="outline" size="sm">
-                            Inactivate ({{ selectedProducts.size }})
-                        </Button>
-                        <Button @click="bulkArchive" variant="destructive">
-                            <Archive class="mr-2 h-4 w-4" />
-                            Archive ({{ selectedProducts.size }})
+                        <Button @click="bulkDelete" variant="destructive">
+                            <Trash2 class="mr-2 h-4 w-4" />
+                            Delete ({{ selectedProducts.size }})
                         </Button>
                     </template>
-                    <Link :href="productsArchived().url">
+                    <Link :href="productsIndex().url">
                         <Button variant="outline">
-                            <Archive class="mr-2 h-4 w-4" />
-                            Archived
-                        </Button>
-                    </Link>
-                    <Link :href="productsCreate().url">
-                        <Button>
-                            <Plus class="mr-2 h-4 w-4" />
-                            Add Product
+                            Back to Products
                         </Button>
                     </Link>
                 </div>
