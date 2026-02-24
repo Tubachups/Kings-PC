@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BuildPost;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Redis;
@@ -40,8 +41,8 @@ class ShopController extends Controller
 
     public function builds()
     {
-        return Inertia::render('Shop/Builds' [
-
+        return Inertia::render('Shop/Builds', [
+            'builds' => BuildPost::all()
         ]);
     }
 
