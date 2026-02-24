@@ -22,14 +22,18 @@ Route::get('/dashboard', function () {
     ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::middleware(['auth', 'cart.not_empty'])->prefix('checkout')->name('checkout.')->group(function () {
+    Route::get('/', [CheckoutController::class, 'index'])->name('index');
+    Route::post('/confirm', [CheckoutController::class, 'checkoutConfirm'])->name('confirm');
+});
+
+
 // Admin only
 Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('products', ProductController::class);
 
 });
-Route::get('/checkout', [CheckoutController::class, 'index']);
-Route::post('/checkout/review', [CheckoutController::class, 'validateStepOne']);
-Route::get('/checkout/review', fn() => redirect('/checkout'));
+
 
 Route::delete('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::resource('cart', CartController::class);

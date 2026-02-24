@@ -23,17 +23,18 @@ class Product extends Model
         'is_active',
     ];
 
-    // This automatically converts the JSON from the database into a PHP array,
-    // and turns it back into JSON when saving.
     protected $casts = [
         'specs' => 'array',
         'is_active' => 'boolean',
     ];
 
-    // Define the relationship: A product belongs to a category (many-to-one)
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
+    public static function checkoutStock($item, $quantity) 
+    {
+        return self::where('id', $item)->decrement('stock', $quantity);
+    }
 }

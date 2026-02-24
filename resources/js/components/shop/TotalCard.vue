@@ -7,6 +7,7 @@ import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue';
 import { Separator } from '@/components/ui/separator';
 import { CartItem } from '@/types/cart';
 import { useCart } from '@/composables/useCart';
+import { Link } from '@inertiajs/vue3';
 
 const props = withDefaults(defineProps<{
     items: CartItem[];
@@ -52,6 +53,7 @@ const { subTotal } = useCart();
             <span>Total</span>
             <span>₱{{ (subTotal + shippingFee).toLocaleString() }}</span>
         </div>
+
     </CardContent>
 </Card>
 </template>

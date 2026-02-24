@@ -16,16 +16,15 @@ const { items, subTotal } = useCart();
             <header class="text-5xl font-extrabold">My Cart</header>
         </div>
 
-        <div class="flex flex-row flex-1 h-full w-full">
-            <div class="flex-2 h-full overflow-y-auto p-6 mb-2">
+        <div class="flex flex-row flex-1 overflow-hidden w-full">
+            
+            <div class="flex-[2] h-full overflow-y-auto p-6">
                 <CartItems />
             </div>
 
-            <div class="flex-1 h-full overflow-y-auto p-6 mb-2 w-full">
-                <div class="">
-                    <TotalCard :items="items" />
-                </div>
-                <Link href="/checkout" class="bg-black text-white p-3 rounded-xl w-full mt-2 block text-center">
+            <div class="flex-1 h-full overflow-y-auto p-6">
+                <TotalCard :items="items" />
+                <Link href="/checkout" class="bg-black text-white p-3 rounded-xl w-full block text-center">
                     Proceed to checkout
                 </Link>
             </div>

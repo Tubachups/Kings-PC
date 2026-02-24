@@ -108,8 +108,10 @@ const { totalItems, items } = useCart();
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
+                                <div class="mb-2">
                                 <TotalCard :items="items" />
-                                <Link href="/cart" class="w-full m-2">
+                                </div>
+                                <Link href="/cart" class=" *:">
                                     <Button class="w-full">View Cart & Checkout</Button>
                                 </Link>
                             </PopoverContent>
