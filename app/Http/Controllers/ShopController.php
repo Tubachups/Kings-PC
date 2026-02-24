@@ -27,14 +27,14 @@ class ShopController extends Controller
     {
         // $products = Product::where('is_active', true)->with('category')->get();
         return Inertia::render('Shop/Components', [
-            'products' => Inertia::lazy(fn () => Product::where('is_active', true)->with('category')->get()),
+            'products' => Inertia::lazy(fn () => Product::where('is_active', true)->orderBy('name', 'asc')->with('category')->get()),
         ]);
     }
 
     public function showByCategory(Category $category)
     {
         return Inertia::render('Shop/Category', [
-            'products' => $category->products()->where('is_active', true)->with('category')->get(),
+            'products' => $category->products()->where('is_active', true)->orderBy('name', 'asc')->with('category')->get(),
         ]);
     }
 

@@ -10,30 +10,53 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
 
+Route::middleware(['auth', 'verified'])->group(function () {
 
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard', [
+            'totalProducts' => Product::count(),
+            'lowStockCount' => Product::where('stock', '<', 10)->count(),
+            'totalCustomers' => User::where('is_admin', false)->count(),
+        ]);
+    })->name('dashboard');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard', [
-        'totalProducts' => Product::count(),
-        'lowStockCount' => Product::where('stock', '<', 10)->count(),
-        'totalCustomers' => User::where('is_admin', false)->count(),
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+});
+
+// Admin only
+Route::middleware(['auth', 'verified', 'is_admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // 1. Custom Routes (Must come BEFORE the resource route)
+        Route::controller(ProductController::class)
+            ->prefix('products')
+            ->name('products.')
+            ->group(function () {
+
+                // Static URIs
+                Route::get('archived', 'archived')->name('archived');
+                Route::post('bulk-archive', 'bulkArchive')->name('bulkArchive');
+                Route::post('bulk-update-status', 'bulkUpdateStatus')->name('bulkUpdateStatus');
+                Route::post('bulk-restore', 'bulkRestore')->name('bulkRestore');
+                Route::post('bulk-force-delete', 'bulkForceDelete')->name('bulkForceDelete');
+
+                // Dynamic URIs (with parameters)
+                Route::patch('{product}/status', 'updateStatus')->name('updateStatus');
+                Route::patch('{id}/restore', 'restore')->name('restore');
+                Route::delete('{id}/force-delete', 'forceDelete')->name('forceDelete');
+            });
+
+        // 2. Standard CRUD Resource Route
+        Route::resource('products', ProductController::class);
+
+    });
 
 Route::middleware(['auth', 'cart.not_empty'])->prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
     Route::post('/confirm', [CheckoutController::class, 'checkoutConfirm'])->name('confirm');
 });
-
-
-// Admin only
-Route::middleware(['auth', 'verified', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('products', ProductController::class);
-
-});
-
 
 Route::delete('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::resource('cart', CartController::class);
