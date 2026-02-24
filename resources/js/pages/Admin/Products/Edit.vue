@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import { toast } from 'vue-sonner';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import {
@@ -18,7 +19,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 import InputError from '@/components/InputError.vue';
 import {
     Card,
@@ -56,6 +56,13 @@ const specsPlaceholder = computed(() => {
     return template ? JSON.stringify(template, null, 2) : '{}';
 });
 
+const isActiveString = computed({
+    get: () => form.is_active ? '1' : '0',
+    set: (val: string) => {
+        form.is_active = val === '1';
+    },
+});
+
 watch(() => form.category_id, (newCategoryId) => {
     const template = specsTemplates[newCategoryId as keyof typeof specsTemplates];
     if (template && (!form.specs || form.specs === '{}')) {
@@ -64,13 +71,18 @@ watch(() => form.category_id, (newCategoryId) => {
 });
 
 function submit() {
-    // Parse specs before submitting
+    // Parse specs and convert is_active before submitting
     try {
         const parsedForm = {
             ...form.data(),
-            specs: JSON.parse(form.specs)
+            specs: JSON.parse(form.specs),
+            is_active: form.is_active === true,
         };
-        form.transform(() => parsedForm).put(productsUpdate(props.product.id).url);
+        form.transform(() => parsedForm).put(productsUpdate(props.product.id).url, {
+            onSuccess: () => {
+                toast.success(`${props.product.name} updated successfully!`);
+            },
+        });
     } catch (e) {
         form.setError('specs', 'Invalid JSON format');
     }
@@ -150,6 +162,8 @@ const breadcrumbs = [
                             <p class="text-xs text-muted-foreground">
                                 Enter product specifications in JSON format. The template updates based on selected category.
                             </p>
+
+
                             <InputError :message="form.errors.specs" />
                         </div>
 
@@ -191,17 +205,18 @@ const breadcrumbs = [
                             <InputError :message="form.errors.image" />
                         </div>
 
-                        <div class="flex items-center space-x-2">
-                            <Checkbox
-                                id="is_active"
-                                v-model:checked="form.is_active"
-                            />
-                            <Label
-                                for="is_active"
-                                class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                            >
-                                Active (Product will be visible in the shop)
-                            </Label>
+                        <div class="space-y-2">
+                            <Label for="is_active">Status *</Label>
+                            <Select v-model="isActiveString">
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Select status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="1">Active (Visible in shop)</SelectItem>
+                                    <SelectItem value="0">Inactive (Hidden from shop)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <InputError :message="form.errors.is_active" />
                         </div>
 
                         <div class="flex gap-2 pt-4">

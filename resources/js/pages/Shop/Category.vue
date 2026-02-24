@@ -60,6 +60,11 @@ const paginatedProducts = computed(() => {
 watch(searchQuery, () => {
     currentPage.value = 1;
 });
+
+const handlePageChange = (page: number): void => {
+    currentPage.value = page;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
 </script>
 
 <template>
@@ -108,7 +113,7 @@ watch(searchQuery, () => {
                 :default-page="currentPage"
                 :sibling-count="1"
                 show-edges
-                @update:page="currentPage = $event"
+                @update:page="handlePageChange"
             >
                 <PaginationContent v-slot="{ items }">
                     <PaginationItem :value="1" class="mr-3">

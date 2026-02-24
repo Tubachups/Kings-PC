@@ -9,6 +9,7 @@ export interface Product {
     is_active: boolean;
     category: Category;
     specs?: Record<string, any>;
+    deleted_at?: string | null;
 }
 
 export interface Category {
