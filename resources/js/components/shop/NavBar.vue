@@ -97,7 +97,16 @@ const { totalItems, items } = useCart();
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 
-                    <NavigationMenuItem>
+                    <NavigationMenuItem v-if="page.props.auth && page.props.auth.user">
+                        <NavigationMenuLink
+                            as-child
+                            :class="navigationMenuTriggerStyle()"
+                        >
+                            <Link href="/orders">Orders</Link>
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+
+                    <NavigationMenuItem v-if="page.props.auth && page.props.auth.user">
                         <Popover>
                             <PopoverTrigger as-child>
                                 <Button variant="ghost" class="relative p-2 cursor-pointer">
@@ -108,8 +117,10 @@ const { totalItems, items } = useCart();
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent>
+                                <div class="mb-2">
                                 <TotalCard :items="items" />
-                                <Link href="/cart" class="w-full m-2">
+                                </div>
+                                <Link href="/cart" class=" *:">
                                     <Button class="w-full">View Cart & Checkout</Button>
                                 </Link>
                             </PopoverContent>

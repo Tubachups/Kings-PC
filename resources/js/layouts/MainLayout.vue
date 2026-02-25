@@ -2,12 +2,14 @@
 import { Toaster } from '@/components/ui/sonner';
 import NavBar from '@/components/shop/NavBar.vue';
 import Footer from '@/components/shop/Footer.vue';
-import { watch } from 'vue';
+import { computed, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useCartStore } from '@/stores/cartStore';
 import { CartItem } from '@/types/cart';
+import { toast } from 'vue-sonner';
 
-const page = usePage();
+const page = usePage<any>();
+const flashError = computed(() => page.props.flash?.error);
 const cartStore = useCartStore()
 
 cartStore.setItems(page.props.cart as CartItem[])
@@ -18,6 +20,15 @@ watch(() => page.props.cart, (newCart) => {
     }
 }, { deep: true })
 
+watch(() => page.props.flash, (flash) => {
+  if (flash?.success) {
+    toast.success(flash.success);
+  }
+
+  if (flash?.error) {
+    toast.error(flash.error);
+  }
+}, { deep: true });
 </script>
 
 <template>

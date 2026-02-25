@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BuildPost;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Support\Facades\Redis;
@@ -38,10 +39,11 @@ class ShopController extends Controller
         ]);
     }
 
-    public function redis()
+    public function builds()
     {
-        Redis::set('test_key', 'Redis is working!');
-
-        return Redis::get('test_key');
+        return Inertia::render('Shop/Builds', [
+            'builds' => BuildPost::all()
+        ]);
     }
+
 }

@@ -1,304 +1,313 @@
 <script setup lang="ts">
+import { onMounted, ref, computed } from 'vue'
 import { toTypedSchema } from '@vee-validate/zod'
-import { useForm } from 'vee-validate'
 import { Check, Circle, Dot } from 'lucide-vue-next'
-import { h, onMounted, ref } from 'vue'
 import { toast } from 'vue-sonner'
 import * as z from 'zod'
+
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Stepper, StepperDescription, StepperItem, StepperSeparator, StepperTitle, StepperTrigger } from '@/components/ui/stepper'
+import { Stepper, StepperItem, StepperSeparator, StepperTitle, StepperTrigger } from '@/components/ui/stepper'
+import { router } from "@inertiajs/vue3";
+import { useCart } from '@/composables/useCart'
+import TotalCard from './TotalCard.vue'
+import { useCartStore } from '@/stores/cartStore'
 
-const regions = ref([]);
-const provinces = ref([]);
-const cities = ref([]);
-const barangays = ref([]);
+const props = defineProps<{
+    shippingFee?: number
+}>()
+
+const checkoutShippingFee = computed(() => props.shippingFee ?? 150)
+
+// Data for Dropdowns
+const regions = ref<any[]>([]);
+const provinces = ref<any[]>([]);
+const cities = ref<any[]>([]);
+const barangays = ref<any[]>([]);
+
+// Logic states
+const isRegionWithoutProvinces = ref(false);
+const stepIndex = ref(1)
+const { items, clearCart } = useCart();
+const formRef = ref<any>(null);
+const isSubmitting = ref(false);
+
+// LOCAL CODES (Tracks dropdown selection by ID/Code)
+const selectedRegionCode = ref('');
+const selectedProvinceCode = ref('');
+const selectedCityCode = ref('');
+const selectedBarangayCode = ref('');
+
+const steps = [
+  { step: 1, title: 'Shipping', description: 'Address info' },
+  { step: 2, title: 'Review', description: 'Check items' },
+  { step: 3, title: 'Payment', description: 'Pay method' },
+]
+
+const step1Schema = z.object({
+  full_name: z.string().min(2, "Name is required"),
+  address: z.string().min(5, "Address is required"),
+  region: z.string().min(1, "Region is required"),
+  province: z.string().optional().nullable().or(z.literal('')),
+  city: z.string().min(1, "City is required"),
+  barangay: z.string().min(1, "Barangay is required"),
+})
+
+const step2Schema = z.object({}) // Review step (no input)
+
+const step3Schema = z.object({
+  payment_method: z.enum(['gcash', 'cod', 'card'], {
+    required_error: "Please select a payment method",
+  }),
+})
+
+// Dynamic Schema: Merges previous steps into current validation
+const currentSchema = computed(() => {
+  if (stepIndex.value === 1) return toTypedSchema(step1Schema)
+  if (stepIndex.value === 2) return toTypedSchema(step1Schema.merge(step2Schema))
+  return toTypedSchema(step1Schema.merge(step2Schema).merge(step3Schema))
+})
 
 onMounted(async () => {
   const res = await fetch('https://psgc.gitlab.io/api/regions/');
   regions.value = await res.json();
 });
 
-const formSchema = [
-  z.object({
-    first_name: z.string().min(2, "Name is required"),
-    email: z.string().email(),
-    mobile_number: z.string().min(11, "Invalid phone number"),
-    address: z.string().min(5, "Address is required"),
-    // Add these for your dropdowns
-    region: z.string().min(1),
-    province: z.string().optional(),
-    city: z.string().optional(),
-  }),
-  z.object({
-    password: z.string().min(2).max(50),
-    confirmPassword: z.string(),
-  }).refine(
-    (values) => {
-      return values.password === values.confirmPassword
-    },
-    {
-      message: 'Passwords must match!',
-      path: ['confirmPassword'],
-    },
-  ),
-  z.object({
-    favoriteDrink: z.union([z.literal('coffee'), z.literal('tea'), z.literal('soda')]),
-  }),
-]
-
-const formRef = ref<any>(null);
-
 const onRegionChange = async (regionCode: string) => {
-  const res = await fetch(`https://psgc.gitlab.io/api/regions/${regionCode}/provinces/`);
-  provinces.value = await res.json();
+  selectedRegionCode.value = regionCode;
+  const name = regions.value.find(r => r.code === regionCode)?.name;
+  formRef.value?.setFieldValue('region', name);
   
-  // Use the ref to set values
-  if (formRef.value) {
-    formRef.value.setFieldValue('province', '');
-    formRef.value.setFieldValue('city', '');
+  // Reset dependents
+  selectedProvinceCode.value = ''; selectedCityCode.value = ''; selectedBarangayCode.value = '';
+  provinces.value = []; cities.value = []; barangays.value = [];
+  formRef.value?.setFieldValue('province', '');
+  formRef.value?.setFieldValue('city', '');
+  formRef.value?.setFieldValue('barangay', '');
+
+  const res = await fetch(`https://psgc.gitlab.io/api/regions/${regionCode}/provinces/`);
+  const data = await res.json();
+
+  if (!data.length) {
+    isRegionWithoutProvinces.value = true;
+    const cityRes = await fetch(`https://psgc.gitlab.io/api/regions/${regionCode}/cities-municipalities/`);
+    cities.value = await cityRes.json();
+  } else {
+    isRegionWithoutProvinces.value = false;
+    provinces.value = data;
   }
 };
 
-const stepIndex = ref(1)
-const steps = [
-  {
-    step: 1,
-    title: 'Shipping details',
-    description: 'Provide shipping information',
-  },
-  {
-    step: 2,
-    title: 'Review Order',
-    description: 'Review order summary',
-  },
-  {
-    step: 3,
-    title: 'Payment',
-    description: 'Provide payment details',
-  },
-]
+const onProvinceChange = async (provinceCode: string) => {
+  selectedProvinceCode.value = provinceCode;
+  const name = provinces.value.find(p => p.code === provinceCode)?.name;
+  formRef.value?.setFieldValue('province', name);
+
+  selectedCityCode.value = ''; selectedBarangayCode.value = '';
+  cities.value = []; barangays.value = [];
+  formRef.value?.setFieldValue('city', '');
+  formRef.value?.setFieldValue('barangay', '');
+
+  const res = await fetch(`https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`);
+  cities.value = await res.json();
+};
+
+const onCityChange = async (cityCode: string) => {
+  selectedCityCode.value = cityCode;
+  const name = cities.value.find(c => c.code === cityCode)?.name;
+  formRef.value?.setFieldValue('city', name);
+
+  selectedBarangayCode.value = '';
+  barangays.value = [];
+  formRef.value?.setFieldValue('barangay', '');
+
+  const res = await fetch(`https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`);
+  barangays.value = await res.json();
+};
+
+const onBarangayChange = (barangayCode: string) => {
+  selectedBarangayCode.value = barangayCode;
+  const name = barangays.value.find(b => b.code === barangayCode)?.name;
+  formRef.value?.setFieldValue('barangay', name);
+};
 
 function onSubmit(values: any) {
-  toast('You submitted the following values:', {
-    description: h('pre', { class: 'mt-2 w-[320px] rounded-md bg-neutral-950 p-4' }, h('code', { class: 'text-white' }, JSON.stringify(values, null, 2))),
-  })
+  isSubmitting.value = true;
+  router.post('/checkout/confirm', values, {
+    onStart: () => toast.loading('Processing your order...'),
+    onFinish: () => isSubmitting.value = false,
+    onSuccess: () => {
+      clearCart();
+      toast.success('Order placed successfully!');
+    },
+    onError: (errors) => {
+      toast.error('Order failed. Please check your details.');
+      console.log('Server Validation Errors:', errors);
+    }
+  });
 }
 </script>
 
 <template>
+  <div v-if="Object.keys(formRef?.errors || {}).length > 0" class="mt-4 p-4 bg-red-50 border border-red-200 rounded text-red-600 mb-4">
+    <p class="font-bold">Please correct the following:</p>
+    <ul class="list-disc ml-5">
+      <li v-for="(error, field) in formRef?.errors" :key="field">{{ field }}: {{ error }}</li>
+    </ul>
+  </div>
+
   <Form
     ref="formRef"
-    v-slot="{ meta, values, validate, setFieldValue }"
-    as="" 
-    keep-values 
-    :validation-schema="toTypedSchema(formSchema[stepIndex - 1])"
+    v-slot="{ values, validate }"
+    as=""
+    keep-values
+    :validation-schema="currentSchema"
   >
-    <Stepper v-slot="{ isNextDisabled, isPrevDisabled, nextStep, prevStep, modelValue }" v-model="stepIndex" class="block w-full">
-      <form
-        @submit="(e) => {
-          e.preventDefault()
-          validate()
-
-          if (stepIndex === steps.length && meta.valid) {
-            onSubmit(values)
+    <Stepper v-model="stepIndex" class="block w-full">
+      <form @submit.prevent="async () => {
+          const result = await validate();
+          if (stepIndex === steps.length && result.valid) {
+            onSubmit(values);
           }
-        }"
-      >
-        <div class="flex w-full flex-start gap-2">
-          <StepperItem
-            v-for="(step, index) in steps"
-            :key="step.step"
-            v-slot="{ state }"
-            class="relative flex w-full flex-col items-center justify-center"
-            :step="step.step"
-          >
-            <StepperSeparator
-              v-if="step.step !== steps[steps.length - 1].step"
-              class="absolute left-[calc(50%+20px)] right-[calc(-50%+10px)] top-5 block h-0.5 shrink-0 rounded-full bg-muted group-data-[state=completed]:bg-primary"
-            />
-
+        }">
+        
+        <div class="flex w-full flex-start gap-2 mb-8">
+          <StepperItem v-for="(step, index) in steps" :key="step.step" v-slot="{ state }" class="relative flex w-full flex-col items-center" :step="step.step">
+            <StepperSeparator v-if="index !== steps.length - 1" class="absolute left-[calc(50%+20px)] right-[calc(-50%+10px)] top-5 block h-0.5 bg-muted group-data-[state=completed]:bg-primary" />
             <StepperTrigger as-child>
-              <Button
-                :variant="state === 'completed' || state === 'active' ? 'default' : 'outline'"
-                size="icon"
-                class="z-10 rounded-full shrink-0"
-                :class="[state === 'active' && 'ring-2 ring-ring ring-offset-2 ring-offset-background']"
-                :disabled="state !== 'completed' && (index >= (modelValue || 0) && !meta.valid)"
-              >
+              <Button :variant="state === 'completed' || state === 'active' ? 'default' : 'outline'" size="icon" class="z-10 rounded-full">
                 <Check v-if="state === 'completed'" class="size-5" />
                 <Circle v-if="state === 'active'" />
                 <Dot v-if="state === 'inactive'" />
               </Button>
             </StepperTrigger>
-
-            <div class="mt-5 flex flex-col items-center text-center">
-              <StepperTitle
-                :class="[state === 'active' && 'text-primary']"
-                class="text-sm font-semibold transition lg:text-base"
-              >
-                {{ step.title }}
-              </StepperTitle>
-              <StepperDescription
-                :class="[state === 'active' && 'text-primary']"
-                class="sr-only text-xs text-muted-foreground transition md:not-sr-only lg:text-sm"
-              >
-                {{ step.description }}
-              </StepperDescription>
+            <div class="mt-2 text-center">
+              <StepperTitle class="text-sm font-bold">{{ step.title }}</StepperTitle>
             </div>
           </StepperItem>
         </div>
 
-        <div class="grid grid-cols-4 gap-4 mt-4">
+        <div class="grid grid-cols-4 gap-4">
           <template v-if="stepIndex === 1">
+            <div class="col-span-4">
+              <FormField v-slot="{ componentField }" name="full_name">
+                <FormItem><FormLabel>Full Name</FormLabel><FormControl><Input v-bind="componentField" /></FormControl><FormMessage /></FormItem>
+              </FormField>
+            </div>
+            
+            <div class="col-span-2">
+              <FormField name="region">
+                <FormItem>
+                  <FormLabel>Region</FormLabel>
+                  <Select :model-value="selectedRegionCode" @update:model-value="(val) => { if (typeof val === 'string') onRegionChange(val) }">
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select Region" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem v-for="r in regions" :key="r.code" :value="r.code">{{ r.name }}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            </div>
+
+            <div class="col-span-2">
+              <FormField name="province">
+                <FormItem>
+                  <FormLabel>Province</FormLabel>
+                  <Select :model-value="selectedProvinceCode" :disabled="isRegionWithoutProvinces || !provinces.length" @update:model-value="(val) => { if (typeof val === 'string') onProvinceChange(val) }">
+                    <FormControl><SelectTrigger><SelectValue :placeholder="isRegionWithoutProvinces ? 'N/A' : 'Select Province'" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem v-for="p in provinces" :key="p.code" :value="p.code">{{ p.name }}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              </FormField>
+            </div>
+
+            <div class="col-span-2">
+              <FormField name="city">
+                <FormItem>
+                  <FormLabel>City</FormLabel>
+                  <Select :model-value="selectedCityCode" :disabled="!cities.length" @update:model-value="(val) => { if (typeof val === 'string') onCityChange(val) }">
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select City" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem v-for="c in cities" :key="c.code" :value="c.code">{{ c.name }}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            </div>
+
+            <div class="col-span-2">
+              <FormField name="barangay">
+                <FormItem>
+                  <FormLabel>Barangay</FormLabel>
+                  <Select :model-value="selectedBarangayCode" :disabled="!barangays.length" @update:model-value="(val) => { if (typeof val === 'string') onBarangayChange(val) }">
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select Barangay" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem v-for="b in barangays" :key="b.code" :value="b.code">{{ b.name }}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            </div>
             
             <div class="col-span-4">
-            <FormField v-slot="{ componentField }" name="first_name" >
-              <FormItem>
-                <FormLabel>Full Name</FormLabel>
-                <FormControl>
-                  <Input type="text " v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
+                <FormField v-slot="{ componentField }" name="address">
+                    <FormItem><FormLabel>Street Address</FormLabel><FormControl><Input placeholder="House No / Street / Landmark" v-bind="componentField" /></FormControl><FormMessage /></FormItem>
+                </FormField>
             </div>
-
-            <div class="col-span-2">
-            <FormField v-slot="{ componentField }" name="email" >
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input type="email " v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-            </div>
-
-            <div class="col-span-2">
-            <FormField v-slot="{ componentField }" name="mobile_number" >
-              <FormItem>
-                <FormLabel>Contact Number</FormLabel>
-                <FormControl>
-                  <Input type="tel " v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-            </div>
-
-            <div class="col-span-4">
-            <FormField v-slot="{ componentField }" name="email" >
-              <FormItem>
-                <FormLabel>Address</FormLabel>
-                <FormControl>
-                  <Input type="tel " v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-            </div>
-
-            <div class="col-span-2">
-            <FormField v-slot="{ componentField }" name="region">
-                <FormItem>
-                <FormLabel>Region</FormLabel>
-                <Select v-bind="componentField" @update:model-value="onRegionChange">
-                    <FormControl>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select Region" />
-                    </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                    <SelectItem v-for="region in regions" :key="region.code" :value="region.code">
-                        {{ region.name }}
-                    </SelectItem>
-                    </SelectContent>
-                </Select>
-                <FormMessage />
-                </FormItem>
-            </FormField>
-            </div>
-
           </template>
 
           <template v-if="stepIndex === 2">
-            <FormField v-slot="{ componentField }" name="password">
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input type="password" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
-
-            <FormField v-slot="{ componentField }" name="confirmPassword">
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <Input type="password" v-bind="componentField" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </FormField>
+            <div class="col-span-4">
+              <TotalCard :items="items" :shipping-fee="checkoutShippingFee" :is-checkout="true"/>
+            </div>
           </template>
 
           <template v-if="stepIndex === 3">
-            <FormField v-slot="{ componentField }" name="favoriteDrink">
-              <FormItem>
-                <FormLabel>Drink</FormLabel>
-
-                <Select v-bind="componentField">
-                  <FormControl>
-                    <SelectTrigger class="w-full!">
-                      <SelectValue placeholder="Select a drink" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="coffee">
-                        Coffee
-                      </SelectItem>
-                      <SelectItem value="tea">
-                        Tea
-                      </SelectItem>
-                      <SelectItem value="soda">
-                        Soda
-                      </SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            </FormField>
+            <div class="col-span-4">
+              <FormField v-slot="{ componentField }" name="payment_method">
+                <FormItem>
+                  <FormLabel>Payment Method</FormLabel>
+                  <Select
+                    :model-value="componentField.modelValue"
+                    @update:model-value="componentField['onUpdate:modelValue']"
+                  >
+                    <FormControl><SelectTrigger><SelectValue placeholder="Select Method" /></SelectTrigger></FormControl>
+                    <SelectContent>
+                      <SelectItem value="gcash">GCash</SelectItem>
+                      <SelectItem value="cod">Cash on Delivery</SelectItem>
+                      <SelectItem value="card">Card</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              </FormField>
+            </div>
           </template>
         </div>
 
-        <div class="flex items-center justify-between mt-4">
-          <Button :disabled="isPrevDisabled" variant="outline" size="sm" @click="prevStep()">
-            Back
+        <div class="flex justify-between mt-10">
+          <Button type="button" variant="outline" :disabled="stepIndex === 1" @click="stepIndex--">Back</Button>
+          
+          <Button v-if="stepIndex < 3" type="button" @click="async () => { const res = await validate(); if (res.valid) stepIndex++ }">
+            Next
           </Button>
-          <div class="flex items-center gap-3">
-            <Button v-if="stepIndex !== 3" :type="meta.valid ? 'button' : 'submit'" :disabled="isNextDisabled" size="sm" @click="meta.valid && nextStep()">
-              Next
-            </Button>
-            <Button
-              v-if="stepIndex === 3" size="sm" type="submit"
-            >
-              Submit
-            </Button>
-          </div>
+          
+          <Button v-else :disabled="isSubmitting" type="submit">
+            {{ isSubmitting ? 'Placing Order...' : 'Place Order' }}
+          </Button>
         </div>
       </form>
     </Stepper>

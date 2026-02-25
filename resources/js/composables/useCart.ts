@@ -83,6 +83,7 @@ export function useCart() {
             showProgress: false,
             preserveState: true,
             onSuccess: () => {
+                cartStore.clearItems()
                 toast.success("Cart Updated", {
                     description: `Your Cart is now clear.`,
                 });

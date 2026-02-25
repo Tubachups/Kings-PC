@@ -13,10 +13,12 @@ const filteredImageUrl = computed(() => {
         : product.image_url;
 });
 
+const page = usePage();
+
 // Added isLoading prop and made product optional so you can render skeletons safely
 const { product, isLoading = false } = defineProps<{
     product: Product;
-    isLoading?: boolean;
+    isLoading: boolean;
 }>();
 
 const { updateQuantity, items } = useCart();
@@ -30,16 +32,6 @@ const handleAddToCart = () => {
 
 }
 
-const categoryColors: Record<string, string> = {
-    gpu: 'bg-red-600',
-    case: 'bg-blue-600',
-    cooling: 'bg-purple-600',
-    cpu: 'bg-green-600',
-    motherboard: 'bg-yellow-600',
-    ram: 'bg-orange-600',
-    'ssd/hdd': 'bg-lime-600',
-    psu: 'bg-indigo-600',
-};
 </script>
 
 <template>
@@ -110,7 +102,7 @@ const categoryColors: Record<string, string> = {
             </ul>
         </div>
 
-    <button @click="handleAddToCart" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
+    <button v-if="page.props.auth && page.props.auth.user" @click="handleAddToCart" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
         Add to Cart
     </button>
     </template>

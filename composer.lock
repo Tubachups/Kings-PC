@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "223717b60299d69ccccb11a4151930de",
+    "content-hash": "9b3d55137230bf94664a4bea7b89dbe4",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -7424,7 +7424,7 @@
                 "issues": "https://github.com/laravel/boost/issues",
                 "source": "https://github.com/laravel/boost"
             },
-            "time": "2026-02-20T14:45:22+00:00"
+            "time": "2026-02-20T08:12:25+00:00"
         },
         {
             "name": "laravel/mcp",

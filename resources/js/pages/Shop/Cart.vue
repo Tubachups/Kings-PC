@@ -3,6 +3,7 @@ import CartItems from '@/components/shop/CartItems.vue';
 import { useCart } from '@/composables/useCart';
 import TotalCard from '@/components/shop/TotalCard.vue';
 import Layout from '@/layouts/MainLayout.vue';
+import { Link } from '@inertiajs/vue3';
 defineOptions({ layout: Layout });
 
 const { items, subTotal } = useCart();
@@ -15,15 +16,17 @@ const { items, subTotal } = useCart();
             <header class="text-5xl font-extrabold">My Cart</header>
         </div>
 
-        <div class="flex flex-row flex-1 h-full">
-            <div class="flex-2 h-full overflow-y-auto p-6 mb-2">
+        <div class="flex flex-row flex-1 overflow-hidden w-full">
+            
+            <div class="flex-[2] h-full overflow-y-auto p-6">
                 <CartItems />
             </div>
 
-            <div class="flex-1 h-full overflow-y-auto p-6 mb-2">
-                <div class="h-full w-full">
-                    <TotalCard :items="items" />
-                </div>
+            <div class="flex-1 h-full overflow-y-auto p-6">
+                <TotalCard :items="items" />
+                <Link href="/checkout" class="bg-black text-white p-3 rounded-xl w-full block text-center">
+                    Proceed to checkout
+                </Link>
             </div>
         </div>
 

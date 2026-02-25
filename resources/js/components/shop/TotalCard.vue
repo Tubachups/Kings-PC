@@ -7,10 +7,16 @@ import ScrollArea from '@/components/ui/scroll-area/ScrollArea.vue';
 import { Separator } from '@/components/ui/separator';
 import { CartItem } from '@/types/cart';
 import { useCart } from '@/composables/useCart';
+import { Link } from '@inertiajs/vue3';
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
     items: CartItem[];
-}>();
+    isCheckout?: boolean;
+    shippingFee?: number;
+}>(), {
+    isCheckout: false,
+    shippingFee: 0,
+});
 
 const { subTotal } = useCart();
 </script>
@@ -38,11 +44,16 @@ const { subTotal } = useCart();
                 </div>
             </div>
         </ScrollArea>
+        <div v-if="isCheckout" class="flex justify-between font-medium text-sms">
+            <span>Shipping Fee</span>
+            <span>₱{{ shippingFee.toLocaleString() }}</span>
+        </div>
         <Separator class="my-2" />
         <div class="flex justify-between font-extrabold text-lg">
             <span>Total</span>
-            <span>₱{{ subTotal.toLocaleString() }}</span>
+            <span>₱{{ (subTotal + shippingFee).toLocaleString() }}</span>
         </div>
+
     </CardContent>
 </Card>
 </template>

@@ -12,7 +12,7 @@ const { items, subTotal } = useCart();
 </script>
 
 <template>
-    <div class="flex flex-col h-screen w-full overflow-hidden justify-center align-middle p-6">
+    <div class="flex flex-col h-screen w-full overflow-hidden justify-center align-middle p-6 px-6 md:48">
         <Card>
             <CardContent>
                 <CheckoutForm />
