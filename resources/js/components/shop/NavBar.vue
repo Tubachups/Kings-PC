@@ -59,6 +59,15 @@ const { totalItems, items } = useCart();
                     </NavigationMenuItem>
 
                     <NavigationMenuItem>
+                        <NavigationMenuLink
+                            as-child
+                            :class="navigationMenuTriggerStyle()"
+                        >
+                            <Link href="/builder">AI Builder</Link>
+                        </NavigationMenuLink>
+                    </NavigationMenuItem>
+
+                    <NavigationMenuItem>
                         <NavigationMenuTrigger>
                             <NavigationMenuLink
                                 as-child
