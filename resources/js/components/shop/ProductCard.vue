@@ -4,34 +4,16 @@ import { useCart } from '@/composables/useCart';
 import { Product } from '@/types/product';
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { getFilteredImageUrl } from '@/utils/helpers';
 
-
-const filteredImageUrl = computed(() => {
-    if (!product?.image_url) return '';
-    return product.image_url.startsWith('/storage')
-        ? product.image_url.replace(/^\/storage/, '')
-        : product.image_url;
-});
-
+const { handleAddToCart } = useCart();
 const page = usePage();
-
-// Added isLoading prop and made product optional so you can render skeletons safely
 const { product, isLoading = false } = defineProps<{
     product: Product;
     isLoading: boolean;
 }>();
 
-const { updateQuantity, items } = useCart();
-
-const handleAddToCart = () => {
-    const existingItem = items.value.find(i => i.product.id === product.id);
-
-    const newQty = existingItem ? existingItem.quantity + 1 : 1;
-
-    updateQuantity(product, newQty);
-
-}
-
+const filteredImageUrl = computed(() => getFilteredImageUrl(product?.image_url));
 </script>
 
 <template>
@@ -96,7 +78,7 @@ const handleAddToCart = () => {
             </ul>
         </div>
 
-    <button v-if="page.props.auth && page.props.auth.user" @click="handleAddToCart" class="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
+    <button v-if="page.props.auth && page.props.auth.user" @click="handleAddToCart(product)" class="w-full mt-auto bottom-0 bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
         Add to Cart
     </button>
     </template>

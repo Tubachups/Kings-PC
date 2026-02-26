@@ -43,25 +43,28 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-    <div class="m-12 flex h-full items-center justify-center">
-        <Card class="grid h-[75vh] w-[85%] grid-cols-1 md:grid-cols-2">
+    <div class="m-12 flex h-full">
+        <Card class="h-full w-1/3 m-2">
             <div class="flex flex-col justify-center p-6">
                 <form @submit.prevent="handleSubmit">
-                    <Textarea v-model="form.prompt" class="h-full resize-none" placeholder="PC build idea here" />
+                    <Label class="block text-sm font-medium text-slate-700">Build Idea</Label>
+                    <Textarea v-model="form.prompt" class="h-96 resize-none" placeholder="PC build idea here" />
+                    <Label class="mt-4 block text-sm font-medium text-slate-700">Budget (PHP)</Label>
                     <Input v-model="form.budget" type="number" class="mt-2" />
                     <Button :disabled="isSubmitting" type="submit" class="mt-2">
                         {{ isSubmitting ? 'Generating...' : 'Submit' }}
                     </Button>
                 </form>
             </div>
-            <div class="p-6">
-                <Card v-if="!aiBuild && !isSubmitting" class="flex h-fit w-fit items-center justify-center">
+        </Card>
+        <div class="h-full w-2/3 m-2">
+            <Card class="flex h-full items-center justify-center text-slate-600 p-6">
+                <div v-if="!aiBuild && !isSubmitting">
                     <img class="rounded-lg object-fill" src="/images/ai.png" alt="PC Build" />
-                </Card>
-                <Card v-else-if="isSubmitting" class="p-6 text-center text-slate-600">
+                </div>
+                <div v-else-if="isSubmitting">
                     Generating your build...
-                    <img class="rounded-lg object-cover w-full h-96" src="/images/053.jpg" alt="PC Build" />                
-                </Card>
+                </div>
                 <div v-else-if="aiBuild" class="flex h-full flex-col gap-4">
                     <Card class="rounded-xl border bg-slate-50 p-4">
                         <p class="text-xs uppercase tracking-wide text-slate-500">Build Summary</p>
@@ -72,11 +75,11 @@ const handleSubmit = async () => {
                             {{ aiBuild.explanation || 'No explanation returned by AI.' }}
                         </p>
                     </Card>
-                    <div class="grid max-h-[45vh] grid-cols-1 gap-3 overflow-y-auto pr-1 md:grid-cols-2">
+                    <div class="grid max-h-[45vh] grid-cols-1 gap-3 overflow-y-auto pr-1 md:grid-cols-4">
                         <Card
                             v-for="product in aiBuild.build"
                             :key="product.id"
-                            class="rounded-xl border border-slate-200 p-4 shadow-sm"
+                            class="flex flex-col rounded-xl border border-slate-200 p-4 shadow-sm"
                         >
                             <ProductCard :product="{
                                 id: product.id,
@@ -88,7 +91,7 @@ const handleSubmit = async () => {
                         </Card>
                     </div>
                 </div>
-            </div>
-        </Card>
+            </Card>
+        </div>
     </div>
 </template>

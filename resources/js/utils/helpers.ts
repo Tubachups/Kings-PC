@@ -59,3 +59,9 @@ export const formatDate = (date: string): string => {
 export const formatPrice = (price: number | null): string | null => {
     return price !== null ? pesoFormatter.format(price) : null;
 };
+export const getFilteredImageUrl = (image_url : string) => {
+    if (!image_url) return '';
+    return !image_url.startsWith('/storage')
+        ? image_url.replace(/^\/storage/, '')
+        : image_url;
+};

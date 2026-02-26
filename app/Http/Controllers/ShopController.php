@@ -35,6 +35,7 @@ class ShopController extends Controller
             A valid build MUST include at least cpu, motherboard, ram, storage, and psu.
             DO NOT GO OVER BUDGET.
             BUT ALSO DONT GO VERY LOW FOR THE TOTAL.
+            IF THE USER INPUTS 30000 BUDGET TRY TO REACH THAT BUDGET AS MUCH AS POSSIBLE.
             If impossible, return {"build_ids":[],"total_price":0,"explanation":"No valid build within budget"}
             Output ONLY JSON:
             {
