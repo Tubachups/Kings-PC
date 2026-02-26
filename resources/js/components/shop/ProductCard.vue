@@ -83,7 +83,6 @@ const handleAddToCart = () => {
             <ul>
                 <template v-for="(value, key) in product.specs" :key="key">
                     <li
-                        
                         class="flex justify-between py-1"
                     >
                         <span class="text-gray-600 capitalize"

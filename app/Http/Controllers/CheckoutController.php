@@ -6,6 +6,7 @@ use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Services\CheckoutService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,38 +16,13 @@ use Inertia\Inertia;
 
 class CheckoutController extends Controller
 {
-    //
-    public function index() {
+
+    public function index(CheckoutService $checkout) {
         $user_id = Auth::id();
         $redisKey = "cart:user:" . $user_id;
         $cart = Redis::hgetall($redisKey);
 
-        if (!empty($cart)) {
-            $updatedCart = [];
-
-            foreach ($cart as $field => $value) {
-                $item = json_decode($value, true);
-                $product = Product::find($item['product']['id']);
-
-                if ($product) {
-                    $item['product']['price'] = $product->price;
-                }
-
-                $updatedCart[$field] = json_encode($item);
-            }
-
-            Redis::pipeline(function ($pipe) use ($redisKey, $updatedCart) {
-                $pipe->del($redisKey);
-                foreach ($updatedCart as $field => $value) {
-                    $pipe->hset($redisKey, $field, $value);
-                }
-                $pipe->expire($redisKey, 43200);
-            });
-
-            $freshCart = collect($updatedCart)
-                ->map(fn($item) => json_decode($item, true))
-                ->values();
-        }
+        $freshCart = $checkout->validateCart($redisKey, $cart);
 
         return Inertia::render('Shop/Checkout', [
             'freshCart'   => $freshCart ?? [],

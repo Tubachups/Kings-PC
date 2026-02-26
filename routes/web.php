@@ -77,6 +77,8 @@ Route::controller(ShopController::class)->group(function () {
     Route::get('/contacts', 'contacts')->name('contacts');
     Route::get('/components', 'components')->name('components');
     Route::get('/builds', 'builds')->name('builds');
+    Route::get('/builder', 'builder')->name('builder');
+    Route::post('/builder/ai', 'generate')->name('builder.ai');
     // Route::get('/redis', 'redis');
     Route::get('/{category:slug}', 'showByCategory')->name('shop.category');
 });

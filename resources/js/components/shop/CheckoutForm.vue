@@ -4,7 +4,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { Check, Circle, Dot } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 import * as z from 'zod'
-
+import { usePsgc } from '@/composables/usePsgc' 
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -19,32 +19,35 @@ import { Stepper, StepperItem, StepperSeparator, StepperTitle, StepperTrigger } 
 import { router } from "@inertiajs/vue3";
 import { useCart } from '@/composables/useCart'
 import TotalCard from './TotalCard.vue'
-import { useCartStore } from '@/stores/cartStore'
 
 const props = defineProps<{
     shippingFee?: number
 }>()
 
+const {
+  regions,
+  provinces,
+  cities,
+  barangays,
+  selectedRegionCode,
+  selectedProvinceCode,
+  selectedCityCode,
+  selectedBarangayCode,
+  isRegionWithoutProvinces,
+  onRegionChange,
+  onProvinceChange,
+  onCityChange,
+  onBarangayChange,
+} = usePsgc((field, value) => {
+  formRef.value?.setFieldValue(field, value);
+});
+
 const checkoutShippingFee = computed(() => props.shippingFee ?? 150)
-
-// Data for Dropdowns
-const regions = ref<any[]>([]);
-const provinces = ref<any[]>([]);
-const cities = ref<any[]>([]);
-const barangays = ref<any[]>([]);
-
-// Logic states
-const isRegionWithoutProvinces = ref(false);
 const stepIndex = ref(1)
 const { items, clearCart } = useCart();
 const formRef = ref<any>(null);
 const isSubmitting = ref(false);
 
-// LOCAL CODES (Tracks dropdown selection by ID/Code)
-const selectedRegionCode = ref('');
-const selectedProvinceCode = ref('');
-const selectedCityCode = ref('');
-const selectedBarangayCode = ref('');
 
 const steps = [
   { step: 1, title: 'Shipping', description: 'Address info' },
@@ -61,7 +64,7 @@ const step1Schema = z.object({
   barangay: z.string().min(1, "Barangay is required"),
 })
 
-const step2Schema = z.object({}) // Review step (no input)
+const step2Schema = z.object({}) 
 
 const step3Schema = z.object({
   payment_method: z.enum(['gcash', 'cod', 'card'], {
@@ -69,91 +72,37 @@ const step3Schema = z.object({
   }),
 })
 
-// Dynamic Schema: Merges previous steps into current validation
 const currentSchema = computed(() => {
   if (stepIndex.value === 1) return toTypedSchema(step1Schema)
   if (stepIndex.value === 2) return toTypedSchema(step1Schema.merge(step2Schema))
   return toTypedSchema(step1Schema.merge(step2Schema).merge(step3Schema))
 })
 
-onMounted(async () => {
-  const res = await fetch('https://psgc.gitlab.io/api/regions/');
-  regions.value = await res.json();
-});
-
-const onRegionChange = async (regionCode: string) => {
-  selectedRegionCode.value = regionCode;
-  const name = regions.value.find(r => r.code === regionCode)?.name;
-  formRef.value?.setFieldValue('region', name);
-  
-  // Reset dependents
-  selectedProvinceCode.value = ''; selectedCityCode.value = ''; selectedBarangayCode.value = '';
-  provinces.value = []; cities.value = []; barangays.value = [];
-  formRef.value?.setFieldValue('province', '');
-  formRef.value?.setFieldValue('city', '');
-  formRef.value?.setFieldValue('barangay', '');
-
-  const res = await fetch(`https://psgc.gitlab.io/api/regions/${regionCode}/provinces/`);
-  const data = await res.json();
-
-  if (!data.length) {
-    isRegionWithoutProvinces.value = true;
-    const cityRes = await fetch(`https://psgc.gitlab.io/api/regions/${regionCode}/cities-municipalities/`);
-    cities.value = await cityRes.json();
-  } else {
-    isRegionWithoutProvinces.value = false;
-    provinces.value = data;
-  }
-};
-
-const onProvinceChange = async (provinceCode: string) => {
-  selectedProvinceCode.value = provinceCode;
-  const name = provinces.value.find(p => p.code === provinceCode)?.name;
-  formRef.value?.setFieldValue('province', name);
-
-  selectedCityCode.value = ''; selectedBarangayCode.value = '';
-  cities.value = []; barangays.value = [];
-  formRef.value?.setFieldValue('city', '');
-  formRef.value?.setFieldValue('barangay', '');
-
-  const res = await fetch(`https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`);
-  cities.value = await res.json();
-};
-
-const onCityChange = async (cityCode: string) => {
-  selectedCityCode.value = cityCode;
-  const name = cities.value.find(c => c.code === cityCode)?.name;
-  formRef.value?.setFieldValue('city', name);
-
-  selectedBarangayCode.value = '';
-  barangays.value = [];
-  formRef.value?.setFieldValue('barangay', '');
-
-  const res = await fetch(`https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`);
-  barangays.value = await res.json();
-};
-
-const onBarangayChange = (barangayCode: string) => {
-  selectedBarangayCode.value = barangayCode;
-  const name = barangays.value.find(b => b.code === barangayCode)?.name;
-  formRef.value?.setFieldValue('barangay', name);
-};
 
 function onSubmit(values: any) {
   isSubmitting.value = true;
+  const loadingToastId = toast.loading('Processing your order...');
+
   router.post('/checkout/confirm', values, {
-    onStart: () => toast.loading('Processing your order...'),
-    onFinish: () => isSubmitting.value = false,
+    onFinish: () => {
+      toast.dismiss(loadingToastId);
+      isSubmitting.value = false;
+    },
     onSuccess: () => {
+      toast.dismiss(loadingToastId);
       clearCart();
       toast.success('Order placed successfully!');
+      isSubmitting.value = false;
     },
     onError: (errors) => {
+      toast.dismiss(loadingToastId);
       toast.error('Order failed. Please check your details.');
       console.log('Server Validation Errors:', errors);
+      isSubmitting.value = false;
     }
   });
 }
+
 </script>
 
 <template>

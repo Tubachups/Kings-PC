@@ -25,7 +25,6 @@ class ClearCart implements ShouldQueue
     public function handle(): void
     {
         CartItem::clearCart($this->user_id);
-        
         $redisKey = "cart:user:{$this->user_id}";
         Redis::del($redisKey); 
     }

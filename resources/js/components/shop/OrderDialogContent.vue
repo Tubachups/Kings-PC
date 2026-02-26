@@ -1,31 +1,13 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import DialogContent from '@/components/ui/dialog/DialogContent.vue';
+import { formatCurrency, formatAddress } from '@/utils/helpers';
 
 const props = defineProps<{
     isLoading: boolean
     selectedOrder?: any
 }>();
 
-const formatCurrency = (amount: string | number) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    }).format(Number(amount || 0));
-};
-
-const formatAddress = (address?: Record<string, any>) => {
-    if (!address) return 'N/A';
-    return [
-        address.address,
-        address.barangay,
-        address.city,
-        address.province,
-        address.region,
-    ]
-        .filter(Boolean)
-        .join(', ');
-};
 
 </script>
 
