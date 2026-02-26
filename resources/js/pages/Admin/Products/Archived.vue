@@ -14,43 +14,14 @@ import {
     restore as productsRestore,
     forceDelete as productsForceDelete,
 } from '@/actions/App/Http/Controllers/Admin/ProductController';
-import type { Category, Product } from '@/types/product';
+import type { Product } from '@/types/product';
+import { formatCurrency, formatSortableHeader, toggleProductSelection } from '@/utils/helpers';
+import type { ProductTableProps } from '@/types/product-table';
 
-interface Props {
-    products: {
-        data: Product[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-        from: number;
-        to: number;
-    };
-    filters: {
-        name?: string;
-    };
-}
-
-const props = defineProps<Props>();
+const props = defineProps<ProductTableProps>();
 
 const selectedProducts = ref<Set<number>>(new Set());
 
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'PHP',
-});
-
-function sortableHeader(label: string) {
-    return ({ column }: { column: any }) =>
-        h(
-            Button,
-            {
-                variant: 'ghost',
-                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
-            },
-            () => [label, h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })],
-        );
-}
 
 function restoreProduct(product: Product) {
     router.patch(productsRestore(product.id).url, {}, { preserveScroll: true });
@@ -69,13 +40,6 @@ function permanentlyDeleteProduct(product: Product) {
     });
 }
 
-function toggleProductSelection(product: Product) {
-    if (selectedProducts.value.has(product.id)) {
-        selectedProducts.value.delete(product.id);
-    } else {
-        selectedProducts.value.add(product.id);
-    }
-}
 
 function bulkRestore() {
     const ids = Array.from(selectedProducts.value);
@@ -128,13 +92,13 @@ const columns: ColumnDef<Product>[] = [
             h('input', {
                 type: 'checkbox',
                 checked: selectedProducts.value.has(row.original.id),
-                onChange: () => toggleProductSelection(row.original),
+                onChange: () => toggleProductSelection(selectedProducts.value, row.original),
                 class: 'cursor-pointer',
             }),
     },
     {
         accessorKey: 'name',
-        header: sortableHeader('Name'),
+        header: formatSortableHeader('Name'),
         cell: ({ row }) => h('div', { class: 'font-medium' }, row.getValue('name')),
     },
     {
@@ -144,9 +108,9 @@ const columns: ColumnDef<Product>[] = [
     },
     {
         accessorKey: 'price',
-        header: sortableHeader('Price'),
+        header: formatSortableHeader('Price'),
         cell: ({ row }) =>
-            h('div', { class: 'font-medium' }, currencyFormatter.format(parseFloat(row.getValue('price')))),
+            h('div', { class: 'font-medium' }, formatCurrency(row.getValue('price'))),
     },
     {
         accessorKey: 'stock',
