@@ -1,24 +1,19 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
-import { toTypedSchema } from '@vee-validate/zod'
+import { Stepper, StepperItem, StepperSeparator, StepperTitle, StepperTrigger } from '@/components/ui/stepper'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { step1Schema, step2Schema, step3Schema } from '@/utils/schema'
 import { Check, Circle, Dot } from 'lucide-vue-next'
-import { toast } from 'vue-sonner'
-import * as z from 'zod'
+import { toTypedSchema } from '@vee-validate/zod'
 import { usePsgc } from '@/composables/usePsgc' 
 import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Stepper, StepperItem, StepperSeparator, StepperTitle, StepperTrigger } from '@/components/ui/stepper'
-import { router } from "@inertiajs/vue3";
 import { useCart } from '@/composables/useCart'
+import { Input } from '@/components/ui/input'
+import { steps } from '@/constants/constants'
+import { router } from "@inertiajs/vue3";
 import TotalCard from './TotalCard.vue'
+import { ref, computed } from 'vue'
+import { toast } from 'vue-sonner'
 
 const props = defineProps<{
     shippingFee?: number
@@ -48,36 +43,11 @@ const { items, clearCart } = useCart();
 const formRef = ref<any>(null);
 const isSubmitting = ref(false);
 
-
-const steps = [
-  { step: 1, title: 'Shipping', description: 'Address info' },
-  { step: 2, title: 'Review', description: 'Check items' },
-  { step: 3, title: 'Payment', description: 'Pay method' },
-]
-
-const step1Schema = z.object({
-  full_name: z.string().min(2, "Name is required"),
-  address: z.string().min(5, "Address is required"),
-  region: z.string().min(1, "Region is required"),
-  province: z.string().optional().nullable().or(z.literal('')),
-  city: z.string().min(1, "City is required"),
-  barangay: z.string().min(1, "Barangay is required"),
-})
-
-const step2Schema = z.object({}) 
-
-const step3Schema = z.object({
-  payment_method: z.enum(['gcash', 'cod', 'card'], {
-    required_error: "Please select a payment method",
-  }),
-})
-
 const currentSchema = computed(() => {
   if (stepIndex.value === 1) return toTypedSchema(step1Schema)
   if (stepIndex.value === 2) return toTypedSchema(step1Schema.merge(step2Schema))
   return toTypedSchema(step1Schema.merge(step2Schema).merge(step3Schema))
 })
-
 
 function onSubmit(values: any) {
   isSubmitting.value = true;

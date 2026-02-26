@@ -18,3 +18,9 @@ export const formatAddress = (address?: Record<string, any>) => {
         .join(', ');
 };
 
+export const getFilteredImageUrl = (image_url : string) => {
+    if (!image_url) return '';
+    return !image_url.startsWith('/storage')
+        ? image_url.replace(/^\/storage/, '')
+        : image_url;
+};

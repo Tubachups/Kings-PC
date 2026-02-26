@@ -91,12 +91,20 @@ export function useCart() {
         })
     }
 
+    const handleAddToCart = (product : Product) => {
+        const existingItem = items.value.find(i => i.product.id === product.id);
+        const newQty = existingItem ? existingItem.quantity + 1 : 1;
+        updateQuantity(product, newQty);
+    }
+
+
     return {
         items,
         subTotal: computed(() => cartStore.subTotal),
         totalItems: computed(() => cartStore.totalItems),
         updateQuantity,
         deleteCartItem,
-        clearCart
+        clearCart,
+        handleAddToCart
     };
 }

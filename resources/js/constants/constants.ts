@@ -18,3 +18,9 @@ export const SORT_OPTIONS = [
     { value: 'price',  label: 'Highest Price' },
     { value: 'price_low', label: 'Lowest Price'}
 ]
+
+export const steps = [
+  { step: 1, title: 'Shipping', description: 'Address info' },
+  { step: 2, title: 'Review', description: 'Check items' },
+  { step: 3, title: 'Payment', description: 'Pay method' },
+]
