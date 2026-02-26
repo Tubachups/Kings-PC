@@ -9,6 +9,7 @@ import { AiBuildResponse } from '@/types/ai';
 import axios from 'axios';
 import { reactive, ref } from 'vue';
 import { toast } from 'vue-sonner';
+import { formatCurrency } from '@/utils/helpers';
 
 defineOptions({ layout: Layout });
 
@@ -22,13 +23,7 @@ const form = reactive({
 
 const toNumber = (value?: number | string | null) => Number(value ?? 0);
 
-const formatCurrency = (value?: number | string | null) => {
-    const amount = Number(value ?? 0);
-    return `PHP ${amount.toLocaleString('en-PH', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    })}`;
-};
+// Use shared formatCurrency helper
 
 const handleSubmit = async () => {
     isSubmitting.value = true;

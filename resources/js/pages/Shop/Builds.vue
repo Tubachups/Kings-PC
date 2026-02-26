@@ -26,6 +26,7 @@ import { useDebounceFn } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 import type { Build, ParsedBuild, PartCategory } from '@/types/build';
 import { PART_CATEGORIES, SORT_OPTIONS } from '@/constants/constants';
+import { formatDate, formatPrice } from '@/utils/helpers';
 
 defineOptions({ layout: Layout });
 
@@ -163,23 +164,6 @@ function parseBuildText(text: string): ParsedBuild {
     return { header, price, parts };
 }
 
-const phpCurrencyFormatter = new Intl.NumberFormat('en-PH', {
-    style: 'currency',
-    currency: 'PHP',
-    maximumFractionDigits: 0,
-});
-
-function formatPrice(price: number | null): string | null {
-    return price !== null ? phpCurrencyFormatter.format(price) : null;
-}
-
-function formatDate(date: string): string {
-    return new Date(date).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
-}
 
 const enrichedBuilds = computed(() =>
     props.builds.data.map(build => ({
@@ -197,15 +181,15 @@ const enrichedBuilds = computed(() =>
 
 <template>
 <div class="p-3 md:p-12 lg:p-24">
-    <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
+    <div class="mb-6 flex flex-col gap-3 md:flex-row  md:justify-between ">
+        <div class=" flex flex-col md:w-1/2">
             <h2 class="text-2xl font-bold">Completed Builds</h2>
             <p class="mt-1 text-sm md:text-base">
                 Explore hundreds of custom rigs crafted by King's PC. Dive into detailed part lists and check out the photo galleries.
             </p>
         </div>
 
-        <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-end">
+        <div class="flex w-full flex-col lg:flex-row gap-3 md:w-1/2 items-center justify-end">
             <!-- Price Range Slider -->
             <div class="flex w-full flex-col gap-2 sm:w-72">
                 <div class="flex items-center justify-between">
@@ -249,7 +233,7 @@ const enrichedBuilds = computed(() =>
         </div>
     </div>
 
-    <InfiniteScroll data="builds" :bufffer="300">
+    <InfiniteScroll data="builds" :bufffer="300" manual>
         <div class="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 lg:gap-6">
             <Card
                 v-for="build in enrichedBuilds"
@@ -324,14 +308,23 @@ const enrichedBuilds = computed(() =>
             </Card>
         </div>
 
-        <template #loading>
-            <div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 lg:gap-6">
-                <div
-                    v-for="i in 6"
-                    :key="i"
-                    class="h-80 animate-pulse rounded-lg bg-muted"
-                />
-            </div>
+        <template #next="{ loading, fetch, hasMore }">
+            <button
+                v-if="hasMore"
+                @click="fetch"
+                :disabled="loading"
+                class="relative mt-6 mx-auto flex items-center justify-center rounded-lg bg-primary px-6 py-2 font-semibold text-white shadow-lg transition-all duration-200 hover:bg-primary/90 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-primary/50"
+            >
+                <span v-if="loading" class="absolute left-4 flex items-center">
+                    <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                </span>
+                <span :class="loading ? 'opacity-70 ml-4' : ''">
+                    {{ loading ? 'Loading...' : 'Load more' }}
+                </span>
+            </button>
         </template>
     </InfiniteScroll>
 </div>

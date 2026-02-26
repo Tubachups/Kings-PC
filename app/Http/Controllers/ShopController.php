@@ -81,7 +81,7 @@ class ShopController extends Controller
         $maxPrice = $request->query('max_price') !== null ? (int) $request->query('max_price') : null;
 
         return Inertia::render('Shop/Builds', [
-            'builds' => Inertia::scroll(fn () => BuildPost::applySort($sort)->applyPriceRange($minPrice, $maxPrice)->paginate(12)),
+            'builds' => Inertia::scroll(fn () => BuildPost::applySort($sort)->applyPriceRange($minPrice, $maxPrice)->paginate(15)),
             'sort' => $sort,
             'minPrice' => $minPrice,
             'maxPrice' => $maxPrice,
@@ -106,10 +106,10 @@ class ShopController extends Controller
         $resolvedData = $this->ai_service->resolveCategory(self::categoryAliases, $categories);
         $resolvedCategories = $resolvedData['resolvedCategories'];
         if (!empty($resolvedData['missingCategoryDefinitions'])) return json_422('Category mapping is incomplete.', ['missing_category_definitions' => $resolvedData['missingCategoryDefinitions']]);
-        
+
         $filteredData = $this->ai_service->filterInventory($resolvedCategories, $requiredCategories, $userBudget);
         if (!empty($filteredData['missingRequiredInventory'])) return json_422('Missing Required Category Inventory', ['missing_categories' => $filteredData['missingRequiredInventory'], 'diagnostics' => $filteredData['inventoryDiagnostics']]);
-        
+
 
         $inventoryString = json_encode($filteredData['filteredInventory']);
         if ($inventoryString === false) return response()->json(['error' => json_last_error_msg()], 500);
@@ -141,12 +141,12 @@ class ShopController extends Controller
             $selectedCategoryIds = $products->pluck('category_id')->unique()->all();
             $missingRequiredCategories = array_values(array_diff($requiredCategoryIds, $selectedCategoryIds));
             if (!empty($missingRequiredCategories)) return json_422('AI build is missing required parts.', ['missing_category_ids' => $missingRequiredCategories, 'build_ids' => $ids, 'raw' => $content,]);
-  
+
 
             if ($actualTotal > $userBudget) {
                 return json_500(
                     'AI build exceeds budget.',
-                    [                    
+                    [
                         'budget' => $userBudget,
                         'actual_total' => $actualTotal,
                         'build_ids' => $ids,

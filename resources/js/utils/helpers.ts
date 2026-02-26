@@ -1,8 +1,38 @@
-export const formatCurrency = (amount: string | number) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'PHP',
-    }).format(Number(amount || 0));
+import { h } from 'vue';
+import { Button } from '@/components/ui/button';
+import { ArrowUpDown } from 'lucide-vue-next';
+
+const pesoFormatter = new Intl.NumberFormat('en-PH', {
+    style: 'currency',
+    currency: 'PHP',
+    maximumFractionDigits: 0,
+});
+
+
+export const formatSortableHeader = (label: string) => {
+    return ({ column }: { column: any }) =>
+        h(
+            Button,
+            {
+                variant: 'ghost',
+                onClick: () => column.toggleSorting(column.getIsSorted() === 'asc'),
+            },
+            () => [label, h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })],
+        );
+};
+
+export const toggleProductSelection = (selectedProducts: Set<number>, product: { id: number }) => {
+    if (selectedProducts.has(product.id)) {
+        selectedProducts.delete(product.id);
+    } else {
+        selectedProducts.add(product.id);
+    }
+};
+
+
+
+export const formatCurrency = (amount: string | number): string => {
+    return pesoFormatter.format(Number(amount || 0));
 };
 
 export const formatAddress = (address?: Record<string, any>) => {
@@ -18,3 +48,14 @@ export const formatAddress = (address?: Record<string, any>) => {
         .join(', ');
 };
 
+export const formatDate = (date: string): string => {
+    return new Date(date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+};
+
+export const formatPrice = (price: number | null): string | null => {
+    return price !== null ? pesoFormatter.format(price) : null;
+};
