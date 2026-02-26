@@ -14,7 +14,7 @@ const form = useForm({
 function submitForm() {
     // Replace '/contacts' with your actual route if needed
     alert(`Form submitted with:\nName: ${form.name}\nEmail: ${form.email}\nMessage: ${form.message}`)
-    
+
 }
 </script>
 

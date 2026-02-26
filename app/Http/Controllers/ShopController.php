@@ -9,10 +9,9 @@ use App\Models\Product;
 use App\Services\AiService;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Inertia\Response;
 
 class ShopController extends Controller
 {
@@ -75,10 +74,17 @@ class ShopController extends Controller
         ]);
     }
 
-    public function builds()
+    public function builds(Request $request): Response
     {
+        $sort = $request->query('sort', 'newest');
+        $minPrice = $request->query('min_price') !== null ? (int) $request->query('min_price') : null;
+        $maxPrice = $request->query('max_price') !== null ? (int) $request->query('max_price') : null;
+
         return Inertia::render('Shop/Builds', [
-            'builds' => BuildPost::all()
+            'builds' => Inertia::scroll(fn () => BuildPost::applySort($sort)->applyPriceRange($minPrice, $maxPrice)->paginate(12)),
+            'sort' => $sort,
+            'minPrice' => $minPrice,
+            'maxPrice' => $maxPrice,
         ]);
     }
 
