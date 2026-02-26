@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ProductCard from '@/components/shop/ProductCard.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Card from '@/components/ui/card/Card.vue';
 import Input from '@/components/ui/input/Input.vue';
@@ -11,13 +12,15 @@ import { toast } from 'vue-sonner';
 
 defineOptions({ layout: Layout });
 
+const isSubmitting = ref(false);
+const aiBuild = ref<AiBuildResponse | null>(null);
 const form = reactive({
     prompt: '',
     budget: 0,
 });
 
-const isSubmitting = ref(false);
-const aiBuild = ref<AiBuildResponse | null>(null);
+
+const toNumber = (value?: number | string | null) => Number(value ?? 0);
 
 const formatCurrency = (value?: number | string | null) => {
     const amount = Number(value ?? 0);
@@ -41,6 +44,7 @@ const handleSubmit = async () => {
         isSubmitting.value = false;
     }
 };
+
 </script>
 
 <template>
@@ -79,8 +83,13 @@ const handleSubmit = async () => {
                             :key="product.id"
                             class="rounded-xl border border-slate-200 p-4 shadow-sm"
                         >
-                            <p class="text-sm font-semibold text-slate-900">{{ product.name }}</p>
-                            <p class="mt-2 text-sm text-slate-600">{{ formatCurrency(product.price) }}</p>
+                            <ProductCard :product="{
+                                id: product.id,
+                                name: product.name,
+                                price: toNumber(product.price),
+                                image_url: product.image_url,
+                                specs: product.specs,
+                            }" />
                         </Card>
                     </div>
                 </div>

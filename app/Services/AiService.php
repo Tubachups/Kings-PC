@@ -62,21 +62,22 @@ class AiService
                 ->where('price', '<=', $userBudget * 0.5)
                 ->orderBy('price', 'asc')
                 ->take(8)
-                ->get(['id', 'name', 'price', 'specs']);
+                ->get(['id', 'name', 'price', 'specs', 'image_url']);
 
             if ($products->isEmpty()) {
                 $products = (clone $baseQuery)
                     ->orderBy('price', 'asc')
                     ->take(8)
-                    ->get(['id', 'name', 'price', 'specs']);
+                    ->get(['id', 'name', 'price', 'specs', 'image_url']);
             }
 
             $filteredInventory[$name] = $products->map(function ($product) {
                 return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'price' => (float) $product->price,
-                    'specs' => $product->specs,
+                    'id'        => $product->id,
+                    'name'      => $product->name,
+                    'price'     => (float) $product->price,
+                    'specs'     => $product->specs,
+                    'image_url' => $product->image_url
                 ];
             })->values();
 
