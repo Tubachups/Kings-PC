@@ -182,7 +182,7 @@ const pages = [
                 <a href="#" class="transition-colors hover:text-black"
                     >Accessibility statement</a
                 >
-                <span>© Matter 2025</span>
+                <span>© King's PC 2026</span>
             </div>
         </div>
     </footer>
