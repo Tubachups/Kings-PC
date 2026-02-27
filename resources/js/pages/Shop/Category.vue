@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue';
-import ProductCard from '@/components/shop/ProductCard.vue';
-import SearchBar from '@/components/shop/SearchBar.vue';
+import ProductCard from '@/components/shop/products/ProductCard.vue';
+import SearchBar from '@/components/shop/layout/SearchBar.vue';
 import Layout from '@/layouts/MainLayout.vue';
 import { router } from '@inertiajs/vue3';
 import {

@@ -40,6 +40,7 @@ const images = [
 <template>
     <Carousel
         class="w-full max-w-7xl"
+        :opts="{ align: 'start', loop: true }"
         :plugins="[
             Autoplay({
                 delay: 2000,

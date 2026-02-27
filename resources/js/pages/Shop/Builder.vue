@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ProductCard from '@/components/shop/ProductCard.vue';
+import ProductCard from '@/components/shop/products/ProductCard.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Card from '@/components/ui/card/Card.vue';
 import Input from '@/components/ui/input/Input.vue';
@@ -60,7 +60,7 @@ const handleSubmit = async () => {
                 </Card>
                 <Card v-else-if="isSubmitting" class="p-6 text-center text-slate-600">
                     Generating your build...
-                    <img class="rounded-lg object-cover w-full h-96" src="/images/053.jpg" alt="PC Build" />                
+                    <img class="rounded-lg object-cover w-full h-96" src="/images/053.jpg" alt="PC Build" />
                 </Card>
                 <div v-else-if="aiBuild" class="flex h-full flex-col gap-4">
                     <Card class="rounded-xl border bg-slate-50 p-4">

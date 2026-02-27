@@ -17,8 +17,7 @@ class CartController extends Controller
 
     public function index()
     {
-        return Inertia::render('Shop/Cart', [
-        ]);
+        // return Inertia::render('Shop/Cart', []);
     }
 
 
@@ -73,12 +72,12 @@ class CartController extends Controller
         $product_id = (int) $id;
 
         Redis::hdel("cart:user:{$user_id}", (string) $product_id);
-        
+
         RemoveCartFromJob::dispatch($user_id, $product_id);
 
         $end = microtime(true);
         Log::info('Cart delete execution time: ' . ($end - $start) . ' seconds');
-        
+
         return back();
     }
 

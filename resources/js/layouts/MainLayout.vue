@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { Toaster } from '@/components/ui/sonner';
-import NavBar from '@/components/shop/NavBar.vue';
-import Footer from '@/components/shop/Footer.vue';
-import { computed, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
-import { useCartStore } from '@/stores/cartStore';
-import { CartItem } from '@/types/cart';
+import { computed, watch } from 'vue';
 import { toast } from 'vue-sonner';
+import StickyCart from '@/components/shop/cart/StickyCart.vue';
+import Footer from '@/components/shop/layout/Footer.vue';
+import NavBar from '@/components/shop/layout/NavBar.vue';
+import { Toaster } from '@/components/ui/sonner';
+import { useCartStore } from '@/stores/cartStore';
+import type { CartItem } from '@/types/cart';
 
 const page = usePage<any>();
-const flashError = computed(() => page.props.flash?.error);
 const cartStore = useCartStore()
+const shouldShowStickyCart = computed(() => {
+    return !page.url.startsWith('/checkout');
+});
 
 cartStore.setItems(page.props.cart as CartItem[])
 
@@ -41,6 +44,7 @@ watch(() => page.props.flash, (flash) => {
             </div>
         </Transition>
         <Footer />
+            <StickyCart v-if="shouldShowStickyCart" />
     </main>
 </template>
 

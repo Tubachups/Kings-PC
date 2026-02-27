@@ -22,10 +22,10 @@ createInertiaApp({
             .use(pinia)
             .mount(el);
     },
-    progress: false,
-    // {
-    //     color: '#4B5563',
-    // },
+    progress:
+    {
+        color: '#4B5563',
+    },
 });
 
 initializeTheme();

@@ -4,6 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPhone, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import {  faFacebookSquare } from '@fortawesome/free-brands-svg-icons';
+import { Link } from '@inertiajs/vue3';
+import {
+    builder as builderRoute,
+    builds as buildsRoute,
+    components as componentsRoute,
+} from '@/routes';
 
 library.add(faPhone, faEnvelope, faFacebookSquare);
 
@@ -20,9 +26,9 @@ const usefulLinks = [
 ];
 
 const pages = [
-    { label: 'Features' },
-    { label: 'Use cases' },
-    { label: 'About us' },
+    { label: 'Builder', route: builderRoute() },
+    { label: 'Products', route: componentsRoute() },
+    { label: 'Completed Builds', route: buildsRoute() },
     { label: 'Testimonials' },
     { label: 'Blogs' },
 ];
@@ -107,7 +113,7 @@ const pages = [
                             <FontAwesomeIcon :icon="faPhone" />0943 404 1792
                         </div>
                         <div>
-                            <FontAwesomeIcon :icon="faEnvelope" /> kingedward0723@yahoo.com.ph
+                            <FontAwesomeIcon :icon="faEnvelope" />kingedward0723@yahoo.com.ph
                         </div>
                     </div>
                 </div>
@@ -150,6 +156,7 @@ const pages = [
                 <div>
                     <p class="mb-6 text-sm font-medium text-gray-400">Pages</p>
                     <ul class="space-y-3">
+
                         <li
                             v-for="(page, index) in pages"
                             :key="page.label"
@@ -158,7 +165,15 @@ const pages = [
                             <span class="w-6 text-xs text-gray-400">{{
                                 String(index + 1).padStart(2, '0')
                             }}</span>
+                            <Link
+                                v-if="page.route"
+                                :href="page.route.url"
+                                class="text-xl font-light text-black transition-colors hover:text-gray-600"
+                            >
+                                {{ page.label }}
+                            </Link>
                             <a
+                                v-else
                                 href="#"
                                 class="text-xl font-light text-black transition-colors hover:text-gray-600"
                             >
