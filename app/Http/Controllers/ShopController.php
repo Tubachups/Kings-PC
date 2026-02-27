@@ -50,6 +50,19 @@ class ShopController extends Controller
     public function index()
     {
         return Inertia::render('Shop/Index', [
+            'topBuilds' => BuildPost::query()
+                ->applySort('price')
+                ->limit(6)
+                ->get([
+                    'id',
+                    'text',
+                    'image_preview_1',
+                    'image_preview_2',
+                    'image_preview_3',
+                    'image_preview_4',
+                    'likes',
+                    'created_at',
+                ]),
         ]);
     }
 

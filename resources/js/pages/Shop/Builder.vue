@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ProductCard from '@/components/shop/ProductCard.vue';
+import ProductCard from '@/components/shop/products/ProductCard.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Card from '@/components/ui/card/Card.vue';
 import Input from '@/components/ui/input/Input.vue';
@@ -64,15 +64,16 @@ const handleSubmit = async () => {
                 </div>
                 <div v-else-if="isSubmitting">
                     Generating your build...
+                    <img class="rounded-lg object-cover w-full h-96" src="/images/053.jpg" alt="PC Build" />
                 </div>
-                <div v-else-if="aiBuild" class="flex h-full flex-col gap-4">
+                <div v-if="aiBuild" class="flex h-full flex-col gap-4">
                     <Card class="rounded-xl border bg-slate-50 p-4">
                         <p class="text-xs uppercase tracking-wide text-slate-500">Build Summary</p>
                         <p class="mt-1 text-lg font-semibold text-slate-900">
-                            Total: {{ formatCurrency(aiBuild.total_price) }}
+                            Total: {{ formatCurrency(toNumber(aiBuild?.total_price)) }}
                         </p>
                         <p class="mt-2 text-sm leading-relaxed text-slate-700">
-                            {{ aiBuild.explanation || 'No explanation returned by AI.' }}
+                            {{ aiBuild?.explanation || 'No explanation returned by AI.' }}
                         </p>
                     </Card>
                     <div class="grid max-h-[45vh] grid-cols-1 gap-3 overflow-y-auto pr-1 md:grid-cols-4">
@@ -81,12 +82,17 @@ const handleSubmit = async () => {
                             :key="product.id"
                             class="flex flex-col rounded-xl border border-slate-200 p-4 shadow-sm"
                         >
-                            <ProductCard :product="{
+                            <ProductCard  :product="{
                                 id: product.id,
                                 name: product.name,
                                 price: toNumber(product.price),
                                 image_url: product.image_url,
                                 specs: product.specs,
+                                description: product.description ?? '',
+                                category_id: product.category_id ?? 0,
+                                stock: product.stock ?? 0,
+                                is_active: product.is_active ?? true,
+                                category: product.category ?? '',
                             }" />
                         </Card>
                     </div>

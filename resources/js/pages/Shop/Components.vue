@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue';
-import ProductCard from "@/components/shop/ProductCard.vue";
+import ProductCard from "@/components/shop/products/ProductCard.vue";
 import { ChevronDown } from "lucide-vue-next";
-import SearchBar from '@/components/shop/SearchBar.vue';
+import SearchBar from '@/components/shop/layout/SearchBar.vue';
 import Layout from '@/layouts/MainLayout.vue';
 import {
     Pagination,
@@ -66,7 +66,7 @@ onMounted(() => {
     });
 });
 
-const PER_PAGE = 15;
+const PER_PAGE = 16;
 const currentPage = ref<number>(1);
 
 // Updated to filter by both search query AND selected categories

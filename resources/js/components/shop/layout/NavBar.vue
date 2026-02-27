@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import {
-    ShoppingCart,
     CircleUserRound,
     Crown,
-    Menu, 
+    Menu,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { Button } from '@/components/ui/button';
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -20,21 +23,10 @@ import {
     SheetTrigger,
     SheetClose,
 } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
-import { Category } from '@/types/product';
-import { useCart } from '@/composables/useCart';
-import PopoverContent from '../ui/popover/PopoverContent.vue';
-import Popover from '../ui/popover/Popover.vue';
-import PopoverTrigger from '../ui/popover/PopoverTrigger.vue';
-import TotalCard from './TotalCard.vue';
+import type { Category } from '@/types/product';
 
 const page = usePage();
 const categories = computed(() => page.props.categories as Category[]);
-const { totalItems, items } = useCart();
 </script>
 
 <template>
@@ -43,18 +35,18 @@ const { totalItems, items } = useCart();
     >
         <div class="flex h-16 items-center justify-between px-4 md:px-16">
             <div class="flex items-center font-bold">
-                <Crown class="mr-2 h-6 w-6" />
-                <Link href="/" class="text-lg">King's PC</Link>
+                <Crown class="mr-1 h-6 w-6" />
+                <Link href="/" class="md:text-sm lg:text-xl">King's PC</Link>
             </div>
 
-            <NavigationMenu :viewport="false" class="ml-auto hidden md:flex">
+            <NavigationMenu :viewport="false" class="ml-auto hidden lg:grid">
                 <NavigationMenuList>
                     <NavigationMenuItem>
                         <NavigationMenuLink
                             as-child
                             :class="navigationMenuTriggerStyle()"
                         >
-                            <Link href="/">Home</Link>
+                            <Link href="/" >Home</Link>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 
@@ -74,7 +66,7 @@ const { totalItems, items } = useCart();
                                 :class="navigationMenuTriggerStyle()"
                             >
                                 <Link href="/components" :only="['products']"
-                                    >Components</Link
+                                    >Products</Link
                                 >
                             </NavigationMenuLink>
                         </NavigationMenuTrigger>
@@ -115,26 +107,6 @@ const { totalItems, items } = useCart();
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 
-                    <NavigationMenuItem v-if="page.props.auth && page.props.auth.user">
-                        <Popover>
-                            <PopoverTrigger as-child>
-                                <Button variant="ghost" class="relative p-2 cursor-pointer">
-                                    <ShoppingCart class="h-5 w-5" />
-                                    <Badge v-if="totalItems > 0" variant="destructive" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full p-0 text-[10px]">
-                                        {{ totalItems }}
-                                    </Badge>
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                                <div class="mb-2">
-                                <TotalCard :items="items" />
-                                </div>
-                                <Link href="/cart" class=" *:">
-                                    <Button class="w-full">View Cart & Checkout</Button>
-                                </Link>
-                            </PopoverContent>
-                        </Popover>
-                        </NavigationMenuItem>
 
                     <NavigationMenuItem>
                         <NavigationMenuLink
@@ -149,18 +121,7 @@ const { totalItems, items } = useCart();
                 </NavigationMenuList>
             </NavigationMenu>
 
-            <div class="flex items-center gap-4 md:hidden">
-                <Link href="/cart" :only="['cart']" class="relative">
-                    <ShoppingCart class="h-6 w-6" />
-                    <Badge
-                        v-if="totalItems > 0"
-                        variant="destructive"
-                        class="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full p-0 text-[10px]"
-                    >
-                        {{totalItems}}
-                    </Badge>
-                </Link>
-
+            <div class="flex items-center gap-4 lg:hidden">
                 <Sheet>
                     <SheetTrigger as-child>
                         <Button
@@ -179,8 +140,16 @@ const { totalItems, items } = useCart();
                             <SheetClose as-child>
                                 <Link
                                     href="/"
-                                    class="rounded-md px-2 py-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
+                                    class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
                                     >Home</Link
+                                >
+                            </SheetClose>
+
+                            <SheetClose as-child>
+                                <Link
+                                    href="/builder"
+                                    class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
+                                    >AI Builder</Link
                                 >
                             </SheetClose>
 
@@ -188,7 +157,7 @@ const { totalItems, items } = useCart();
                                 <SheetClose as-child>
                                     <Link
                                         href="/components"
-                                        class="rounded-md px-2 py-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
+                                        class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
                                         >Components</Link
                                     >
                                 </SheetClose>
@@ -203,7 +172,7 @@ const { totalItems, items } = useCart();
                                     >
                                         <Link
                                             :href="'/' + category.slug"
-                                            class="rounded-md px-2 py-1 text-sm text-muted-foreground transition hover:bg-accent hover:text-primary"
+                                            class="rounded-md p-1 text-sm text-muted-foreground transition hover:bg-accent hover:text-primary"
                                         >
                                             {{ category.name.toUpperCase() }}
                                         </Link>
@@ -214,7 +183,7 @@ const { totalItems, items } = useCart();
                             <SheetClose as-child>
                                 <Link
                                     href="/contacts"
-                                    class="rounded-md px-2 py-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
+                                    class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
                                     >Contact Us</Link
                                 >
                             </SheetClose>
@@ -222,7 +191,7 @@ const { totalItems, items } = useCart();
                             <SheetClose as-child>
                                 <Link
                                     href="/login"
-                                    class="flex items-center gap-2 rounded-md border-t px-2 py-1 pt-2 text-lg font-medium transition hover:bg-accent hover:text-primary"
+                                    class="flex items-center gap-2 rounded-md border-t p-1 pt-2 text-lg font-medium transition hover:bg-accent hover:text-primary"
                                 >
                                     <CircleUserRound class="h-5 w-5" /> Login /
                                     Register
