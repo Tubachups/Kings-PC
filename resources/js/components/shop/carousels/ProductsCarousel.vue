@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import {
     Carousel,
@@ -8,6 +7,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '@/components/ui/carousel';
+import { cn } from '@/lib/utils';
 
 interface Props {
     class?: string;

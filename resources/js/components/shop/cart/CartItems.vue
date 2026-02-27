@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { Minus, Plus, ShoppingCart, Trash2Icon } from 'lucide-vue-next';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/composables/useCart';
 import type { CartItem } from '@/types/cart';
 import { formatCurrency } from '@/utils/helpers';
-import { Minus, Plus, ShoppingCart, Trash2Icon } from 'lucide-vue-next';
 
 const { deleteCartItem, updateQuantity, items } = useCart();
 

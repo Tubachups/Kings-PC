@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { X } from 'lucide-vue-next'
+import { computed} from 'vue'
 import { Button } from '@/components/ui/button'
 import { useCart } from '@/composables/useCart'
 import { formatCurrency } from '@/utils/helpers'
@@ -10,8 +10,7 @@ const props = defineProps<{
   couponDiscount: number
 }>()
 
-const { items, subTotal, deleteCartItem, updateQuantity } = useCart()
-const couponCode = ref('')
+const { items, subTotal, deleteCartItem } = useCart()
 
 const reviewTotal = computed(() => subTotal.value + props.shippingFee - props.couponDiscount)
 

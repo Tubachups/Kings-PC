@@ -1,24 +1,26 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { toast } from 'vue-sonner';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { Button } from '@/components/ui/button';
-import DataTable from '@/components/ui/data-table/DataTable.vue';
-import { h, ref } from 'vue';
 import type { ColumnDef } from '@tanstack/vue-table';
-import { ArrowUpDown, RotateCcw, Trash2 } from 'lucide-vue-next';
-import { dashboard } from '@/routes';
+import { RotateCcw, Trash2 } from 'lucide-vue-next';
+import { h, ref } from 'vue';
+import { toast } from 'vue-sonner';
+
 import {
     index as productsIndex,
     archived as productsArchived,
     restore as productsRestore,
     forceDelete as productsForceDelete,
 } from '@/actions/App/Http/Controllers/Admin/ProductController';
-import type { Product } from '@/types/product';
-import { formatCurrency, formatSortableHeader, toggleProductSelection } from '@/utils/helpers';
-import type { ProductTableProps } from '@/types/product-table';
+import { Button } from '@/components/ui/button';
+import DataTable from '@/components/ui/data-table/DataTable.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { dashboard } from '@/routes';
 
-const props = defineProps<ProductTableProps>();
+import type { Product } from '@/types/product';
+import type { ProductTableProps } from '@/types/product-table';
+import { formatCurrency, formatSortableHeader, toggleProductSelection } from '@/utils/helpers';
+
+defineProps<ProductTableProps>();
 
 const selectedProducts = ref<Set<number>>(new Set());
 

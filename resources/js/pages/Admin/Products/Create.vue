@@ -1,14 +1,15 @@
 <script setup lang="ts">
+
 import { Head, useForm } from '@inertiajs/vue3';
+import { computed,  watch } from 'vue';
 import { toast } from 'vue-sonner';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { computed } from 'vue';
-import { dashboard } from '@/routes';
+
 import { index as productsIndex, create as productsCreate, store as productsStore } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import {
     Select,
     SelectContent,
@@ -16,17 +17,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import InputError from '@/components/InputError.vue';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ref, watch } from 'vue';
-import type { Category } from '@/types/product'
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { dashboard } from '@/routes';
+import type { Category } from '@/types/product';
 import { specsTemplates, specsCategoryNames } from '@/utils/specsTemplates';
 
 interface Props {
     categories: Category[];
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const form = useForm({
     name: '',
@@ -124,10 +125,8 @@ watch(() => form.category_id, (newCategoryId) => {
                                 <SelectContent>
                                     <SelectItem
                                         v-for="category in categories"
-                                        v-bind="{
-                                            key: category.id,
-                                            value: category.id.toString(),
-                                        }"
+                                        :key="category.id"
+                                        :value="category.id.toString()"
                                     >
                                         {{ category.name }}
                                     </SelectItem>

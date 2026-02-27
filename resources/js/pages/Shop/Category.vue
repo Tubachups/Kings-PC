@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue';
-import ProductCard from '@/components/shop/products/ProductCard.vue';
-import SearchBar from '@/components/shop/layout/SearchBar.vue';
-import Layout from '@/layouts/MainLayout.vue';
 import { router } from '@inertiajs/vue3';
+import { ref, computed, watch, onMounted } from 'vue';
+import SearchBar from '@/components/shop/layout/SearchBar.vue';
+import ProductCard from '@/components/shop/products/ProductCard.vue';
+import { Button } from '@/components/ui/button';
 import {
     Pagination,
     PaginationContent,
@@ -12,7 +12,8 @@ import {
     PaginationItem,
     PaginationLast,
 } from '@/components/ui/pagination';
-import { Button } from '@/components/ui/button';
+import Layout from '@/layouts/MainLayout.vue';
+
 
 defineOptions({ layout: Layout });
 

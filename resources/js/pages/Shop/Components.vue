@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, ref, computed, watch } from 'vue';
-import ProductCard from "@/components/shop/products/ProductCard.vue";
+import { router } from '@inertiajs/vue3';
 import { ChevronDown } from "lucide-vue-next";
+import { onMounted, ref, computed, watch } from 'vue';
 import SearchBar from '@/components/shop/layout/SearchBar.vue';
-import Layout from '@/layouts/MainLayout.vue';
+import ProductCard from "@/components/shop/products/ProductCard.vue";
+import { Button } from '@/components/ui/button';
 import {
     Pagination,
     PaginationContent,
@@ -12,8 +13,7 @@ import {
     PaginationItem,
     PaginationLast,
 } from '@/components/ui/pagination';
-import { Button } from '@/components/ui/button';
-import { router } from '@inertiajs/vue3';
+import Layout from '@/layouts/MainLayout.vue';
 
 defineOptions({ layout: Layout });
 
@@ -152,7 +152,7 @@ const handlePageChange = (page: number): void => {
                         :key="`skeleton-${i}`"
                         class="border rounded-lg p-4 shadow-sm h-full flex flex-col"
                     >
-                        <ProductCard isLoading />
+                        <ProductCard  isLoading />
                     </div>
                 </template>
 
@@ -166,7 +166,7 @@ const handlePageChange = (page: number): void => {
                         :key="product.id"
                         class="border rounded-lg p-4 shadow-sm hover:shadow-md transition h-full flex flex-col"
                     >
-                        <ProductCard :product="product" />
+                        <ProductCard :product="product" :is-loading="false" />
                     </div>
                 </template>
 

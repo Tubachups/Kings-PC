@@ -1,21 +1,19 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
 import { router } from "@inertiajs/vue3"
 import { toTypedSchema } from '@vee-validate/zod'
-import * as z from 'zod'
+import { Check, Circle, Dot } from 'lucide-vue-next'
+import { ref, computed } from 'vue'
 import { toast } from 'vue-sonner'
-import { useCart } from '@/composables/useCart'
-import { steps } from '@/constants/constants'
-
-// Import UI and new Child Components
+import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { Stepper, StepperItem, StepperSeparator, StepperTitle, StepperTrigger } from '@/components/ui/stepper'
-import { Check, Circle, Dot } from 'lucide-vue-next'
+import { useCart } from '@/composables/useCart'
+import { steps } from '@/constants/constants'
 
-import CheckoutStepShipping from './CheckoutStepShipping.vue'
-import CheckoutStepReview from './CheckoutStepReview.vue'
 import CheckoutStepPayment from './CheckoutStepPayment.vue'
+import CheckoutStepReview from './CheckoutStepReview.vue'
+import CheckoutStepShipping from './CheckoutStepShipping.vue'
 
 const props = defineProps<{ shippingFee?: number }>()
 const checkoutShippingFee = computed(() => props.shippingFee ?? 150)

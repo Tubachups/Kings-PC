@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { dashboard, shop } from '@/routes';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Package, ShoppingCart, Users, Settings, Plus, LayoutGrid } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { index as productsIndex, create as productsCreate } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { dashboard, shop } from '@/routes';
+import { type BreadcrumbItem } from '@/types';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);

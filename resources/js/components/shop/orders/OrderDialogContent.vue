@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import DialogContent from '@/components/ui/dialog/DialogContent.vue';
 import { formatCurrency, formatAddress } from '@/utils/helpers';
 
-const props = defineProps<{
+defineProps<{
     isLoading: boolean
     selectedOrder?: any
 }>();

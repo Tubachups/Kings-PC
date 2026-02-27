@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Quote } from 'lucide-vue-next'
 import { onMounted, ref } from 'vue'
 import { index as reviewsIndex } from '@/actions/App/Http/Controllers/ReviewController'
+import { Card, CardContent } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 
 interface Props {
     class?: string
