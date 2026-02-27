@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import axios from 'axios';
+import { reactive, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import ProductCard from '@/components/shop/products/ProductCard.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Card from '@/components/ui/card/Card.vue';
 import Input from '@/components/ui/input/Input.vue';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
 import Layout from '@/layouts/MainLayout.vue';
-import { AiBuildResponse } from '@/types/ai';
-import axios from 'axios';
-import { reactive, ref } from 'vue';
-import { toast } from 'vue-sonner';
+import type { AiBuildResponse } from '@/types/ai';
 import { formatCurrency } from '@/utils/helpers';
 
 defineOptions({ layout: Layout });

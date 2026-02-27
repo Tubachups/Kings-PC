@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Card, CardContent } from '@/components/ui/card';
 import Autoplay from 'embla-carousel-autoplay';
+import { Card, CardContent } from '@/components/ui/card';
 import {
     Carousel,
     CarouselContent,

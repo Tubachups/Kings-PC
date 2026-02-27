@@ -1,25 +1,15 @@
 <script setup lang="ts">
+
 import { Head, useForm } from '@inertiajs/vue3';
+import { computed, watch } from 'vue';
 import { toast } from 'vue-sonner';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { dashboard } from '@/routes';
 import {
-    index as productsIndex,
     edit as productsEdit,
+    index as productsIndex,
     update as productsUpdate,
 } from '@/actions/App/Http/Controllers/Admin/ProductController';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
 import InputError from '@/components/InputError.vue';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -27,8 +17,19 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { dashboard } from '@/routes';
 import type { Category, Product } from '@/types/product';
-import {  watch, computed } from 'vue';
 import { specsTemplates } from '@/utils/specsTemplates';
 
 
@@ -44,7 +45,7 @@ const form = useForm({
     category_id: props.product.category_id.toString(),
     price: props.product.price.toString(),
     stock: props.product.stock.toString(),
-    image: props.product.image || '',
+    image: props.product.image_url || '',
     specs: JSON.stringify(props.product.specs || {}, null, 2),
     is_active: props.product.is_active,
 });
@@ -137,13 +138,9 @@ const breadcrumbs = [
                                 <SelectContent>
                                     <SelectItem
                                         v-for="category in categories"
-                                        v-bind="{
-                                            key: category.id,
-                                            value: category.id.toString(),
-                                        }"
-                                    >
-                                        {{ category.name }}
-                                    </SelectItem>
+                                            :key="category.id"
+                                            :value="category.id.toString()"
+                                        >{{ category.name }}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <InputError :message="form.errors.category_id" />

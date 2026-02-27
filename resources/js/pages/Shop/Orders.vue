@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import { router } from '@inertiajs/vue3'
-import Dialog from '@/components/ui/dialog/Dialog.vue';
+import { ref } from 'vue';
 import OrderDialogContent from '@/components/shop/orders/OrderDialogContent.vue';
 import OrdersTable from '@/components/shop/orders/OrdersTable.vue';
+import Dialog from '@/components/ui/dialog/Dialog.vue';
 import Layout from '@/layouts/MainLayout.vue';
 defineOptions({ layout: Layout });
 
-const props = defineProps<{
+defineProps<{
     orders: Array<any>
     selectedOrder?: any
 }>();

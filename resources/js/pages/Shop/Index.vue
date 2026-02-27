@@ -1,30 +1,20 @@
 <script setup lang="ts">
+import { Link } from '@inertiajs/vue3'
 import { ref } from 'vue';
 import BannerCarousel from '@/components/shop/carousels/BannerCarousel.vue';
-import ReviewsCarousel from '@/components/shop/carousels/ReviewsCarousel.vue';
 import ComponentsCarousel from '@/components/shop/carousels/ComponentsCarousel.vue';
+import ReviewsCarousel from '@/components/shop/carousels/ReviewsCarousel.vue';
 import Layout from '@/layouts/MainLayout.vue';
-import { Link } from '@inertiajs/vue3'
 import { builds as buildsRoute } from '@/routes';
+import type { Build } from '@/types/build';
 import { formatPrice } from '@/utils/helpers';
 
 defineOptions({ layout: Layout });
 
-const props = defineProps<{
-    topBuilds: Array<{
-        id: number
-        text: string
-        image_preview_1?: string
-        image_preview_2?: string
-        image_preview_3?: string
-        image_preview_4?: string
-        likes?: number
-        created_at: string
-    }>
+defineProps<{
+    topBuilds: Build[];
 }>()
 
-
-const searchQuery = ref<string>("");
 
 function extractPrice(text: string): number | null {
     const match = text.match(/[Uu]nit\s+[Pp]rice[:\s]+([0-9,\.]+\s*k?)/);

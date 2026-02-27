@@ -1,21 +1,16 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
+import {usePage, Link} from '@inertiajs/vue3'
 import Autoplay from 'embla-carousel-autoplay';
-import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from '@/components/ui/carousel';
-import {usePage} from '@inertiajs/vue3'
 import {computed} from 'vue'
-import { Link } from '@inertiajs/vue3'
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 
-interface Props {
-    class?: string;
-}
 
 interface Category {
     id: number;
@@ -27,7 +22,6 @@ interface Category {
 const page = usePage<{categories: Category[]}>();
 const categories = computed(() => page.props.categories);
 
-const props = defineProps<Props>();
 const images = [
   'https://cdn.britannica.com/64/170564-050-7A0A86A2/motherboard-for-computer.jpg',
   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTnIjYBVGPZG4cPXqcexrS18prvUg45Dl2hgw&s',

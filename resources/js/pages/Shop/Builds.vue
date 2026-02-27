@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { InfiniteScroll, router } from '@inertiajs/vue3';
+import { useDebounceFn } from '@vueuse/core';
+import { computed, ref, watch } from 'vue';
 import Card from '@/components/ui/card/Card.vue';
 import {
     Carousel,
@@ -19,13 +22,10 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import Slider from '@/components/ui/slider/Slider.vue';
-import Layout from '@/layouts/MainLayout.vue';
-import { InfiniteScroll, router } from '@inertiajs/vue3';
-import { builds as buildsRoute } from '@/routes';
-import { useDebounceFn } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
-import type { Build, ParsedBuild, PartCategory } from '@/types/build';
 import { PART_CATEGORIES, SORT_OPTIONS } from '@/constants/constants';
+import Layout from '@/layouts/MainLayout.vue';
+import { builds as buildsRoute } from '@/routes';
+import type { Build, ParsedBuild, PartCategory } from '@/types/build';
 import { formatDate, formatPrice } from '@/utils/helpers';
 
 defineOptions({ layout: Layout });

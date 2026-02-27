@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { Skeleton } from '@/components/ui/skeleton';
-import { useCart } from '@/composables/useCart';
-import { Product } from '@/types/product';
 import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useCart } from '@/composables/useCart';
+import type { Product } from '@/types/product';
 import { getFilteredImageUrl } from '@/utils/helpers';
 
 const { handleAddToCart } = useCart();

@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { toast } from 'vue-sonner';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { Button } from '@/components/ui/button';
-import DataTable from '@/components/ui/data-table/DataTable.vue';
-import { h, ref } from 'vue';
 import type { ColumnDef } from '@tanstack/vue-table';
+import {  Pencil, Plus, Archive } from 'lucide-vue-next';
 import type { AcceptableValue } from 'reka-ui';
-import { ArrowUpDown, Pencil, Trash2, Plus, Archive } from 'lucide-vue-next';
-import { dashboard } from '@/routes';
+import { h, ref } from 'vue';
+import { toast } from 'vue-sonner';
 import {
     index as productsIndex,
     create as productsCreate,
@@ -17,6 +13,8 @@ import {
     updateStatus as productsUpdateStatus,
     archived as productsArchived,
 } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import { Button } from '@/components/ui/button';
+import DataTable from '@/components/ui/data-table/DataTable.vue';
 import {
     Select,
     SelectContent,
@@ -24,11 +22,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { dashboard } from '@/routes';
 import type { Product } from '@/types/product';
-import { formatCurrency, formatSortableHeader, toggleProductSelection } from '@/utils/helpers';
 import type { ProductTableProps } from '@/types/product-table';
+import { formatCurrency, formatSortableHeader, toggleProductSelection } from '@/utils/helpers';
 
-const props = defineProps<ProductTableProps>();
+defineProps<ProductTableProps>();
 
 const selectedProducts = ref<Set<number>>(new Set());
 
@@ -86,7 +86,6 @@ function bulkUpdateStatus(is_active: boolean) {
     const ids = Array.from(selectedProducts.value);
     if (ids.length === 0) return;
 
-    const status = is_active ? 'activate' : 'inactivate';
     const statusLabel = is_active ? 'Activate' : 'Inactivate';
 
     router.post(

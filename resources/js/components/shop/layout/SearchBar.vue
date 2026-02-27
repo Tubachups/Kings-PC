@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref } from 'vue';
 import {Delete} from "lucide-vue-next";
 
 const model = defineModel<string>();

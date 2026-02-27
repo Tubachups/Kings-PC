@@ -1,4 +1,4 @@
-import { PART_CATEGORIES} from '@/constants/constants';
+import type { PART_CATEGORIES} from '@/constants/constants';
 
 export interface Build {
     id: number;
