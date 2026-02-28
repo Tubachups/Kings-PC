@@ -12,7 +12,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::middleware(['auth', 'verified', 'is_admin'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
     // Dashboard Route
     Route::get('/dashboard', function () {
@@ -24,7 +24,8 @@ Route::middleware(['auth', 'verified', 'is_admin'])->group(function () {
     })->name('dashboard');
 
     // Admin Routes
-    Route::prefix('admin')
+    Route::middleware('is_admin')
+        ->prefix('admin')
         ->name('admin.')
         ->group(function () {
 
