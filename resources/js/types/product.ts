@@ -5,10 +5,11 @@ export interface Product {
     category_id: number;
     price: number;
     stock: number;
-    image: string | null;
+    image_url: string;
     is_active: boolean;
-    category?: Category;
+    category: Category;
     specs?: Record<string, any>;
+    deleted_at?: string | null;
 }
 
 export interface Category {

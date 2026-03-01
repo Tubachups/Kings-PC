@@ -23,4 +23,15 @@ class OrderItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public static function createOrderItem($order_id, $item)
+    {
+        return self::create([
+                    'order_id'      => $order_id,
+                    'product_id'    => $item['product']['id'],
+                    'unit_price'    => $item['product']['price'],
+                    'quantity'      => $item['quantity'],
+                    'variant'       => null,
+                ]);
+    }
 }

@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CartItem extends Model
 {
@@ -59,5 +60,16 @@ class CartItem extends Model
         return self::where('user_id', $user_id)
                     ->where('product_id', $product_id)
                     ->delete();
+    }
+
+    public static function clearCart($user_id)
+    {
+        return self::where('user_id', $user_id)
+                    ->delete();
+    }
+
+    public static function getUserCart(){
+        return self::where('user_id', Auth::id())
+                    ->get();
     }
 }
