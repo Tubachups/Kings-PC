@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Label } from '@/components/ui/label'
 import {
   NumberField,
   NumberFieldContent,
@@ -7,45 +6,33 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field'
-import { ref, watch } from 'vue';
+import { Label } from '@/components/ui/label'
+import { watch } from 'vue';
 import { debounce } from 'lodash';
-import { router } from '@inertiajs/vue3';
-import { toast } from 'vue-sonner';
+import { useCart } from '@/composables/useCart';
+import { CartItem } from '@/types/cart';
 
 const props = defineProps<{
-    productId: number;
+    item: CartItem;
 }>();
-const model = defineModel<number>({default: 1});
+
+const { updateQuantity } = useCart()
 
 const syncWithServer = debounce((newQty: number) => {
     if (!newQty || newQty < 1) return;
     
-    router.put(`/cart/${props.productId}`, { 
-        quantity: newQty 
-    }, {
-        preserveScroll: true,
-        showProgress: false,
-        only: ['cart', 'cart_items'],
-        onSuccess: () => {
-            toast.success("Cart Updated", {
-                description: `Item quantity updated.`,
-            });
-        }
-
-    });
+    updateQuantity(props.item.product, newQty);
 }, 500);
 
-
-watch(model, (newVal, oldVal) => {
+watch(() => props.item.quantity, (newVal, oldVal) => {
     if (newVal === oldVal) return; 
     syncWithServer(newVal);
 });
 
-
 </script>
 
 <template>
-  <NumberField id="qty" v-model="model" :min="1">
+  <NumberField id="qty" v-model="props.item.quantity" :min="1">
     <Label for="qty"></Label>
     <NumberFieldContent>
       <NumberFieldDecrement />

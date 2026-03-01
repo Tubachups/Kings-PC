@@ -1,113 +1,162 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import AppLayout from '@/layouts/AppLayout.vue';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import DataTable from '@/components/ui/data-table/DataTable.vue';
-import { h } from 'vue';
 import type { ColumnDef } from '@tanstack/vue-table';
-import { ArrowUpDown, Pencil, Trash2, Plus } from 'lucide-vue-next';
+import {  Pencil, Plus, Archive } from 'lucide-vue-next';
+import type { AcceptableValue } from 'reka-ui';
+import { h, ref } from 'vue';
+import { toast } from 'vue-sonner';
+import {
+    index as productsIndex,
+    create as productsCreate,
+    edit as productsEdit,
+    destroy as productsDestroy,
+    updateStatus as productsUpdateStatus,
+    archived as productsArchived,
+} from '@/actions/App/Http/Controllers/Admin/ProductController';
+import { Button } from '@/components/ui/button';
+import DataTable from '@/components/ui/data-table/DataTable.vue';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import { index as productsIndex, create as productsCreate, edit as productsEdit, destroy as productsDestroy } from '@/actions/App/Http/Controllers/Admin/ProductController';
-import type { Category, Product } from '@/types/product'
+import type { Product } from '@/types/product';
+import type { ProductTableProps } from '@/types/product-table';
+import { formatCurrency, formatSortableHeader, toggleProductSelection } from '@/utils/helpers';
 
-interface Props {
-    products: {
-        data: Product[];
-    };
-    categories: Array<Category>;
-    filters: {
-        search?: string;
-        category?: number;
-    };
+defineProps<ProductTableProps>();
+
+const selectedProducts = ref<Set<number>>(new Set());
+
+
+function updateProductStatus(product: Product, value: AcceptableValue) {
+    router.patch(
+        productsUpdateStatus(product.id).url,
+        { is_active: String(value) === '1' },
+        { preserveScroll: true },
+    );
 }
 
-const props = defineProps<Props>();
+function deleteProduct(product: Product) {
+    toast(`Archive "${product.name}"?`, {
+        description: 'You can restore it later from Archived Products.',
+        cancel: {
+            label: 'Archive',
+            onClick: () => router.delete(productsDestroy(product.id).url),
+        },
+        action: {
+            label: 'Cancel',
+        },
+    });
+}
+
+
+function bulkArchive() {
+    const ids = Array.from(selectedProducts.value);
+    if (ids.length === 0) return;
+
+    toast(`Archive ${ids.length} product(s)?`, {
+        description: 'You can restore them later from Archived Products.',
+        cancel: {
+            label: 'Archive',
+            onClick: () => {
+                router.post(
+                    '/admin/products/bulk-archive',
+                    { ids },
+                    {
+                        onSuccess: () => {
+                            selectedProducts.value.clear();
+                            toast.success(`${ids.length} product(s) archived successfully!`);
+                        },
+                    },
+                );
+            },
+        },
+        action: {
+            label: 'Cancel',
+        },
+    });
+}
+
+function bulkUpdateStatus(is_active: boolean) {
+    const ids = Array.from(selectedProducts.value);
+    if (ids.length === 0) return;
+
+    const statusLabel = is_active ? 'Activate' : 'Inactivate';
+
+    router.post(
+        '/admin/products/bulk-update-status',
+        { ids, is_active },
+        {
+            onSuccess: () => {
+                selectedProducts.value.clear();
+                toast.success(`${ids.length} product(s) ${statusLabel.toLowerCase()}d successfully!`);
+            },
+        },
+    );
+}
 
 const columns: ColumnDef<Product>[] = [
     {
+        id: 'select',
+        header: 'Select',
+        cell: ({ row }) =>
+            h('input', {
+                type: 'checkbox',
+                checked: selectedProducts.value.has(row.original.id),
+                onChange: () => toggleProductSelection(selectedProducts.value, row.original),
+                class: 'cursor-pointer',
+            }),
+    },
+    {
         accessorKey: 'name',
-        header: ({ column }) => {
-            return h(
-                Button,
-                {
-                    variant: 'ghost',
-                    onClick: () =>
-                        column.toggleSorting(column.getIsSorted() === 'asc'),
-                },
-                () => ['Name', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })]
-            );
-        },
-        cell: ({ row }) => {
-            return h('div', { class: 'font-medium' }, row.getValue('name'));
-        },
+        header: formatSortableHeader('Name'),
+        cell: ({ row }) => h('div', { class: 'font-medium' }, row.getValue('name')),
     },
     {
         accessorKey: 'category.name',
         header: 'Category',
-        cell: ({ row }) => {
-            return h(
-                'div',
-                { class: 'text-sm' },
-                row.original.category?.name || 'N/A'
-            );
-        },
+        cell: ({ row }) => h('div', { class: 'text-sm' }, row.original.category?.name || 'N/A'),
     },
     {
         accessorKey: 'price',
-        header: ({ column }) => {
-            return h(
-                Button,
-                {
-                    variant: 'ghost',
-                    onClick: () =>
-                        column.toggleSorting(column.getIsSorted() === 'asc'),
-                },
-                () => ['Price', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })]
-            );
-        },
-        cell: ({ row }) => {
-            const price = parseFloat(row.getValue('price'));
-            const formatted = new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'PHP',
-            }).format(price);
-            return h('div', { class: 'font-medium' }, formatted);
-        },
+        header: formatSortableHeader('Price'),
+        cell: ({ row }) =>
+            h('div', { class: 'font-medium' }, formatCurrency(row.getValue('price'))),
     },
     {
         accessorKey: 'stock',
-        header: ({ column }) => {
-            return h(
-                Button,
-                {
-                    variant: 'ghost',
-                    onClick: () =>
-                        column.toggleSorting(column.getIsSorted() === 'asc'),
-                },
-                () => ['Stock', h(ArrowUpDown, { class: 'ml-2 h-4 w-4' })]
-            );
-        },
+        header: formatSortableHeader('Stock'),
         cell: ({ row }) => {
             const stock = parseInt(row.getValue('stock'));
-            return h(
-                'div',
-                { class: stock < 10 ? 'text-destructive font-medium' : '' },
-                stock.toString()
-            );
+            return h('div', { class: stock < 10 ? 'text-destructive font-medium' : '' }, stock.toString());
         },
     },
     {
         accessorKey: 'is_active',
         header: 'Status',
         cell: ({ row }) => {
-            const isActive = row.getValue('is_active');
+            const product = row.original;
+
             return h(
-                Badge,
+                Select,
                 {
-                    variant: isActive ? 'default' : 'secondary',
+                    modelValue: product.is_active ? '1' : '0',
+                    'onUpdate:modelValue': (value: AcceptableValue) => updateProductStatus(product, value),
                 },
-                () => (isActive ? 'Active' : 'Inactive')
+                {
+                    default: () => [
+                        h(SelectTrigger, { class: 'w-36' }, () => h(SelectValue, { placeholder: 'Status' })),
+                        h(SelectContent, {}, () => [
+                            h(SelectItem, { value: '1' }, () => 'Active'),
+                            h(SelectItem, { value: '0' }, () => 'Inactive'),
+                        ]),
+                    ],
+                },
             );
         },
     },
@@ -116,38 +165,23 @@ const columns: ColumnDef<Product>[] = [
         header: 'Actions',
         cell: ({ row }) => {
             const product = row.original;
+
             return h('div', { class: 'flex gap-2' }, [
-                h(
-                    Link,
-                    {
-                        href: productsEdit(product.id).url,
-                    },
-                    () =>
-                        h(
-                            Button,
-                            { variant: 'outline', size: 'sm' },
-                            () => [h(Pencil, { class: 'mr-2 h-4 w-4' }), 'Edit']
-                        )
+                h(Link, { href: productsEdit(product.id).url }, () =>
+                    h(Button, { variant: 'outline', size: 'sm' }, () => [
+                        h(Pencil, { class: 'mr-2 h-4 w-4' }),
+                        'Edit',
+                    ]),
                 ),
                 h(
                     Button,
-                    {
-                        variant: 'destructive',
-                        size: 'sm',
-                        onClick: () => deleteProduct(product),
-                    },
-                    () => [h(Trash2, { class: 'mr-2 h-4 w-4' }), 'Delete']
+                    { variant: 'destructive', size: 'sm', onClick: () => deleteProduct(product) },
+                    () => [h(Archive, { class: 'mr-2 h-4 w-4' }), 'Archive'],
                 ),
             ]);
         },
     },
 ];
-
-function deleteProduct(product: Product) {
-    if (confirm('Are you sure you want to delete this product?')) {
-        router.delete(productsDestroy(product.id).url);
-    }
-}
 
 const breadcrumbs = [
     { title: 'Dashboard', href: dashboard().url },
@@ -169,15 +203,47 @@ const breadcrumbs = [
                         Manage your PC parts inventory
                     </p>
                 </div>
-                <Link :href="productsCreate().url">
-                    <Button>
-                        <Plus class="mr-2 h-4 w-4" />
-                        Add Product
-                    </Button>
-                </Link>
+                <div class="flex gap-2">
+                    <template v-if="selectedProducts.size > 0">
+                        <Button @click="bulkUpdateStatus(true)" variant="outline" size="sm">
+                            Activate ({{ selectedProducts.size }})
+                        </Button>
+                        <Button @click="bulkUpdateStatus(false)" variant="outline" size="sm">
+                            Inactivate ({{ selectedProducts.size }})
+                        </Button>
+                        <Button @click="bulkArchive" variant="destructive">
+                            <Archive class="mr-2 h-4 w-4" />
+                            Archive ({{ selectedProducts.size }})
+                        </Button>
+                    </template>
+                    <Link :href="productsArchived().url">
+                        <Button variant="outline">
+                            <Archive class="mr-2 h-4 w-4" />
+                            Archived
+                        </Button>
+                    </Link>
+                    <Link :href="productsCreate().url">
+                        <Button>
+                            <Plus class="mr-2 h-4 w-4" />
+                            Add Product
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
-            <DataTable :columns="columns" :data="products.data" />
+            <DataTable
+                :columns="columns"
+                :data="products.data"
+                :meta="{
+                    current_page: products.current_page,
+                    last_page: products.last_page,
+                    per_page: products.per_page,
+                    total: products.total,
+                    from: products.from,
+                    to: products.to,
+                }"
+                :filters="filters"
+            />
         </div>
     </AppLayout>
 </template>

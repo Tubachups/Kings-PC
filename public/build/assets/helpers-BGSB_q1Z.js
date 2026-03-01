@@ -1,0 +1,1 @@
+const t=r=>new Intl.NumberFormat("en-US",{style:"currency",currency:"PHP"}).format(Number(r||0)),e=r=>r?[r.address,r.barangay,r.city,r.province,r.region].filter(Boolean).join(", "):"N/A",n=r=>r?r.startsWith("/storage")?r:r.replace(/^\/storage/,""):"";export{e as a,t as f,n as g};

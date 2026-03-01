@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->on('users')->cascadeOnDelete();
 
             $table->decimal('total', 10, 2)->default(0);
-
             // recommended extras
             $table->string('order_number')->unique();
             $table->string('status')->nullable();

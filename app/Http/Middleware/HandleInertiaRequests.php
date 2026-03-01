@@ -6,7 +6,6 @@ use App\Models\CartItem;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Inertia\Middleware;
 
@@ -54,7 +53,7 @@ class HandleInertiaRequests extends Middleware
             'categories' => cache()->remember('global_categories', 3600, function () {
                 return Category::select('id', 'name', 'slug')->get();
             }),
-            'cart' => function () {
+            'cart' => (function () {
                 if(!Auth::check()) return [];
 
                 $user_id = Auth::id();
@@ -78,7 +77,7 @@ class HandleInertiaRequests extends Middleware
                     ->filter()  
                     ->values()
                     ->toArray();
-            }
+            })
         ];
     }
 }
