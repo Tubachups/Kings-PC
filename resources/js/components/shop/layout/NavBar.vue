@@ -39,7 +39,7 @@ const categories = computed(() => page.props.categories as Category[]);
                 <Link href="/" class="md:text-sm lg:text-xl">King's PC</Link>
             </div>
 
-            <NavigationMenu :viewport="false" class="ml-auto hidden lg:grid">
+            <NavigationMenu :viewport="false" class="ml-auto hidden md:grid">
                 <NavigationMenuList>
                     <NavigationMenuItem>
                         <NavigationMenuLink
@@ -121,7 +121,7 @@ const categories = computed(() => page.props.categories as Category[]);
                 </NavigationMenuList>
             </NavigationMenu>
 
-            <div class="flex items-center gap-4 lg:hidden">
+            <div class="flex items-center gap-4 md:hidden">
                 <Sheet>
                     <SheetTrigger as-child>
                         <Button

@@ -21,6 +21,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import Skeleton from '@/components/ui/skeleton/Skeleton.vue';
 import Slider from '@/components/ui/slider/Slider.vue';
 import { PART_CATEGORIES, SORT_OPTIONS } from '@/constants/constants';
 import Layout from '@/layouts/MainLayout.vue';
@@ -76,10 +77,23 @@ watch(priceRange, (range) => navigateWithPrice(range));
 
 const lightboxOpen = ref(false);
 const lightboxImage = ref<string | null>(null);
+const loadedImages = ref<Record<string, boolean>>({});
 
 function openLightbox(image: string): void {
     lightboxImage.value = image;
     lightboxOpen.value = true;
+}
+
+function getImageKey(buildId: number | string, index: number): string {
+    return `${buildId}-${index}`;
+}
+
+function isImageLoaded(buildId: number | string, index: number): boolean {
+    return Boolean(loadedImages.value[getImageKey(buildId, index)]);
+}
+
+function markImageLoaded(buildId: number | string, index: number): void {
+    loadedImages.value[getImageKey(buildId, index)] = true;
 }
 
 
@@ -223,7 +237,7 @@ const enrichedBuilds = computed(() =>
         </div>
 
         <InfiniteScroll data="builds" :buffer="300" manual preserve-url>
-            <div class="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 lg:gap-6">
+            <div class="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 lg:gap-6">
                 <Card v-for="build in enrichedBuilds" :key="build.id" class="overflow-hidden p-3">
                     <!-- Image Carousel -->
                     <Carousel v-if="build.images.length" class="w-full" :opts="{ loop: true }">
@@ -232,10 +246,15 @@ const enrichedBuilds = computed(() =>
                                 class="basis-full">
                                 <div class="relative h-56 md:h-72 w-full overflow-hidden rounded-md bg-muted cursor-zoom-in"
                                     @click="openLightbox(image)">
-                                    <img :src="image" aria-hidden="true"
-                                        class="absolute inset-0 h-full w-full scale-110 object-cover blur-lg opacity-30" />
-                                    <img :src="image" :alt="`Build ${build.id} image ${idx + 1}`"
-                                        class="relative z-10 h-full w-full object-contain" />
+                                    <Skeleton v-if="!isImageLoaded(build.id, idx)"
+                                        class="absolute inset-0 h-full w-full rounded-md" />
+                                    <img :src="image" aria-hidden="true" loading="lazy" decoding="async"
+                                        class="absolute inset-0 h-full w-full scale-110 object-cover blur-lg transition-opacity duration-300"
+                                        :class="isImageLoaded(build.id, idx) ? 'opacity-30' : 'opacity-0'" />
+                                    <img :src="image" :alt="`Build ${build.id} image ${idx + 1}`" loading="lazy"
+                                        decoding="async" class="relative z-10 h-full w-full object-contain transition-opacity duration-300"
+                                        :class="isImageLoaded(build.id, idx) ? 'opacity-100' : 'opacity-0'"
+                                        @load="markImageLoaded(build.id, idx)" @error="markImageLoaded(build.id, idx)" />
                                 </div>
                             </CarouselItem>
                         </CarouselContent>

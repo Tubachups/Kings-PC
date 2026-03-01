@@ -82,6 +82,7 @@ Route::controller(ShopController::class)->group(function () {
     Route::post('/builder/ai', 'generate')->name('builder.ai');
     // Route::get('/redis', 'redis');
     Route::get('/{category:slug}', 'showByCategory')->name('shop.category');
+    Route::get('/builds/{buildPost}/image/{slot}', 'buildImage')->whereNumber('slot')->name('builds.image');
 });
 
 require __DIR__.'/settings.php';
