@@ -13,21 +13,13 @@ import {
     PaginationLast,
 } from '@/components/ui/pagination';
 import Layout from '@/layouts/MainLayout.vue';
+import type { Product } from '@/types/product';
 
 
 defineOptions({ layout: Layout });
 
 const props = defineProps<{
-    products: Array<{
-        id: number;
-        name: string;
-        price: number;
-        specs: Record<string, string>;
-        image_url: string;
-        category: {
-            name: string;
-        };
-    }>;
+    products: Product[];
 }>();
 
 const PER_PAGE = 15;
@@ -94,7 +86,7 @@ const handlePageChange = (page: number): void => {
                     :key="product.id"
                     class="rounded-lg border p-4 shadow-sm transition hover:shadow-md"
                 >
-                    <ProductCard :product="product" />
+                    <ProductCard :product="product" :is-loading="false"/>
                 </div>
             </template>
             <div v-else class="col-span-full py-12 text-center text-gray-500">

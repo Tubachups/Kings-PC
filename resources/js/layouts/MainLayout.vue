@@ -10,18 +10,31 @@ import { useCartStore } from '@/stores/cartStore';
 import type { CartItem } from '@/types/cart';
 
 const page = usePage<any>();
-const cartStore = useCartStore()
+const cartStore = useCartStore();
+
+const hiddenStickyCartPaths = ['/checkout', '/payment', '/order/success'];
+
 const shouldShowStickyCart = computed(() => {
-    return !page.url.startsWith('/checkout');
+    const isAuthenticated = !!page.props.auth?.user;
+
+    if (!isAuthenticated) {
+        return false;
+    }
+
+    const currentPath = page.url.split('?')[0];
+
+    return !hiddenStickyCartPaths.some((path) => {
+        return currentPath === path || currentPath.startsWith(`${path}/`);
+    });
 });
 
-cartStore.setItems(page.props.cart as CartItem[])
+cartStore.setItems(page.props.cart as CartItem[]);
 
 watch(() => page.props.cart, (newCart) => {
     if (!cartStore.isSyncing) {
-        cartStore.setItems(newCart as CartItem[])
+        cartStore.setItems(newCart as CartItem[]);
     }
-}, { deep: true })
+}, { deep: true });
 
 watch(() => page.props.flash, (flash) => {
   if (flash?.success) {

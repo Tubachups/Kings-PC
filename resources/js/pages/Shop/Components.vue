@@ -14,26 +14,12 @@ import {
     PaginationLast,
 } from '@/components/ui/pagination';
 import Layout from '@/layouts/MainLayout.vue';
+import type { Product } from '@/types/product';
 
 defineOptions({ layout: Layout });
 
 const props = defineProps<{
-    products: Array<{
-        id: number
-        name: string
-        description: string
-        category_id: number
-        price: number
-        stock: number
-        specs: Record<string, string>
-        image_url: string
-        is_active: boolean
-        category: {
-            id: number
-            name: string
-            slug: string
-        }
-    }>
+    products: Product[];
 }>()
 
 const searchQuery = ref<string>("");

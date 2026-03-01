@@ -9,11 +9,13 @@ import { getFilteredImageUrl } from '@/utils/helpers';
 const { handleAddToCart } = useCart();
 const page = usePage();
 const { product, isLoading = false } = defineProps<{
-    product: Product;
-    isLoading: boolean;
+    product?: Product;
+    isLoading?: boolean;
 }>();
 
-const filteredImageUrl = computed(() => getFilteredImageUrl(product?.image_url));
+const filteredImageUrl = computed(() => 
+    product?.image_url ? getFilteredImageUrl(product.image_url) : ''
+);
 </script>
 
 <template>
