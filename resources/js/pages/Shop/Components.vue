@@ -88,14 +88,14 @@ const handlePageChange = (page: number): void => {
         <div class="flex flex-col md:flex-row gap-6">
 
             <aside class="w-40 hidden lg:block">
-                <div class="border rounded-lg shadow-sm bg-white overflow-hidden">
+                <div class="border rounded-lg shadow-sm bg-white dark:bg-neutral-950 overflow-hidden">
                     <button
                         @click="isCategoryOpen = !isCategoryOpen"
-                        class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+                        class="w-full flex justify-between items-center p-4 bg-gray-50 hover:bg-gray-100 transition-colors dark:bg-neutral-900 dark:hover:bg-neutral-800"
                     >
-                        <span class="font-semibold text-gray-700">Categories</span>
+                        <span class="font-semibold text-gray-700 dark:text-gray-300">Categories</span>
                         <ChevronDown
-                            class="w-5 h-5 text-gray-500 transition-transform duration-200"
+                            class="w-5 h-5 text-gray-500  transition-transform duration-200"
                             :class="{ 'rotate-180': isCategoryOpen }"
                         />
                     </button>
@@ -110,9 +110,9 @@ const handlePageChange = (page: number): void => {
                                 type="checkbox"
                                 :value="category.id"
                                 v-model="selectedCategories"
-                                class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                class="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 dark:border-gray-700 dark:bg-neutral-950 dark:text-blue-500"
                             />
-                            <span class="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">
+                            <span class="text-sm text-gray-600 dark:text-gray-300 group-hover:text-gray-900 transition-colors">
                                 {{ category.name }}
                             </span>
                         </label>
