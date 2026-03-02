@@ -1,98 +1,27 @@
 <?php
 
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Auth\SocialiteController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\OrdersController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\ShopController;
-use App\Models\Product;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified'])
+    ->group(base_path('routes/web/dashboard.php'));
 
-    // Dashboard Route
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard', [
-            'totalProducts' => Product::count(),
-            'lowStockCount' => Product::where('stock', '<', 10)->count(),
-            'totalCustomers' => User::where('is_admin', false)->count(),
-        ]);
-    })->name('dashboard');
+// Admin Routes
+Route::middleware(['auth', 'verified', 'is_admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(base_path('routes/web/admin/products.php'));
 
-    // Admin Routes
-    Route::middleware('is_admin')
-        ->prefix('admin')
-        ->name('admin.')
-        ->group(function () {
 
-            // 1. Custom Routes (Must come BEFORE the resource route)
-            Route::controller(ProductController::class)
-                ->prefix('products')
-                ->name('products.')
-                ->group(function () {
+// Checkout
+Route::middleware(['auth', 'cart.not_empty'])
+    ->prefix('checkout')
+    ->name('checkout.')
+    ->group(base_path('routes/web/checkout.php'));
 
-                    // Static URIs
-                    Route::get('archived', 'archived')->name('archived');
-                    Route::post('bulk-archive', 'bulkArchive')->name('bulkArchive');
-                    Route::post('bulk-update-status', 'bulkUpdateStatus')->name('bulkUpdateStatus');
-                    Route::post('bulk-restore', 'bulkRestore')->name('bulkRestore');
-                    Route::post('bulk-force-delete', 'bulkForceDelete')->name('bulkForceDelete');
-
-                    // Dynamic URIs (with parameters)
-                    Route::patch('{product}/status', 'updateStatus')->name('updateStatus');
-                    Route::patch('{id}/restore', 'restore')->name('restore');
-                    Route::delete('{id}/force-delete', 'forceDelete')->name('forceDelete');
-                });
-
-            // 2. Standard CRUD Resource Route
-            Route::resource('products', ProductController::class);
-
-        });
-
-});
-
-Route::middleware(['auth', 'cart.not_empty'])->prefix('checkout')->name('checkout.')->group(function () {
-    Route::get('/', [CheckoutController::class, 'index'])->name('index');
-    Route::post('/confirm', [CheckoutController::class, 'checkoutConfirm'])->name('confirm');
-});
-Route::get('/orders', [OrdersController::class, 'index'])->name('orders');
-Route::delete('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-Route::resource('cart', CartController::class);
-
-// Social OAuth routes
-Route::controller(SocialiteController::class)->group(function () {
-    Route::get('/auth/google/redirect', 'redirect')
-        ->defaults('provider', 'google')
-        ->name('google.redirect');
-    Route::get('/auth/google/callback', 'callback')
-        ->defaults('provider', 'google')
-        ->name('google.callback');
-    Route::get('/auth/facebook/redirect', 'redirect')
-        ->defaults('provider', 'facebook')
-        ->name('facebook.redirect');
-    Route::get('/auth/facebook/callback', 'callback')
-        ->defaults('provider', 'facebook')
-        ->name('facebook.callback');
-});
-
-// Testimonials
-Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
-
-// Shop (guest) routes
-Route::controller(ShopController::class)->group(function () {
-    Route::get('/', 'index')->name('shop');
-    Route::get('/contacts', 'contacts')->name('contacts');
-    Route::get('/components', 'components')->name('components');
-    Route::get('/builds', 'builds')->name('builds');
-    Route::get('/builder', 'builder')->name('builder');
-    Route::post('/builder/ai', 'generate')->name('builder.ai');
-    // Route::get('/redis', 'redis');
-    Route::get('/{category:slug}', 'showByCategory')->name('shop.category');
-    Route::get('/builds/{buildPost}/image/{slot}', 'buildImage')->whereNumber('slot')->name('builds.image');
-});
+require __DIR__.'/web/cart.php';
+require __DIR__.'/web/order.php';
+require __DIR__.'/web/reviews.php';
+require __DIR__.'/web/shop.php';
+require __DIR__.'/web/socialite.php';
 
 require __DIR__.'/settings.php';

@@ -7,7 +7,7 @@ import ReviewsCarousel from '@/components/shop/carousels/ReviewsCarousel.vue';
 import Layout from '@/layouts/MainLayout.vue';
 import { builds as buildsRoute } from '@/routes';
 import type { Build } from '@/types/build';
-import { formatPrice } from '@/utils/helpers';
+import { formatPrice, extractPrice, extractBuildTitle } from '@/utils/helpers';
 
 defineOptions({ layout: Layout });
 
@@ -15,30 +15,6 @@ defineProps<{
     topBuilds: Build[];
 }>()
 
-
-function extractPrice(text: string): number | null {
-    const match = text.match(/[Uu]nit\s+[Pp]rice[:\s]+([0-9,\.]+\s*k?)/);
-    if (!match) {
-        return null;
-    }
-
-    const raw = match[1].replace(/,/g, '').trim();
-    if (raw.toLowerCase().endsWith('k')) {
-        return parseFloat(raw) * 1000;
-    }
-
-    return parseFloat(raw);
-}
-
-function extractBuildTitle(text: string): string {
-    const firstLine = text
-        .replace(/\r\n/g, '\n')
-        .split('\n')
-        .map((line) => line.trim())
-        .find((line) => line.length > 0);
-
-    return firstLine ?? 'Custom Gaming System Unit';
-}
 
 function firstImage(build: { image_preview_1?: string; image_preview_2?: string; image_preview_3?: string; image_preview_4?: string }): string {
     return (

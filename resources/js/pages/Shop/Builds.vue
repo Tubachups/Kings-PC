@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { InfiniteScroll, router } from '@inertiajs/vue3';
+import {  router } from '@inertiajs/vue3';
+import { ArrowBigUpDash } from 'lucide-vue-next';
 import { useDebounceFn } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
 import {
     Select,
     SelectContent,
@@ -15,12 +16,14 @@ import Layout from '@/layouts/MainLayout.vue';
 import InfiniteBuilds from '@/components/shop/builds/InfiniteBuilds.vue';
 import { builds as buildsRoute } from '@/routes';
 import type { Build } from '@/types/build';
+import { formatSliderPrice } from '@/utils/helpers';
 
 defineOptions({ layout: Layout });
 
 const PRICE_MIN = 0;
 const PRICE_MAX = 200_000;
 const PRICE_STEP = 1_000;
+const showScrollTopButton = ref(false);
 
 const props = defineProps<{
     builds: {data: Build[];};
@@ -34,16 +37,6 @@ const priceRange = ref<[number, number]>([
     props.maxPrice ?? PRICE_MAX,
 ]);
 
-const isPriceFiltered = computed(
-    () => priceRange.value[0] > PRICE_MIN || priceRange.value[1] < PRICE_MAX,
-);
-
-function formatSliderPrice(value: number): string {
-    if (value >= 1_000) {
-        return `₱${(value / 1_000).toFixed(0)}k`;
-    }
-    return `₱${value}`;
-}
 
 function resetPriceFilter(): void {
     priceRange.value = [PRICE_MIN, PRICE_MAX];
@@ -58,7 +51,6 @@ const navigateWithPrice = useDebounceFn((range: [number, number]) => {
     router.get(buildsRoute(), params, { preserveScroll: true });
 }, 400);
 
-watch(priceRange, (range) => navigateWithPrice(range));
 
 function onSortChange(value: any): void {
     if (value) {
@@ -71,7 +63,28 @@ function onSortChange(value: any): void {
     }
 }
 
+function handleWindowScroll(): void {
+    showScrollTopButton.value = window.scrollY > 500;
+}
 
+function scrollToTop(): void {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+onMounted(() => {
+    window.addEventListener('scroll', handleWindowScroll, { passive: true });
+    handleWindowScroll();
+});
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleWindowScroll);
+});
+
+const isPriceFiltered = computed(
+    () => priceRange.value[0] > PRICE_MIN || priceRange.value[1] < PRICE_MAX,
+);
+
+watch(priceRange, (range) => navigateWithPrice(range));
 </script>
 
 <template>
@@ -118,6 +131,15 @@ function onSortChange(value: any): void {
         </div>
 
         <InfiniteBuilds :builds="builds" />
+
+        <button
+            v-show="showScrollTopButton"
+            type="button"
+            class="fixed bottom-17 right-6 z-50 rounded-full bg-primary px-2 py-1 text-sm  text-primary-foreground shadow-lg transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer"
+            @click="scrollToTop"
+        >
+            <ArrowBigUpDash />
+        </button>
 
 
     </div>
