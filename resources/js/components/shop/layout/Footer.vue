@@ -15,7 +15,7 @@ const email = ref('');
 
 <template>
     <footer
-        class="border-t border-gray-200 bg-white px-6 py-12 md:px-12 lg:px-20"
+        class="border-t border-gray-200 bg-white px-6 py-12 dark:border-none dark:bg-neutral-950 md:px-12 lg:px-20"
     >
         <div class="mx-auto max-w-7xl">
             <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3 justify-between">
@@ -37,19 +37,19 @@ const email = ref('');
                                 />
                             </svg>
                         </div>
-                        <span class="text-xl font-bold text-black"
+                        <span class="text-xl font-bold text-black dark:text-white"
                             >King's PC</span
                         >
                     </div>
 
                     <!-- Newsletter -->
                     <div>
-                        <p class="mb-1 text-sm font-semibold text-black">
+                        <p class="mb-1 text-sm font-semibold text-black dark:text-white">
                             Subscribe to newsletter
                         </p>
-                        <p class="mb-4 text-xs text-gray-500">
+                        <p class="mb-4 text-xs text-gray-500 dark:text-gray-400">
                             Have questions or need assistance?
-                            <a href="#" class="text-orange-500 hover:underline"
+                            <a href="#" class="text-orange-500 hover:underline dark:text-orange-400"
                                 >Get in touch</a
                             >
                             with our team for personalised support.
@@ -59,10 +59,10 @@ const email = ref('');
                                 v-model="email"
                                 type="email"
                                 placeholder="Your email..."
-                                class="w-full rounded-full border border-gray-300 px-4 py-2 text-sm outline-none focus:border-gray-400"
+                                class="w-full rounded-full border border-gray-300 px-4 py-2 text-sm outline-none focus:border-gray-400 dark:border-gray-700 dark:bg-neutral-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                             />
                             <button
-                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black text-white transition-colors hover:bg-gray-800"
+                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black text-white transition-colors hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -83,10 +83,10 @@ const email = ref('');
                     </div>
 
                     <!-- Social Icons -->
-                    <div>
+                    <div class="text-gray-700 dark:text-gray-300">
                         <div class="flex">
                             <font-awesome-icon icon="fa-brands fa-facebook-square" size="lg"/>
-                            <a href="https://www.facebook.com/profile.php?id=100063578996223" target="_blank"> King's PC</a>
+                            <a href="https://www.facebook.com/profile.php?id=100063578996223" target="_blank" class="hover:text-black dark:hover:text-white"> King's PC</a>
                         </div>
                         <div>
                             <FontAwesomeIcon :icon="faPhone" />0943 404 1792
@@ -99,7 +99,7 @@ const email = ref('');
 
                 <!-- Useful Links -->
                 <div>
-                    <p class="mb-6 text-sm font-medium text-gray-400">
+                    <p class="mb-6 text-sm font-medium text-gray-400 dark:text-gray-500">
                         Useful links
                     </p>
                     <ul class="space-y-3">
@@ -108,12 +108,12 @@ const email = ref('');
                             :key="link.label"
                             class="flex items-baseline gap-4"
                         >
-                            <span class="w-6 text-xs text-gray-400">{{
+                            <span class="w-6 text-xs text-gray-400 dark:text-gray-500">{{
                                 String(index + 1).padStart(2, '0')
                             }}</span>
                             <a
                                 href="#"
-                                class="text-xl font-light text-black transition-colors hover:text-gray-600"
+                                class="text-xl font-light text-black transition-colors hover:text-gray-600 dark:text-gray-100 dark:hover:text-gray-300"
                             >
                                 {{ link.label }}
                             </a>
@@ -123,7 +123,7 @@ const email = ref('');
 
                 <!-- Pages -->
                 <div>
-                    <p class="mb-6 text-sm font-medium text-gray-400">Pages</p>
+                    <p class="mb-6 text-sm font-medium text-gray-400 dark:text-gray-500">Pages</p>
                     <ul class="space-y-3">
 
                         <li
@@ -131,20 +131,20 @@ const email = ref('');
                             :key="page.label"
                             class="flex items-baseline gap-4"
                         >
-                            <span class="w-6 text-xs text-gray-400">{{
+                            <span class="w-6 text-xs text-gray-400 dark:text-gray-500">{{
                                 String(index + 1).padStart(2, '0')
                             }}</span>
                             <Link
                                 v-if="page.route"
                                 :href="page.route.url"
-                                class="text-xl font-light text-black transition-colors hover:text-gray-600"
+                                class="text-xl font-light text-black transition-colors hover:text-gray-600 dark:text-gray-100 dark:hover:text-gray-300"
                             >
                                 {{ page.label }}
                             </Link>
                             <a
                                 v-else
                                 href="#"
-                                class="text-xl font-light text-black transition-colors hover:text-gray-600"
+                                class="text-xl font-light text-black transition-colors hover:text-gray-600 dark:text-gray-100 dark:hover:text-gray-300"
                             >
                                 {{ page.label }}
                             </a>
@@ -155,15 +155,15 @@ const email = ref('');
 
             <!-- Bottom Bar -->
             <div
-                class="mt-12 flex flex-col items-center justify-end gap-2 border-t border-gray-100 pt-6 text-xs text-gray-400 sm:flex-row sm:gap-4"
+                class="mt-12 flex flex-col items-center justify-end gap-2 border-t border-gray-100 pt-6 text-xs text-gray-400 dark:border-gray-800 dark:text-gray-500 sm:flex-row sm:gap-4"
             >
-                <a href="#" class="transition-colors hover:text-black"
+                <a href="#" class="transition-colors hover:text-black dark:hover:text-white"
                     >Terms &amp; condition</a
                 >
-                <a href="#" class="transition-colors hover:text-black"
+                <a href="#" class="transition-colors hover:text-black dark:hover:text-white"
                     >Privacy policy</a
                 >
-                <a href="#" class="transition-colors hover:text-black"
+                <a href="#" class="transition-colors hover:text-black dark:hover:text-white"
                     >Accessibility statement</a
                 >
                 <span>© King's PC 2026</span>

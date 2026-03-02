@@ -8,6 +8,27 @@ import { createPinia } from 'pinia';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const pinia = createPinia()
+const progressColorVariable = '--inertia-progress-color';
+
+const applyProgressColor = (): void => {
+    const isDark = document.documentElement.classList.contains('dark');
+    const color = isDark ? '#FFFFFF' : '#000000';
+    
+    document.documentElement.style.setProperty(progressColorVariable, color);
+};
+
+const syncProgressColorWithTheme = (): void => {
+    applyProgressColor();
+
+    const observer = new MutationObserver(() => {
+        applyProgressColor();
+    });
+
+    observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class'],
+    });
+};
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
@@ -24,8 +45,9 @@ createInertiaApp({
     },
     progress:
     {
-        color: '#4B5563',
+        color: `var(${progressColorVariable})`,
     },
 });
 
 initializeTheme();
+syncProgressColorWithTheme();

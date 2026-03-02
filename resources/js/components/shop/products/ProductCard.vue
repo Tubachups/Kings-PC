@@ -49,7 +49,7 @@ const filteredImageUrl = computed(() =>
         <img
             :src="filteredImageUrl"
             :alt="product.name"
-            class="my-2 aspect-square w-full rounded-lg object-cover"
+            class="my-2 aspect-square w-full rounded-lg object-cover dark:bg-neutral-950"
         />
 
         <h2 class="mt-2 mb-2 text-lg leading-tight font-bold">
@@ -60,8 +60,8 @@ const filteredImageUrl = computed(() =>
             ₱{{ product.price }}
         </p>
 
-        <div class="mb-4 rounded bg-gray-50 p-3 text-sm">
-            <h3 class="mb-2 border-b pb-1 font-bold text-gray-700">
+        <div class="mb-4 rounded bg-gray-50 dark:bg-neutral-950 p-3 text-sm">
+            <h3 class="mb-2 border-b pb-1 font-bold text-gray-700 dark:text-gray-300">
                 Specifications
             </h3>
             <ul>
@@ -69,10 +69,10 @@ const filteredImageUrl = computed(() =>
                     <li
                         class="flex justify-between py-1"
                     >
-                        <span class="text-gray-600 capitalize"
+                        <span class="text-gray-600 dark:text-gray-200 capitalize"
                             >{{ String(key).replace('_', ' ') }}:</span
                         >
-                        <span class="font-medium text-gray-900">{{
+                        <span class="font-medium text-gray-900 dark:text-gray-300">{{
                             value
                         }}</span>
                     </li>

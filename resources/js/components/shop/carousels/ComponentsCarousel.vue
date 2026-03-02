@@ -42,7 +42,7 @@ const images = [
       <CarouselItem
         v-for="(category, idx) in categories"
         :key="category.id"
-        class=" sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/6 2xl:basis-1/8"
+        class=" sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/6 2xl:basis-1/7"
       >
       <Link :href="'/' + category.slug">
           <div class="p-1 sm:p-0">

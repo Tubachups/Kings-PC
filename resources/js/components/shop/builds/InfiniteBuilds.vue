@@ -102,7 +102,7 @@ function parseBuildText(text: string): ParsedBuild {
             <button
                 v-if="hasMore"
                 :disabled="loading"
-                class="relative mx-auto mt-6 flex items-center justify-center rounded-lg bg-primary px-6 py-2 font-semibold text-white shadow-lg transition-all duration-200 hover:bg-primary/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                class="relative mx-auto mt-6 flex items-center justify-center rounded-lg bg-primary px-6 py-2 font-semibold text-white dark:bg-neutral-950 dark:border-white/25 shadow-lg transition-all border duration-200 hover:bg-primary/90 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-primary/50 cursor-pointer"
                 @click="fetch"
             >
                 <span v-if="loading" class="absolute left-4 flex items-center">
@@ -111,7 +111,7 @@ function parseBuildText(text: string): ParsedBuild {
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                     </svg>
                 </span>
-                <span :class="loading ? 'ml-4 opacity-70' : ''">
+                <span :class="loading ? 'ml-4 opacity-70' : '' ">
                     {{ loading ? 'Loading...' : 'Load more' }}
                 </span>
             </button>
