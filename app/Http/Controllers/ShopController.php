@@ -116,7 +116,7 @@ class ShopController extends Controller
                 ->selectRaw('image_preview_4_blob IS NOT NULL as has_image_preview_4_blob')
                 ->applySort($sort)
                 ->applyPriceRange($minPrice, $maxPrice)
-                ->paginate(15)
+                ->paginate(16)
                 ->through(fn (BuildPost $buildPost): array => [
                     'id' => $buildPost->id,
                     'text' => $buildPost->text,

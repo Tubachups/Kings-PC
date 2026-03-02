@@ -16,7 +16,13 @@ class DownloadFacebookImages extends Command
 
     public function handle(): int
     {
-        $posts = BuildPost::query()->get();
+        $targetIds = [
+           11, 29, 31
+        ];
+
+        $posts = BuildPost::query()
+            ->whereIn('id', $targetIds)
+            ->get();
         $columns = [
             'image_preview_1',
             'image_preview_2',
@@ -32,21 +38,7 @@ class DownloadFacebookImages extends Command
                 }
 
                 $blobColumn = "{$column}_blob";
-                if (! is_null($post->{$blobColumn})) {
-                    $this->line("Skipped [{$post->id}] {$blobColumn} already exists");
-
-                    continue;
-                }
-
                 $filename = "facebook_images/{$post->id}_preview_".($index + 1).'.jpg';
-
-                if (Storage::exists($filename)) {
-                    $post->{$blobColumn} = Storage::get($filename);
-                    $post->save();
-                    $this->line("Synced existing file to DB: {$filename}");
-
-                    continue;
-                }
 
                 try {
                     $response = Http::withHeaders([

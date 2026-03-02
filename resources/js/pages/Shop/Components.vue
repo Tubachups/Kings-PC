@@ -2,27 +2,25 @@
 import { router } from '@inertiajs/vue3';
 import { ChevronDown } from "lucide-vue-next";
 import { onMounted, ref, computed, watch } from 'vue';
+import PaginationControls from '@/components/PaginationControls.vue';
 import SearchBar from '@/components/shop/layout/SearchBar.vue';
 import ProductCard from "@/components/shop/products/ProductCard.vue";
-import { Button } from '@/components/ui/button';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationFirst,
-    PaginationItem,
-    PaginationLast,
-} from '@/components/ui/pagination';
+
 import Layout from '@/layouts/MainLayout.vue';
 import type { Product } from '@/types/product';
 
 defineOptions({ layout: Layout });
 
-const props = defineProps<{
-    products: Product[];
-}>()
+const props = withDefaults(defineProps<{
+    products?: Product[];
+}>(), {
+    products: () => [],
+});
 
+const PER_PAGE = 16;
+const currentPage = ref<number>(1);
 const searchQuery = ref<string>("");
+const isLoading = ref<boolean>(true);
 
 // --- New Filter & Accordion State ---
 const isCategoryOpen = ref<boolean>(true);
@@ -30,7 +28,6 @@ const selectedCategories = ref<number[]>([]);
 
 // Dynamically extract unique categories from the products array
 const uniqueCategories = computed(() => {
-    if (!props.products) return [];
     const map = new Map();
     props.products.forEach(p => {
         if (!map.has(p.category.id)) {
@@ -41,7 +38,6 @@ const uniqueCategories = computed(() => {
 });
 // ------------------------------------
 
-const isLoading = ref<boolean>(true);
 
 onMounted(() => {
     router.reload({
@@ -52,13 +48,9 @@ onMounted(() => {
     });
 });
 
-const PER_PAGE = 16;
-const currentPage = ref<number>(1);
 
 // Updated to filter by both search query AND selected categories
 const filteredProducts = computed(() => {
-    if (!props.products) return [];
-
     return props.products.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchQuery.value.toLowerCase());
 
@@ -68,8 +60,6 @@ const filteredProducts = computed(() => {
         return matchesSearch && matchesCategory;
     });
 });
-
-const totalPages = computed(() => Math.ceil(filteredProducts.value.length / PER_PAGE));
 
 const paginatedProducts = computed(() => {
     const start = (currentPage.value - 1) * PER_PAGE;
@@ -159,49 +149,13 @@ const handlePageChange = (page: number): void => {
             </main>
         </div>
 
-        <div v-if="!isLoading && filteredProducts.length > PER_PAGE" class="mt-8 flex flex-col items-center gap-2">
-            <p class="text-muted-foreground text-sm">
-                Showing
-                <span class="font-medium">{{ (currentPage - 1) * PER_PAGE + 1 }}</span>–<span class="font-medium">{{ Math.min(currentPage * PER_PAGE, filteredProducts.length) }}</span>
-                of <span class="font-medium">{{ filteredProducts.length }}</span> results
-            </p>
-            <Pagination
-                :total="filteredProducts.length"
-                :items-per-page="PER_PAGE"
-                :default-page="currentPage"
-                :sibling-count="1"
-                show-edges
-                @update:page="handlePageChange"
-            >
-                <PaginationContent v-slot="{ items }">
-                    <PaginationItem :value="1" class="mr-3">
-                        <PaginationFirst />
-                    </PaginationItem>
-                    <template v-for="(item, index) in items" :key="index">
-                        <PaginationItem v-if="item.type === 'page'" :value="item.value">
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                :class="[
-                                    'mx-1 rounded-md transition-colors duration-150',
-                                    item.value === currentPage
-                                        ? 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary'
-                                        : 'border border-gray-200 bg-white text-black hover:bg-muted',
-                                ]"
-                            >
-                                {{ item.value }}
-                            </Button>
-                        </PaginationItem>
-                        <PaginationItem v-else :value="0">
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                    </template>
-                    <PaginationItem :value="totalPages" class="ml-3">
-                        <PaginationLast />
-                    </PaginationItem>
-                </PaginationContent>
-            </Pagination>
-        </div>
+        <PaginationControls
+            v-if="filteredProducts.length > PER_PAGE"
+            :total-items="filteredProducts.length"
+            :current-page="currentPage"
+            :items-per-page="PER_PAGE"
+            @update:page="handlePageChange"
+        />
 
     </div>
 </template>

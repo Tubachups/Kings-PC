@@ -1,3 +1,9 @@
+import {
+    builder as builderRoute,
+    builds as buildsRoute,
+    components as componentsRoute,
+} from '@/routes';
+
 export const PART_CATEGORIES = [
     { cat: 'gpu',     keywords: ['rtx', 'rx 9', 'rx9', 'radeon rx', 'gtx', 'gddr'] },
     { cat: 'cpu',     keywords: ['ryzen 5', 'ryzen 7', 'ryzen 9', 'r5 5', 'r7 5', 'r9 7', 'intel core', '9700x', '8700f', '7800x3d', '7700 ', '7500f', '5600 ', '5700x', '7700x'] },
@@ -24,3 +30,22 @@ export const steps = [
   { step: 2, title: 'Review', description: 'Check items' },
   { step: 3, title: 'Payment', description: 'Pay method' },
 ]
+
+
+export const usefulLinks = [
+    { label: 'Career' },
+    { label: 'Help' },
+    { label: 'Works' },
+    { label: 'News' },
+    { label: 'Partners' },
+    { label: 'Community' },
+    { label: 'Support' },
+];
+
+export const pages = [
+    { label: 'Builder', route: builderRoute() },
+    { label: 'Products', route: componentsRoute() },
+    { label: 'Completed Builds', route: buildsRoute() },
+    { label: 'Testimonials' },
+    { label: 'Blogs' },
+];

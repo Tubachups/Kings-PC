@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
-import DialogContent from '@/components/ui/dialog/DialogContent.vue';
+import {
+    DialogContent,
+    DialogDescription,
+    DialogTitle,
+} from '@/components/ui/dialog';
 import { formatCurrency, formatAddress } from '@/utils/helpers';
 
 defineProps<{
@@ -18,10 +22,10 @@ defineProps<{
 
         <div v-else-if="selectedOrder" class="space-y-4">
             <div>
-                <h3 class="text-lg font-semibold">Order #{{ selectedOrder.order_number }}</h3>
-                <p class="text-sm text-muted-foreground">
+                <DialogTitle class="text-lg font-semibold">Order #{{ selectedOrder.order_number }}</DialogTitle>
+                <DialogDescription class="text-sm text-muted-foreground">
                     Placed on {{ dayjs(selectedOrder.created_at).format('MMMM D, YYYY h:mm A') }}
-                </p>
+                </DialogDescription>
             </div>
 
             <div class="grid gap-2 text-sm">
