@@ -5,33 +5,12 @@ import { faPhone, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import {
-    builder as builderRoute,
-    builds as buildsRoute,
-    components as componentsRoute,
-} from '@/routes';
+import { usefulLinks, pages } from '@/constants/constants';
 
 library.add(faPhone, faEnvelope, faFacebookSquare);
 
 const email = ref('');
 
-const usefulLinks = [
-    { label: 'Career' },
-    { label: 'Help' },
-    { label: 'Works' },
-    { label: 'News' },
-    { label: 'Partners' },
-    { label: 'Community' },
-    { label: 'Support' },
-];
-
-const pages = [
-    { label: 'Builder', route: builderRoute() },
-    { label: 'Products', route: componentsRoute() },
-    { label: 'Completed Builds', route: buildsRoute() },
-    { label: 'Testimonials' },
-    { label: 'Blogs' },
-];
 </script>
 
 <template>
@@ -39,7 +18,7 @@ const pages = [
         class="border-t border-gray-200 bg-white px-6 py-12 md:px-12 lg:px-20"
     >
         <div class="mx-auto max-w-7xl">
-            <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-3 justify-between">
                 <!-- Brand + Newsletter -->
                 <div class="flex flex-col gap-6 lg:col-span-1">
                     <!-- Logo -->
@@ -116,16 +95,6 @@ const pages = [
                             <FontAwesomeIcon :icon="faEnvelope" />kingedward0723@yahoo.com.ph
                         </div>
                     </div>
-                </div>
-
-                <!-- Robot image (hidden on mobile, visible on lg) -->
-                <div class="hidden lg:flex lg:items-end lg:justify-center">
-                    <img
-                        src="/images/robot-footer.png"
-                        alt="Robot"
-                        class="h-64 w-auto object-contain"
-                        onerror="this.style.display = 'none'"
-                    />
                 </div>
 
                 <!-- Useful Links -->
