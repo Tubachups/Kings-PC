@@ -43,8 +43,8 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-    <div class="m-12 flex h-full">
-        <Card class="h-full w-1/3 m-2">
+    <div class="m-12 flex flex-col md:flex-row h-full">
+        <Card class="h-full md:w-1/3 m-2">
             <div class="flex flex-col justify-center p-6">
                 <form @submit.prevent="handleSubmit">
                     <Label class="block text-sm font-medium text-slate-700">Build Idea</Label>
@@ -57,7 +57,7 @@ const handleSubmit = async () => {
                 </form>
             </div>
         </Card>
-        <div class="h-full w-2/3 m-2">
+        <div class="h-full md:w-2/3 m-2">
             <Card class="flex h-full items-center justify-center text-slate-600 p-6">
                 <div v-if="!aiBuild && !isSubmitting">
                     <img class="rounded-lg object-fill" src="/images/ai.png" alt="PC Build" />
