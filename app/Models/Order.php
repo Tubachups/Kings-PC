@@ -16,7 +16,7 @@ class Order extends Model
         'shipping_address',
         'billing_address',
         'payment_method',
-        'payment_status'
+        'payment_status',
     ];
 
     protected $casts = [
@@ -37,26 +37,26 @@ class Order extends Model
     public static function createOrder($request)
     {
         return self::create([
-                'user_id'           => Auth::id(),
-                'status'            => "Order Placed",
-                'total'             => 0,
-                'order_number' => "KPC - " . strtoupper(Str::random(8)),
-                'shipping_address'  => [
-                    'address'   => $request->address,
-                    'region'    => $request->region,
-                    'province'  => $request->province,
-                    'city'      => $request->city,
-                    'barangay'  => $request->barangay,
-                ],
-                'billing_address'   => [
-                    'address'   => $request->address,
-                    'region'    => $request->region,
-                    'province'  => $request->province,
-                    'city'      => $request->city,
-                    'barangay'  => $request->barangay,
-                ],
-                'payment_method'    => $request->payment_method,
-                'payment_status'    => $request->payment_method === "cod" ? "Pending" : "Paid", 
-            ]);
+            'user_id' => Auth::id(),
+            'status' => 'Order Placed',
+            'total' => 0,
+            'order_number' => 'KPC - '.strtoupper(Str::random(8)),
+            'shipping_address' => [
+                'address' => $request->address,
+                'region' => $request->region,
+                'province' => $request->province,
+                'city' => $request->city,
+                'barangay' => $request->barangay,
+            ],
+            'billing_address' => [
+                'address' => $request->address,
+                'region' => $request->region,
+                'province' => $request->province,
+                'city' => $request->city,
+                'barangay' => $request->barangay,
+            ],
+            'payment_method' => $request->payment_method,
+            'payment_status' => $request->payment_method === 'cod' ? 'Pending' : 'Paid',
+        ]);
     }
 }

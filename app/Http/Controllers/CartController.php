@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Jobs\ClearCart;
 use App\Jobs\RemoveCartFromJob;
 use App\Jobs\SyncCartToDatabase;
-use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -14,12 +13,10 @@ use Inertia\Inertia;
 
 class CartController extends Controller
 {
-
     public function index()
     {
         // return Inertia::render('Shop/Cart', []);
     }
-
 
     public function create()
     {
@@ -50,20 +47,19 @@ class CartController extends Controller
         //
     }
 
-
     public function update(Request $request, $id)
     {
         $start = microtime(true);
         $user_id = Auth::id() ?? 1;
         $quantity = (int) $request->input('quantity');
-        Redis::hset("cart:user:" . $user_id, $id, $quantity);
+        Redis::hset('cart:user:'.$user_id, $id, $quantity);
         SyncCartToDatabase::dispatch($user_id, $id, $quantity);
         $end = microtime(true);
         $executionTime = $end - $start;
-        Log::info('Cart update execution time: ' . $executionTime . ' seconds');
+        Log::info('Cart update execution time: '.$executionTime.' seconds');
+
         return back();
     }
-
 
     public function destroy(Request $request, string $id)
     {
@@ -76,7 +72,7 @@ class CartController extends Controller
         RemoveCartFromJob::dispatch($user_id, $product_id);
 
         $end = microtime(true);
-        Log::info('Cart delete execution time: ' . ($end - $start) . ' seconds');
+        Log::info('Cart delete execution time: '.($end - $start).' seconds');
 
         return back();
     }
@@ -86,6 +82,7 @@ class CartController extends Controller
         $user_id = Auth::id();
         Redis::del("cart:user:{$user_id}");
         ClearCart::dispatch($user_id);
+
         return back();
     }
 }

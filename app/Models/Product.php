@@ -33,10 +33,11 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public static function checkoutStock($item, $quantity) 
+    public static function checkoutStock($item, $quantity)
     {
         return self::where('id', $item)->decrement('stock', $quantity);
     }
+
     /**
      * Scope to filter products by name.
      */

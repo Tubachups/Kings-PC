@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -109,12 +110,14 @@ class ProductController extends Controller
     public function restore(int $id): RedirectResponse
     {
         Product::onlyTrashed()->findOrFail($id)->restore();
+
         return back()->with('success', 'Product restored successfully.');
     }
 
     public function forceDelete(int $id): RedirectResponse
     {
         Product::onlyTrashed()->findOrFail($id)->forceDelete();
+
         return back()->with('success', 'Product permanently deleted.');
     }
 
@@ -123,7 +126,7 @@ class ProductController extends Controller
         $ids = $request->validate(['ids' => 'required|array|exists:products,id'])['ids'];
         Product::onlyTrashed()->whereIn('id', $ids)->restore();
 
-        return back()->with('success', count($ids) . ' product(s) restored successfully.');
+        return back()->with('success', count($ids).' product(s) restored successfully.');
     }
 
     public function bulkForceDelete(Request $request): RedirectResponse
@@ -131,7 +134,7 @@ class ProductController extends Controller
         $ids = $request->validate(['ids' => 'required|array|exists:products,id'])['ids'];
         Product::onlyTrashed()->whereIn('id', $ids)->forceDelete();
 
-        return back()->with('success', count($ids) . ' product(s) permanently deleted.');
+        return back()->with('success', count($ids).' product(s) permanently deleted.');
     }
 
     public function bulkArchive(Request $request): RedirectResponse
@@ -139,7 +142,7 @@ class ProductController extends Controller
         $ids = $request->validate(['ids' => 'required|array|exists:products,id'])['ids'];
         Product::whereIn('id', $ids)->delete();
 
-        return back()->with('success', count($ids) . ' product(s) archived successfully.');
+        return back()->with('success', count($ids).' product(s) archived successfully.');
     }
 
     public function bulkUpdateStatus(Request $request): RedirectResponse
@@ -152,6 +155,7 @@ class ProductController extends Controller
         Product::whereIn('id', $validated['ids'])->update(['is_active' => $validated['is_active']]);
 
         $status = $validated['is_active'] ? 'activated' : 'deactivated';
-        return back()->with('success', count($validated['ids']) . " product(s) {$status} successfully.");
+
+        return back()->with('success', count($validated['ids'])." product(s) {$status} successfully.");
     }
 }

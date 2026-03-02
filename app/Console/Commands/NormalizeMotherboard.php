@@ -41,9 +41,15 @@ class NormalizeMotherboard extends Command
             $name = strtoupper($mobo->name);
 
             // Map Socket from name
-            if (str_contains($name, 'B550') || str_contains($name, 'X570')) $specs['socket'] = 'AM4';
-            if (str_contains($name, 'B650') || str_contains($name, 'X870')) $specs['socket'] = 'AM5';
-            if (str_contains($name, 'Z790') || str_contains($name, 'B760')) $specs['socket'] = 'LGA1700';
+            if (str_contains($name, 'B550') || str_contains($name, 'X570')) {
+                $specs['socket'] = 'AM4';
+            }
+            if (str_contains($name, 'B650') || str_contains($name, 'X870')) {
+                $specs['socket'] = 'AM5';
+            }
+            if (str_contains($name, 'Z790') || str_contains($name, 'B760')) {
+                $specs['socket'] = 'LGA1700';
+            }
 
             // Map RAM Type
             $specs['ram_type'] = (str_contains($name, 'D4') || str_contains($name, 'DDR4')) ? 'DDR4' : 'DDR5';
@@ -57,13 +63,13 @@ class NormalizeMotherboard extends Command
 
         foreach ($gpus as $gpu) {
             $specs = $gpu->specs;
-            $chipset = $specs['chipset'] ?? ''; 
+            $chipset = $specs['chipset'] ?? '';
             $wattage = 200; // Default fallback
 
             // Mapping based on the RDNA 4 and Blackwell (2025/2026) chipsets
             if (str_contains($chipset, 'RX 9060 XT')) {
                 // Your specific card (16GB models are usually 160W-180W)
-                $wattage = 180; 
+                $wattage = 180;
             } elseif (str_contains($chipset, 'RX 9070 XT')) {
                 $wattage = 304;
             } elseif (str_contains($chipset, 'RX 9070')) {
@@ -81,6 +87,6 @@ class NormalizeMotherboard extends Command
             $updated++;
         }
 
-        $this->info("Database cleaned and synchronized successfully!");
+        $this->info('Database cleaned and synchronized successfully!');
     }
 }

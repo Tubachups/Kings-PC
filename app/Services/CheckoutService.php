@@ -7,9 +7,10 @@ use Illuminate\Support\Facades\Redis;
 
 class CheckoutService
 {
-    public function validateCart($redisKey, $cart) 
+    public function validateCart($redisKey, $cart)
     {
-        if (!empty($cart)) {
+        $freshCart = [];
+        if (! empty($cart)) {
             $updatedCart = [];
 
             foreach ($cart as $field => $value) {
@@ -32,7 +33,7 @@ class CheckoutService
             });
 
             $freshCart = collect($updatedCart)
-                ->map(fn($item) => json_decode($item, true))
+                ->map(fn ($item) => json_decode($item, true))
                 ->values();
         }
 

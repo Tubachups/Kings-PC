@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE build_posts ADD COLUMN image_preview_1_blob MEDIUMBLOB NULL AFTER image_preview_1');
-        DB::statement('ALTER TABLE build_posts ADD COLUMN image_preview_2_blob MEDIUMBLOB NULL AFTER image_preview_2');
-        DB::statement('ALTER TABLE build_posts ADD COLUMN image_preview_3_blob MEDIUMBLOB NULL AFTER image_preview_3');
-        DB::statement('ALTER TABLE build_posts ADD COLUMN image_preview_4_blob MEDIUMBLOB NULL AFTER image_preview_4');
+        // DB::statement('ALTER TABLE build_posts ADD COLUMN image_preview_1_blob MEDIUMBLOB NULL AFTER image_preview_1');
+        // DB::statement('ALTER TABLE build_posts ADD COLUMN image_preview_2_blob MEDIUMBLOB NULL AFTER image_preview_2');
+        // DB::statement('ALTER TABLE build_posts ADD COLUMN image_preview_3_blob MEDIUMBLOB NULL AFTER image_preview_3');
+        // DB::statement('ALTER TABLE build_posts ADD COLUMN image_preview_4_blob MEDIUMBLOB NULL AFTER image_preview_4');
     }
 
     /**

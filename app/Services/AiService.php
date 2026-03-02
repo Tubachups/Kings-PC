@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 class AiService
 {
-
-    public function resolveCategory($categoryAliases, $categories) : array
+    public function resolveCategory($categoryAliases, $categories): array
     {
         $resolveCategoryId = function (array $aliases) use ($categories): ?int {
             $normalizedAliases = array_map(
@@ -38,17 +37,17 @@ class AiService
         }
 
         $missingCategoryDefinitions = collect(array_keys($categoryAliases))
-            ->filter(fn ($key) => !isset($resolvedCategories[$key]))
+            ->filter(fn ($key) => ! isset($resolvedCategories[$key]))
             ->values()
             ->all();
 
         return [
-            'resolvedCategories'            => $resolvedCategories, 
-            'missingCategoryDefinitions'    => $missingCategoryDefinitions
+            'resolvedCategories' => $resolvedCategories,
+            'missingCategoryDefinitions' => $missingCategoryDefinitions,
         ];
     }
 
-    public function filterInventory($resolvedCategories, $requiredCategories, $userBudget) : array
+    public function filterInventory($resolvedCategories, $requiredCategories, $userBudget): array
     {
         $filteredInventory = [];
         $inventoryDiagnostics = [];
@@ -73,11 +72,11 @@ class AiService
 
             $filteredInventory[$name] = $products->map(function ($product) {
                 return [
-                    'id'        => $product->id,
-                    'name'      => $product->name,
-                    'price'     => (float) $product->price,
-                    'specs'     => $product->specs,
-                    'image_url' => $product->image_url
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'price' => (float) $product->price,
+                    'specs' => $product->specs,
+                    'image_url' => $product->image_url,
                 ];
             })->values();
 
@@ -95,29 +94,28 @@ class AiService
             ->all();
 
         return [
-            'filteredInventory'         => $filteredInventory,
-            'inventoryDiagnostics'      => $inventoryDiagnostics,
-            'missingRequiredInventory'  => $missingRequiredInventory
+            'filteredInventory' => $filteredInventory,
+            'inventoryDiagnostics' => $inventoryDiagnostics,
+            'missingRequiredInventory' => $missingRequiredInventory,
         ];
     }
 
-    public function aiPrompt($systemInstructions, $prompt, $inventoryString, $userBudget) : Response
+    public function aiPrompt($systemInstructions, $prompt, $inventoryString, $userBudget): Response
     {
         return Http::timeout(60)
-                ->withHeaders([
-                    'Authorization' => 'Bearer '.config('services.openrouter.api_key'),
-                    'HTTP-Referer' => config('services.openrouter.referer'),
-                    'X-Title' => config('services.openrouter.title'),
-                ])
-                ->post('https://openrouter.ai/api/v1/chat/completions', [
-                    'model' => config('services.openrouter.model'),
-                    'messages' => [
-                        ['role' => 'system', 'content' => $systemInstructions],
-                        ['role' => 'user', 'content' => "User Prompt: {$prompt}\n\nAvailable Inventory: {$inventoryString}\n\nUsers Budget: {$userBudget}"],
-                    ],
-                    'temperature' => 0.2,
-                    'response_format' => ['type' => 'json_object'],
-                ]);
+            ->withHeaders([
+                'Authorization' => 'Bearer '.config('services.openrouter.api_key'),
+                'HTTP-Referer' => config('services.openrouter.referer'),
+                'X-Title' => config('services.openrouter.title'),
+            ])
+            ->post('https://openrouter.ai/api/v1/chat/completions', [
+                'model' => config('services.openrouter.model'),
+                'messages' => [
+                    ['role' => 'system', 'content' => $systemInstructions],
+                    ['role' => 'user', 'content' => "User Prompt: {$prompt}\n\nAvailable Inventory: {$inventoryString}\n\nUsers Budget: {$userBudget}"],
+                ],
+                'temperature' => 0.2,
+                'response_format' => ['type' => 'json_object'],
+            ]);
     }
-
 }

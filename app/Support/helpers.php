@@ -2,7 +2,7 @@
 
 use Illuminate\Http\JsonResponse;
 
-if (!function_exists('json_422')) {
+if (! function_exists('json_422')) {
     function json_422(string $message, array $extra = []): JsonResponse
     {
         return response()->json(
@@ -11,7 +11,7 @@ if (!function_exists('json_422')) {
     }
 }
 
-if (!function_exists('json_500')) {
+if (! function_exists('json_500')) {
     function json_500(string $message, array $extra = []): JsonResponse
     {
         return response()->json(
