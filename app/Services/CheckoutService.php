@@ -9,6 +9,7 @@ class CheckoutService
 {
     public function validateCart($redisKey, $cart) 
     {
+        $freshCart = [];
         if (!empty($cart)) {
             $updatedCart = [];
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\CartItem;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,11 +18,17 @@ class CheckCartNotEmpty
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = Auth::id();
-        $cart = Redis::hgetall("cart:user:" . $user);
+        $userId = Auth::id();
+        $cart = Redis::hgetall("cart:user:{$userId}");
 
-        if(empty($cart)){
-            return redirect()->route('cart.index')
+        if (empty($cart)) {
+            $hasDbCartItems = CartItem::where('user_id', $userId)->exists();
+
+            if ($hasDbCartItems) {
+                return $next($request);
+            }
+
+            return redirect()->route('shop')
                     ->with('error', 'Your cart is empty! Add items to your cart first.');
         }
         
