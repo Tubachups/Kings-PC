@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Models\FacebookReview;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ReviewController extends Controller
 {

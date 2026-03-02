@@ -8,6 +8,7 @@ class FacebookReview extends Model
 {
     //
     protected $table = 'facebook_reviews';
+
     protected $fillable = [
         'Name', 'Feedback', 'web_sraper_order'];
 

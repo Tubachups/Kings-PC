@@ -12,8 +12,8 @@ import { register } from '@/routes';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
 import Layout from '@/layouts/MainLayout.vue';
-import { redirect } from '@/routes/google';
-
+import { redirect as googleRedirect } from '@/routes/google';
+import { redirect as facebookRedirect } from '@/routes/facebook';
 
 defineOptions({ layout: Layout });
 
@@ -117,9 +117,21 @@ defineProps<{
                 variant="outline"
                 class="w-full"
                 :tabindex="6"
-                :href="redirect().url"
+                :href="googleRedirect().url"
             >
                 Log in with Google
+            </Button>
+        </div>
+
+        <div>
+            <Button
+                as="a"
+                variant="outline"
+                class="w-full"
+                :tabindex="7"
+                :href="facebookRedirect().url"
+            >
+                Log in with Facebook
             </Button>
         </div>
     </AuthBase>

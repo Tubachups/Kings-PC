@@ -17,7 +17,7 @@ class DownloadFacebookImages extends Command
     public function handle(): int
     {
         $targetIds = [
-           11, 29, 31
+            11, 29, 31,
         ];
 
         $posts = BuildPost::query()

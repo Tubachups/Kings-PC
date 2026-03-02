@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\OrdersController;
@@ -63,10 +63,20 @@ Route::get('/orders', [OrdersController::class, 'index'])->name('orders');
 Route::delete('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
 Route::resource('cart', CartController::class);
 
-// Google OAuth routes
-Route::controller(GoogleController::class)->group(function () {
-    Route::get('/auth/google/redirect', 'redirectToGoogle')->name('google.redirect');
-    Route::get('/auth/google/callback', 'handleGoogleCallback')->name('google.callback');
+// Social OAuth routes
+Route::controller(SocialiteController::class)->group(function () {
+    Route::get('/auth/google/redirect', 'redirect')
+        ->defaults('provider', 'google')
+        ->name('google.redirect');
+    Route::get('/auth/google/callback', 'callback')
+        ->defaults('provider', 'google')
+        ->name('google.callback');
+    Route::get('/auth/facebook/redirect', 'redirect')
+        ->defaults('provider', 'facebook')
+        ->name('facebook.redirect');
+    Route::get('/auth/facebook/callback', 'callback')
+        ->defaults('provider', 'facebook')
+        ->name('facebook.callback');
 });
 
 // Testimonials

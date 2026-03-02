@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class CartItem extends Model
 {
@@ -32,7 +31,7 @@ class CartItem extends Model
             ['user_id' => $user_id, 'product_id' => $id],
             ['quantity' => $quantity]
         );
-        
+
     }
 
     public static function getCartForRedis($user_id)
@@ -42,13 +41,13 @@ class CartItem extends Model
         $payload = [];
         foreach ($items as $item) {
             $payload[$item->product_id] = json_encode([
-                'quantity'  => $item->quantity,
-                'product'   => [
-                    'id'        => $item->product->id,
-                    'name'      => $item->product->name,
-                    'price'     => $item->product->price,
+                'quantity' => $item->quantity,
+                'product' => [
+                    'id' => $item->product->id,
+                    'name' => $item->product->name,
+                    'price' => $item->product->price,
                     'image_url' => $item->product->image_url,
-                ]
+                ],
             ]);
         }
 
@@ -58,18 +57,19 @@ class CartItem extends Model
     public static function removeFromCart($user_id, $product_id)
     {
         return self::where('user_id', $user_id)
-                    ->where('product_id', $product_id)
-                    ->delete();
+            ->where('product_id', $product_id)
+            ->delete();
     }
 
     public static function clearCart($user_id)
     {
         return self::where('user_id', $user_id)
-                    ->delete();
+            ->delete();
     }
 
-    public static function getUserCart(){
+    public static function getUserCart()
+    {
         return self::where('user_id', Auth::id())
-                    ->get();
+            ->get();
     }
 }

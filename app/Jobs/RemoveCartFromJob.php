@@ -17,7 +17,7 @@ class RemoveCartFromJob implements ShouldQueue
     public function __construct(
         public int $user_id,
         public int $product_id
-    ){}
+    ) {}
 
     /**
      * Execute the job.
@@ -34,9 +34,9 @@ class RemoveCartFromJob implements ShouldQueue
             foreach ($currentDbState as $field => $value) {
                 $pipe->hset($redisKey, $field, $value);
             }
-            if (!empty($currentDbState)) {
+            if (! empty($currentDbState)) {
                 $pipe->expire($redisKey, 43200);
             }
         });
     }
-} 
+}

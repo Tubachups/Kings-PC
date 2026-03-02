@@ -20,7 +20,7 @@ class ProductSeeder extends Seeder
                     'brand' => 'Darkflash',
                     'form_factor' => 'mATX',
                     'color' => 'Black',
-                    'side_panel' => 'Tempered Glass'
+                    'side_panel' => 'Tempered Glass',
                 ],
             ],
             [
@@ -32,7 +32,7 @@ class ProductSeeder extends Seeder
                     'brand' => 'Fantech',
                     'form_factor' => 'ATX',
                     'color' => 'Black',
-                    'fans_included' => 4
+                    'fans_included' => 4,
                 ],
             ],
 
@@ -46,7 +46,7 @@ class ProductSeeder extends Seeder
                     'brand' => 'Galax',
                     'memory' => '8GB',
                     'memory_type' => 'GDDR6',
-                    'chipset' => 'NVIDIA GeForce'
+                    'chipset' => 'NVIDIA GeForce',
                 ],
             ],
             [
@@ -58,7 +58,7 @@ class ProductSeeder extends Seeder
                     'brand' => 'ASUS',
                     'memory' => '8GB',
                     'memory_type' => 'GDDR6',
-                    'chipset' => 'AMD Radeon'
+                    'chipset' => 'AMD Radeon',
                 ],
             ],
 
@@ -72,7 +72,7 @@ class ProductSeeder extends Seeder
                     'brand' => 'Darkflash',
                     'type' => 'Air Cooler',
                     'fan_size' => '120mm',
-                    'rgb' => true
+                    'rgb' => true,
                 ],
             ],
             [
@@ -84,12 +84,11 @@ class ProductSeeder extends Seeder
                     'brand' => 'Deepcool',
                     'type' => 'AIO Liquid',
                     'radiator_size' => '240mm',
-                    'rgb' => true
+                    'rgb' => true,
                 ],
             ],
 
-
-[
+            [
                 'category_id' => 1,
                 'name' => 'MSI Pro B760M-E M-ATX LGA 1700 DDR4 Motherboard',
                 'price' => 5300.00,
@@ -99,7 +98,7 @@ class ProductSeeder extends Seeder
                     'socket' => 'LGA 1700',
                     'form_factor' => 'mATX',
                     'memory_type' => 'DDR4',
-                    'wifi' => false
+                    'wifi' => false,
                 ],
             ],
 
@@ -115,7 +114,7 @@ class ProductSeeder extends Seeder
                     'cores' => 6,
                     'threads' => 12,
                     'base_clock' => '2.5GHz',
-                    'integrated_graphics' => false
+                    'integrated_graphics' => false,
                 ],
             ],
 
@@ -130,7 +129,7 @@ class ProductSeeder extends Seeder
                     'capacity' => '16GB',
                     'modules' => '2x8GB',
                     'speed' => '3200MHz',
-                    'memory_type' => 'DDR4'
+                    'memory_type' => 'DDR4',
                 ],
             ],
 
@@ -144,7 +143,7 @@ class ProductSeeder extends Seeder
                     'brand' => 'Western Digital',
                     'capacity' => '1TB',
                     'form_factor' => 'M.2',
-                    'interface' => 'NVMe'
+                    'interface' => 'NVMe',
                 ],
             ],
 
@@ -158,12 +157,11 @@ class ProductSeeder extends Seeder
                     'brand' => 'Cooler Master',
                     'wattage' => '750W',
                     'efficiency' => '80 Plus Bronze',
-                    'modular' => false
+                    'modular' => false,
                 ],
             ],
 
-
- // 1. Motherboard
+            // 1. Motherboard
             [
                 'category_id' => 1,
                 'name' => 'MSI Mag B550m Pro-Vdh WIFI mATX AM4 Ddr4 Gaming Motherboard',
@@ -174,7 +172,7 @@ class ProductSeeder extends Seeder
                     'socket' => 'AM4',
                     'form_factor' => 'mATX',
                     'memory_type' => 'DDR4',
-                    'wifi' => true
+                    'wifi' => true,
                 ],
             ],
 
@@ -189,7 +187,7 @@ class ProductSeeder extends Seeder
                     'socket' => 'AM4',
                     'cores' => 6,
                     'threads' => 12,
-                    'base_clock' => '3.7GHz'
+                    'base_clock' => '3.7GHz',
                 ],
             ],
 
@@ -204,7 +202,7 @@ class ProductSeeder extends Seeder
                     'capacity' => '16GB',
                     'modules' => '2x8GB',
                     'speed' => '3200MHz',
-                    'memory_type' => 'DDR4'
+                    'memory_type' => 'DDR4',
                 ],
             ],
 
@@ -218,7 +216,7 @@ class ProductSeeder extends Seeder
                     'brand' => 'Lexar',
                     'capacity' => '500GB',
                     'form_factor' => 'M.2',
-                    'interface' => 'NVMe'
+                    'interface' => 'NVMe',
                 ],
             ],
 
@@ -232,7 +230,7 @@ class ProductSeeder extends Seeder
                     'brand' => 'Corsair',
                     'wattage' => '650W',
                     'efficiency' => '80 Plus Bronze',
-                    'modular' => false
+                    'modular' => false,
                 ],
             ],
         ];

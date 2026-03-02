@@ -2,10 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Models\CartItem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Redis;
-use App\Models\CartItem;
 
 class ClearCart implements ShouldQueue
 {
@@ -16,8 +16,7 @@ class ClearCart implements ShouldQueue
      */
     public function __construct(
         public int $user_id,
-    ){}
-
+    ) {}
 
     /**
      * Execute the job.
@@ -26,6 +25,6 @@ class ClearCart implements ShouldQueue
     {
         CartItem::clearCart($this->user_id);
         $redisKey = "cart:user:{$this->user_id}";
-        Redis::del($redisKey); 
+        Redis::del($redisKey);
     }
 }

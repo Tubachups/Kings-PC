@@ -29,9 +29,9 @@ class CheckCartNotEmpty
             }
 
             return redirect()->route('shop')
-                    ->with('error', 'Your cart is empty! Add items to your cart first.');
+                ->with('error', 'Your cart is empty! Add items to your cart first.');
         }
-        
+
         return $next($request);
     }
 }

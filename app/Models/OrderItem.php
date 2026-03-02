@@ -10,7 +10,7 @@ class OrderItem extends Model
         'order_id',
         'product_id',
         'quantity',
-        'unit_price', //snapshot price of the item on checkout time
+        'unit_price', // snapshot price of the item on checkout time
         'variant',
     ];
 
@@ -27,11 +27,11 @@ class OrderItem extends Model
     public static function createOrderItem($order_id, $item)
     {
         return self::create([
-                    'order_id'      => $order_id,
-                    'product_id'    => $item['product']['id'],
-                    'unit_price'    => $item['product']['price'],
-                    'quantity'      => $item['quantity'],
-                    'variant'       => null,
-                ]);
+            'order_id' => $order_id,
+            'product_id' => $item['product']['id'],
+            'unit_price' => $item['product']['price'],
+            'quantity' => $item['quantity'],
+            'variant' => null,
+        ]);
     }
 }
