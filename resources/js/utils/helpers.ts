@@ -8,7 +8,6 @@ const pesoFormatter = new Intl.NumberFormat('en-PH', {
     maximumFractionDigits: 0,
 });
 
-
 export const formatSortableHeader = (label: string) => {
     return ({ column }: { column: any }) =>
         h(
@@ -28,8 +27,6 @@ export const toggleProductSelection = (selectedProducts: Set<number>, product: {
         selectedProducts.add(product.id);
     }
 };
-
-
 
 export const formatCurrency = (amount: string | number): string => {
     return pesoFormatter.format(Number(amount || 0));
@@ -65,3 +62,34 @@ export const getFilteredImageUrl = (image_url : string) => {
         ? image_url.replace(/^\/storage/, '')
         : image_url;
 };
+
+export const formatSliderPrice = (value: number): string => {
+    if (value >= 1_000) {
+        return `₱${(value / 1_000).toFixed(0)}k`;
+    }
+    return `₱${value}`;
+}
+
+export const extractPrice = (text: string): number | null => {
+    const match = text.match(/[Uu]nit\s+[Pp]rice[:\s]+([0-9,\.]+\s*k?)/);
+    if (!match) {
+        return null;
+    }
+
+    const raw = match[1].replace(/,/g, '').trim();
+    if (raw.toLowerCase().endsWith('k')) {
+        return parseFloat(raw) * 1000;
+    }
+
+    return parseFloat(raw);
+}
+
+export const extractBuildTitle = (text: string): string => {
+    const firstLine = text
+        .replace(/\r\n/g, '\n')
+        .split('\n')
+        .map((line) => line.trim())
+        .find((line) => line.length > 0);
+
+    return firstLine ?? 'Custom Gaming System Unit';
+}
