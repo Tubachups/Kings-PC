@@ -49,3 +49,14 @@ export const pages = [
     { label: 'Testimonials' },
     { label: 'Blogs' },
 ];
+
+export const categoryOrder = [
+    'motherboard',
+    'cpu',
+    'ram',
+    'storages',
+    'psu',
+    'gpu',
+    'case',
+    'cooling',
+]
