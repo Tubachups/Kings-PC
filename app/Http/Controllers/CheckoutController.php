@@ -23,6 +23,7 @@ class CheckoutController extends Controller
         $freshCart = $checkout->validateCart($redisKey, $cart);
 
         return Inertia::render('Shop/Checkout', [
+            'currentUser' => Auth::user(),
             'freshCart' => $freshCart ?? [],
             'shippingFee' => 150.00,
         ]);

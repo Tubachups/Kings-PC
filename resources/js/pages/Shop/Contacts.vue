@@ -1,18 +1,30 @@
 <script setup lang="ts">
-import { useForm, Form } from '@inertiajs/vue3'
+import { useForm, usePage } from '@inertiajs/vue3'
 import Layout from '@/layouts/MainLayout.vue'
 
 defineOptions({ layout: Layout })
+
+type ContactsPageProps = {
+    flash?: {
+        success?: string
+    }
+}
+
+const page = usePage<ContactsPageProps>()
 
 const form = useForm({
     name: '',
     email: '',
     message: '',
-    services: [] as string[],
 })
 
 function submitForm() {
-    alert(`Form submitted with:\nName: ${form.name}\nEmail: ${form.email}\nMessage: ${form.message}`)
+    form.post('/contacts', {
+        preserveScroll: true,
+        onSuccess: () => {
+            form.reset('name', 'email', 'message')
+        },
+    })
 }
 </script>
 
@@ -24,7 +36,13 @@ function submitForm() {
                 Reach out for inquiries, support, or collaboration -- we'd love to hear from you!
             </p>
             <div class="flex flex-col gap-6 rounded-2xl bg-white p-4 shadow dark:bg-neutral-900 dark:ring-1 dark:ring-gray-800 md:flex-row md:p-8">
-                <Form class="flex flex-1 flex-col gap-4" @submit.prevent="submitForm">
+                <form class="flex flex-1 flex-col gap-4" @submit.prevent="submitForm">
+                    <div
+                        v-if="page.props.flash?.success"
+                        class="rounded border border-green-300 bg-green-50 px-4 py-2 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/40 dark:text-green-300"
+                    >
+                        {{ page.props.flash.success }}
+                    </div>
                     <div>
                         <label class="mb-1 block font-semibold text-gray-900 dark:text-gray-100">Name</label>
                         <input
@@ -66,7 +84,7 @@ function submitForm() {
                     >
                         Send Message
                     </button>
-                </Form>
+                </form>
 
                 <div class="flex min-h-75 flex-1 items-center justify-center">
                     <iframe
