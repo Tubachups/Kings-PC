@@ -55,9 +55,7 @@ class ShopController extends Controller
     {
         return Inertia::render('Shop/Index', [
             'topBuilds' => BuildPost::query()
-                ->applySort('price')
-                ->limit(6)
-                ->get([
+                ->select([
                     'id',
                     'text',
                     'image_preview_1',
@@ -66,7 +64,25 @@ class ShopController extends Controller
                     'image_preview_4',
                     'likes',
                     'created_at',
-                ]),
+                ])
+                ->selectRaw('image_preview_1_blob IS NOT NULL as has_image_preview_1_blob')
+                ->selectRaw('image_preview_2_blob IS NOT NULL as has_image_preview_2_blob')
+                ->selectRaw('image_preview_3_blob IS NOT NULL as has_image_preview_3_blob')
+                ->selectRaw('image_preview_4_blob IS NOT NULL as has_image_preview_4_blob')
+                ->applySort('price')
+                ->limit(6)
+                ->get()
+                ->map(fn (BuildPost $buildPost): array => [
+                    'id' => $buildPost->id,
+                    'text' => $buildPost->text,
+                    'likes' => $buildPost->likes,
+                    'created_at' => $buildPost->created_at,
+                    'image_preview_1' => $this->resolveBuildImageUrl($buildPost, 1),
+                    'image_preview_2' => $this->resolveBuildImageUrl($buildPost, 2),
+                    'image_preview_3' => $this->resolveBuildImageUrl($buildPost, 3),
+                    'image_preview_4' => $this->resolveBuildImageUrl($buildPost, 4),
+                ])
+                ->values(),
         ]);
     }
 

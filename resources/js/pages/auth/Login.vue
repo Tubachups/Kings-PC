@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faGoogle, faFacebook } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Form, Head, usePage } from '@inertiajs/vue3';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -15,6 +18,8 @@ import Layout from '@/layouts/MainLayout.vue';
 import { redirect as googleRedirect } from '@/routes/google';
 import { redirect as facebookRedirect } from '@/routes/facebook';
 
+library.add(faGoogle, faFacebook);
+
 defineOptions({ layout: Layout });
 
 defineProps<{
@@ -26,10 +31,10 @@ defineProps<{
 
 <template>
     <AuthBase
-        title="Log in to your account"
-        description="Enter your email and password below to log in"
+        title="Sign in to your account"
+        description="Enter your email and password below to Sign in"
     >
-        <Head title="Log in" />
+        <Head title="Sign in" />
 
         <div
             v-if="status"
@@ -93,13 +98,13 @@ defineProps<{
 
                 <Button
                     type="submit"
-                    class="mt-4 w-full"
+                    class="mt-4 w-full cursor-pointer"
                     :tabindex="4"
                     :disabled="processing"
                     data-test="login-button"
                 >
                     <Spinner v-if="processing" />
-                    Log in
+                    Sign in
                 </Button>
             </div>
 
@@ -119,8 +124,9 @@ defineProps<{
                 :tabindex="6"
                 :href="googleRedirect().url"
             >
-                Log in with Google
+            <FontAwesomeIcon :icon="faGoogle" size="lg"/> Sign in with Google
             </Button>
+            <div class="g-signin2" data-onsuccess="onSignIn"></div>
         </div>
 
         <div>
@@ -131,7 +137,7 @@ defineProps<{
                 :tabindex="7"
                 :href="facebookRedirect().url"
             >
-                Log in with Facebook
+            <FontAwesomeIcon :icon="faFacebook" size="lg"/> Sign in with Facebook
             </Button>
         </div>
     </AuthBase>

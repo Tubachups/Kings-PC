@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faComputer, faHouse, faPhone, faRobot } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
 import {
@@ -24,9 +27,42 @@ import {
     SheetClose,
 } from '@/components/ui/sheet';
 import type { Category } from '@/types/product';
+import { categoryOrder } from '@/constants/constants';
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
+library.add(faHouse, faRobot, faComputer, faPhone);
 
 const page = usePage();
-const categories = computed(() => page.props.categories as Category[]);
+
+const categoryIconClassesBySlug: Record<string, string> = {
+    motherboard: 'bi bi-motherboard',
+    cpu: 'bi bi-cpu',
+    ram: 'bi bi-memory',
+    storages: 'bi bi-device-ssd',
+    psu: 'bi bi-power',
+    gpu: 'bi bi-gpu-card',
+    case: 'bi bi-suitcase-lg',
+    cooling: 'bi bi-fan',
+};
+
+const categoryOrderPosition = new Map<string, number>(
+    categoryOrder.map((slug, index) => [slug, index]),
+);
+
+const sortedCategories = computed(() => {
+    const categories = [...(page.props.categories as Category[])];
+
+    return categories.sort((firstCategory, secondCategory) => {
+        const firstPosition = categoryOrderPosition.get(firstCategory.slug) ?? Number.MAX_SAFE_INTEGER;
+        const secondPosition = categoryOrderPosition.get(secondCategory.slug) ?? Number.MAX_SAFE_INTEGER;
+
+        if (firstPosition === secondPosition) {
+            return firstCategory.name.localeCompare(secondCategory.name);
+        }
+
+        return firstPosition - secondPosition;
+    });
+});
 </script>
 
 <template>
@@ -46,7 +82,9 @@ const categories = computed(() => page.props.categories as Category[]);
                             as-child
                             :class="navigationMenuTriggerStyle()"
                         >
-                            <Link href="/" >Home</Link>
+                            <Link href="/" ><span>
+                                <FontAwesomeIcon :icon="faHouse"/> Home
+                            </span></Link>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 
@@ -55,7 +93,9 @@ const categories = computed(() => page.props.categories as Category[]);
                             as-child
                             :class="navigationMenuTriggerStyle()"
                         >
-                            <Link href="/builder">AI Builder</Link>
+                            <Link href="/builder"><span>
+                                <FontAwesomeIcon :icon="faRobot"/> AI Builder
+                            </span></Link>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 
@@ -66,22 +106,29 @@ const categories = computed(() => page.props.categories as Category[]);
                                 :class="navigationMenuTriggerStyle()"
                             >
                                 <Link href="/components" :only="['products']"
-                                    >Products</Link
+                                    ><span>
+                                        <FontAwesomeIcon :icon="faComputer"/> Products
+                                    </span></Link
                                 >
                             </NavigationMenuLink>
                         </NavigationMenuTrigger>
                         <NavigationMenuContent>
                             <ul class="grid w-50 gap-2 p-2">
                                 <li
-                                    v-for="category in categories"
+                                    v-for="category in sortedCategories"
                                     :key="category.id"
                                 >
                                     <NavigationMenuLink as-child>
                                         <Link
                                             :href="'/' + category.slug"
-                                            class="block rounded-md p-2 text-sm hover:bg-accent"
+                                            class="flex items-start gap-2 rounded-md p-2 text-sm hover:bg-accent"
                                         >
-                                            {{ category.name.toUpperCase() }}
+                                            <span>
+                                                <i
+                                                    :class="categoryIconClassesBySlug[category.slug] + ' mr-1'"
+                                                    aria-hidden="true"
+                                                />  {{ category.name.toUpperCase() }}
+                                            </span>
                                         </Link>
                                     </NavigationMenuLink>
                                 </li>
@@ -94,7 +141,9 @@ const categories = computed(() => page.props.categories as Category[]);
                             as-child
                             :class="navigationMenuTriggerStyle()"
                         >
-                            <Link href="/contacts">Contact Us</Link>
+                            <Link href="/contacts"><span>
+                                <FontAwesomeIcon :icon="faPhone"/> Contact Us
+                            </span></Link>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
 
@@ -141,7 +190,7 @@ const categories = computed(() => page.props.categories as Category[]);
                                 <Link
                                     href="/"
                                     class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
-                                    >Home</Link
+                                    ><FontAwesomeIcon :icon="faHouse"/> Home</Link
                                 >
                             </SheetClose>
 
@@ -149,7 +198,7 @@ const categories = computed(() => page.props.categories as Category[]);
                                 <Link
                                     href="/builder"
                                     class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
-                                    >AI Builder</Link
+                                    ><FontAwesomeIcon :icon="faRobot"/> AI Builder</Link
                                 >
                             </SheetClose>
 
@@ -158,7 +207,7 @@ const categories = computed(() => page.props.categories as Category[]);
                                     <Link
                                         href="/components"
                                         class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
-                                        >Components</Link
+                                        ><FontAwesomeIcon :icon="faComputer"/> Products</Link
                                     >
                                 </SheetClose>
 
@@ -167,13 +216,17 @@ const categories = computed(() => page.props.categories as Category[]);
                                 >
                                     <SheetClose
                                         as-child
-                                        v-for="category in categories"
+                                        v-for="category in sortedCategories"
                                         :key="category.id"
                                     >
                                         <Link
                                             :href="'/' + category.slug"
-                                            class="rounded-md p-1 text-sm text-muted-foreground transition hover:bg-accent hover:text-primary"
+                                            class="flex items-center gap-2 rounded-md p-1 text-sm text-muted-foreground transition hover:bg-accent hover:text-primary"
                                         >
+                                            <i
+                                                :class="categoryIconClassesBySlug[category.slug]"
+                                                aria-hidden="true"
+                                            />
                                             {{ category.name.toUpperCase() }}
                                         </Link>
                                     </SheetClose>
@@ -184,7 +237,7 @@ const categories = computed(() => page.props.categories as Category[]);
                                 <Link
                                     href="/contacts"
                                     class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
-                                    >Contact Us</Link
+                                    ><FontAwesomeIcon :icon="faPhone" /> Contact Us</Link
                                 >
                             </SheetClose>
 
