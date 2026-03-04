@@ -107,7 +107,7 @@ const sortedCategories = computed(() => {
                                 as-child
                                 :class="navigationMenuTriggerStyle()"
                             >
-                                <Link href="/components" :only="['products']"
+                                <Link href="/components" :only="['products']" 
                                     ><span>
                                         <FontAwesomeIcon :icon="faComputer"/> Products
                                     </span></Link
@@ -148,19 +148,6 @@ const sortedCategories = computed(() => {
                             </span></Link>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
-                    
-                    <NavigationMenuItem>
-                        <NavigationMenuLink
-                            as-child
-                            :class="navigationMenuTriggerStyle()"
-                        >
-                            <Link href="/contacts"><span>
-                                <FontAwesomeIcon :icon="faPhone"/> Contact Us
-                            </span></Link>
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
-
-
 
                     <NavigationMenuItem>
                         <NavigationMenuLink
@@ -251,14 +238,6 @@ const sortedCategories = computed(() => {
                                 >
                                     <FontAwesomeIcon :icon="faCartArrowDown" /> Orders
                                 </Link>
-                            </SheetClose>
-
-                            <SheetClose as-child>
-                                <Link
-                                    href="/contacts"
-                                    class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
-                                    ><FontAwesomeIcon :icon="faPhone" /> Contact Us</Link
-                                >
                             </SheetClose>
 
                             <SheetClose as-child>

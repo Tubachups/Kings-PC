@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +12,11 @@ Route::controller(ProductController::class)
 
         // Static URIs
         Route::get('archived', 'archived')->name('archived');
+        Route::get('pending-orders', 'pendingOrders')->name('pendingOrders');
+        Route::get('processed-orders', 'processedOrders')->name('processedOrders');
+        Route::get('shipped-orders', 'shippedOrders')->name('shippedOrders');
+        Route::get('delivered-orders', 'deliveredOrders')->name('deliveredOrders');
+        Route::patch('pending-orders/{order}/advance', 'advancePendingOrder')->name('advancePendingOrder');
         Route::post('bulk-archive', 'bulkArchive')->name('bulkArchive');
         Route::post('bulk-update-status', 'bulkUpdateStatus')->name('bulkUpdateStatus');
         Route::post('bulk-restore', 'bulkRestore')->name('bulkRestore');

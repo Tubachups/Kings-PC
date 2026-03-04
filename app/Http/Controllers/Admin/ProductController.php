@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
+use App\Services\Admin\PendingOrderService;
 use App\Services\ProductService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +17,10 @@ use Inertia\Response;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductService $productService) {}
+    public function __construct(
+        private ProductService $productService,
+        private PendingOrderService $pendingOrderService
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -105,6 +110,68 @@ class ProductController extends Controller
             'products' => $products,
             'filters' => $filters,
         ]);
+    }
+
+    public function pendingOrders(Request $request): Response
+    {
+        $perPage = (int) $request->integer('per_page', 12);
+        $perPage = max(6, min($perPage, 48));
+
+        return Inertia::render('Admin/Products/PendingOrders', [
+            'orders' => $this->pendingOrderService->getPendingOrdersPaginated($perPage)
+                ->withQueryString(),
+        ]);
+    }
+
+    public function processedOrders(Request $request): Response
+    {
+        $perPage = (int) $request->integer('per_page', 12);
+        $perPage = max(6, min($perPage, 48));
+
+        return Inertia::render('Admin/Products/ProcessedOrders', [
+            'orders' => $this->pendingOrderService->getProcessedOrdersPaginated($perPage)
+                ->withQueryString(),
+        ]);
+    }
+
+    public function shippedOrders(Request $request): Response
+    {
+        $perPage = (int) $request->integer('per_page', 12);
+        $perPage = max(6, min($perPage, 48));
+
+        return Inertia::render('Admin/Products/ShippedOrders', [
+            'orders' => $this->pendingOrderService->getShippedOrdersPaginated($perPage)
+                ->withQueryString(),
+        ]);
+    }
+
+    public function deliveredOrders(Request $request): Response
+    {
+        $perPage = (int) $request->integer('per_page', 12);
+        $perPage = max(6, min($perPage, 48));
+
+        return Inertia::render('Admin/Products/DeliveredOrders', [
+            'orders' => $this->pendingOrderService->getDeliveredOrdersPaginated($perPage)
+                ->withQueryString(),
+        ]);
+    }
+
+    public function advancePendingOrder(Order $order): RedirectResponse
+    {
+        $nextStatus = match ($order->status) {
+            'Pending', 'Order Placed' => 'Processing',
+            'Processing' => 'Shipped',
+            'Shipped' => 'Delivered',
+            default => null,
+        };
+
+        if ($nextStatus === null) {
+            return back()->with('error', 'Order is already at its final status.');
+        }
+
+        $order->update(['status' => $nextStatus]);
+
+        return back()->with('success', "Order {$order->order_number} moved to {$nextStatus}.");
     }
 
     public function restore(int $id): RedirectResponse

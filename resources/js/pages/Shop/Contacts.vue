@@ -29,7 +29,7 @@ function submitForm() {
 </script>
 
 <template>
-    <div class="bg-gray-50 px-2 py-8 dark:bg-neutral-950">
+    <div class="bg-gray-50 px-4 py-8 dark:bg-neutral-950">
         <div class="mx-auto max-w-5xl">
             <h1 class="mb-2 text-center text-3xl font-bold text-gray-900 dark:text-gray-100 md:text-4xl">Stay Connected with Us</h1>
             <p class="mb-8 text-center text-lg text-gray-600 dark:text-gray-400">

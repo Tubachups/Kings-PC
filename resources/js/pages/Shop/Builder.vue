@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios';
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { toast } from 'vue-sonner';
 import ProductCard from '@/components/shop/products/ProductCard.vue';
 import Button from '@/components/ui/button/Button.vue';
@@ -22,10 +22,15 @@ const form = reactive({
 
 
 const toNumber = (value?: number | string | null) => Number(value ?? 0);
+const isInputEmpty = computed(() => form.prompt.trim().length === 0 || toNumber(form.budget) <= 0);
 
 // Use shared formatCurrency helper
 
 const handleSubmit = async () => {
+    if (isInputEmpty.value || isSubmitting.value) {
+        return;
+    }
+
     isSubmitting.value = true;
 
     try {
@@ -43,46 +48,57 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-    <div class="m-12 flex flex-col md:flex-row h-full">
-        <Card class="h-full md:w-1/3 m-2">
+    <div class="m-5 flex flex-col lg:flex-row gap-4">
+        <Card class="w-full  lg:w-1/3 lg:max-w-sm  self-start">
             <div class="flex flex-col justify-center p-6">
-                <form @submit.prevent="handleSubmit">
+                <form @submit.prevent="handleSubmit" class="flex flex-col">
                     <Label class="block text-sm font-medium text-slate-700">Build Idea</Label>
-                    <Textarea v-model="form.prompt" class="h-96 resize-none" placeholder="PC build idea here" />
+                    <Textarea
+                        v-model="form.prompt"
+                        class="mt-2 h-40 resize-none lg:h-96"
+                        placeholder="PC build idea here"
+                    />
+
                     <Label class="mt-4 block text-sm font-medium text-slate-700">Budget (PHP)</Label>
                     <Input v-model="form.budget" type="number" class="mt-2" />
-                    <Button :disabled="isSubmitting" type="submit" class="mt-2">
+
+                    <Button :disabled="isSubmitting || isInputEmpty" type="submit" class="mt-6 w-full">
                         {{ isSubmitting ? 'Generating...' : 'Submit' }}
                     </Button>
                 </form>
             </div>
         </Card>
-        <div class="h-full md:w-2/3 m-2">
-            <Card class="flex h-full items-center justify-center text-slate-600 p-6">
-                <div v-if="!aiBuild && !isSubmitting">
-                    <img class="rounded-lg object-fill" src="/images/ai.png" alt="PC Build" />
+
+        <div class="flex flex-1 flex-col min-w-0">
+            <Card class="flex flex-1 flex-col items-center justify-center p-4 text-slate-600 min-h-[50vh]">
+
+                <div v-if="!aiBuild && !isSubmitting" class="w-full max-w-sm">
+                    <img class="w-full rounded-lg object-contain" src="/images/ai.png" alt="PC Build" />
                 </div>
-                <div v-else-if="isSubmitting">
-                    Generating your build...
-                    <img class="rounded-lg object-cover w-full h-96" src="/images/053.jpg" alt="PC Build" />
+
+                <div v-else-if="isSubmitting" class="flex w-full max-w-sm flex-col items-center gap-4 text-center">
+                    <span class="animate-pulse font-medium">Generating your build...</span>
+                    <img class="w-full rounded-lg object-cover" src="/images/053.jpg" alt="PC Build" />
                 </div>
-                <div v-if="aiBuild" class="flex h-full flex-col gap-4">
-                    <Card class="rounded-xl border bg-slate-50 p-4">
+
+                <div v-if="aiBuild" class="flex w-full flex-col gap-4">
+                    <Card class=" rounded-xl border bg-slate-50 p-4">
                         <p class="text-xs uppercase tracking-wide text-slate-500">Build Summary</p>
-                        <p class="mt-1 text-lg font-semibold text-slate-900">
+                        <p class=" text-lg font-semibold text-slate-900">
                             Total: {{ formatCurrency(toNumber(aiBuild?.total_price)) }}
                         </p>
-                        <p class="mt-2 text-sm leading-relaxed text-slate-700">
+                        <p class=" text-xs leading-relaxed text-slate-700">
                             {{ aiBuild?.explanation || 'No explanation returned by AI.' }}
                         </p>
                     </Card>
-                    <div class="grid max-h-[45vh] grid-cols-1 gap-3 overflow-y-auto pr-1 md:grid-cols-4">
+
+                    <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                         <Card
                             v-for="product in aiBuild.build"
                             :key="product.id"
                             class="flex flex-col rounded-xl border border-slate-200 p-4 shadow-sm"
                         >
-                            <ProductCard  :product="{
+                            <ProductCard :product="{
                                 id: product.id,
                                 name: product.name,
                                 price: toNumber(product.price),
@@ -97,6 +113,7 @@ const handleSubmit = async () => {
                         </Card>
                     </div>
                 </div>
+
             </Card>
         </div>
     </div>
