@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\PasswordUpdateRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -13,8 +14,12 @@ class PasswordController extends Controller
     /**
      * Show the user's password settings page.
      */
-    public function edit(): Response
+    public function edit(Request $request): Response|RedirectResponse
     {
+        if ($request->user()->isOauthUser()) {
+            return to_route('profile.edit')->with('error', 'Password updates are unavailable for social-login accounts.');
+        }
+
         return Inertia::render('settings/Password');
     }
 
@@ -23,6 +28,10 @@ class PasswordController extends Controller
      */
     public function update(PasswordUpdateRequest $request): RedirectResponse
     {
+        if ($request->user()->isOauthUser()) {
+            return to_route('profile.edit')->with('error', 'Password updates are unavailable for social-login accounts.');
+        }
+
         $request->user()->update([
             'password' => $request->password,
         ]);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
@@ -8,8 +8,8 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
-use App\Services\Admin\PendingOrderService;
-use App\Services\ProductService;
+use App\Services\admin\PendingOrderService;
+use App\Services\productservice;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,7 +18,7 @@ use Inertia\Response;
 class ProductController extends Controller
 {
     public function __construct(
-        private ProductService $productService,
+        private productservice $productservice,
         private PendingOrderService $pendingOrderService
     ) {}
 
@@ -33,7 +33,7 @@ class ProductController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return Inertia::render('Admin/Products/Index', [
+        return Inertia::render('admin/products/Index', [
             'products' => $products,
             'categories' => Category::all(),
             'filters' => $filters,
@@ -42,14 +42,14 @@ class ProductController extends Controller
 
     public function create(): Response
     {
-        return Inertia::render('Admin/Products/Create', [
+        return Inertia::render('admin/products/Create', [
             'categories' => Category::all(),
         ]);
     }
 
     public function store(StoreProductRequest $request): RedirectResponse
     {
-        $this->productService->createProduct(
+        $this->productservice->createProduct(
             $request->validated(),
             $request->file('image')
         );
@@ -64,7 +64,7 @@ class ProductController extends Controller
             'image' => $product->image_url,
         ]);
 
-        return Inertia::render('Admin/Products/Edit', [
+        return Inertia::render('admin/products/Edit', [
             'product' => $productData,
             'categories' => Category::all(),
         ]);
@@ -72,7 +72,7 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
-        $this->productService->updateProduct($product, $request->validated());
+        $this->productservice->updateProduct($product, $request->validated());
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Product updated successfully.');
@@ -106,7 +106,7 @@ class ProductController extends Controller
             ->paginate(15)
             ->withQueryString();
 
-        return Inertia::render('Admin/Products/Archived', [
+        return Inertia::render('admin/products/Archived', [
             'products' => $products,
             'filters' => $filters,
         ]);
@@ -117,7 +117,7 @@ class ProductController extends Controller
         $perPage = (int) $request->integer('per_page', 12);
         $perPage = max(6, min($perPage, 48));
 
-        return Inertia::render('Admin/Products/PendingOrders', [
+        return Inertia::render('admin/products/PendingOrders', [
             'orders' => $this->pendingOrderService->getPendingOrdersPaginated($perPage)
                 ->withQueryString(),
         ]);
@@ -128,7 +128,7 @@ class ProductController extends Controller
         $perPage = (int) $request->integer('per_page', 12);
         $perPage = max(6, min($perPage, 48));
 
-        return Inertia::render('Admin/Products/ProcessedOrders', [
+        return Inertia::render('admin/products/ProcessedOrders', [
             'orders' => $this->pendingOrderService->getProcessedOrdersPaginated($perPage)
                 ->withQueryString(),
         ]);
@@ -139,7 +139,7 @@ class ProductController extends Controller
         $perPage = (int) $request->integer('per_page', 12);
         $perPage = max(6, min($perPage, 48));
 
-        return Inertia::render('Admin/Products/ShippedOrders', [
+        return Inertia::render('admin/products/ShippedOrders', [
             'orders' => $this->pendingOrderService->getShippedOrdersPaginated($perPage)
                 ->withQueryString(),
         ]);
@@ -150,7 +150,7 @@ class ProductController extends Controller
         $perPage = (int) $request->integer('per_page', 12);
         $perPage = max(6, min($perPage, 48));
 
-        return Inertia::render('Admin/Products/DeliveredOrders', [
+        return Inertia::render('admin/products/DeliveredOrders', [
             'orders' => $this->pendingOrderService->getDeliveredOrdersPaginated($perPage)
                 ->withQueryString(),
         ]);

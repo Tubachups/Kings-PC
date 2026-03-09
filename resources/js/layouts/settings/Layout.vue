@@ -1,34 +1,48 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
-import { type NavItem } from '@/types';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editProfile } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
+import { type NavItem } from '@/types';
 
-const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: editProfile(),
-    },
-    {
-        title: 'Password',
-        href: editPassword(),
-    },
-    {
-        title: 'Two-Factor Auth',
-        href: show(),
-    },
-    {
-        title: 'Appearance',
-        href: editAppearance(),
-    },
-];
+const page = usePage();
+
+const isOauthUser = computed(() => {
+    return Boolean(page.props.auth.user?.google_id || page.props.auth.user?.fb_id);
+});
+
+const sidebarNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Profile',
+            href: editProfile(),
+        },
+        {
+            title: 'Two-Factor Auth',
+            href: show(),
+        },
+        {
+            title: 'Appearance',
+            href: editAppearance(),
+        },
+    ];
+
+    if (!isOauthUser.value) {
+        items.splice(1, 0, {
+            title: 'Password',
+            href: editPassword(),
+        });
+    }
+
+    return items;
+});
 
 const { isCurrentUrl } = useCurrentUrl();
 </script>

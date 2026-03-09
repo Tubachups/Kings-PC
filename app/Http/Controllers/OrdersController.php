@@ -11,7 +11,7 @@ class OrdersController extends Controller
     //
     public function index(Request $request)
     {
-        return Inertia::render('Shop/Orders', [
+        return Inertia::render('shop/Orders', [
             'orders' => $request->user()
                 ->orders()
                 ->latest()

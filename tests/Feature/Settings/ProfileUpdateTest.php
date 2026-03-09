@@ -50,6 +50,30 @@ test('email verification status is unchanged when the email address is unchanged
     expect($user->refresh()->email_verified_at)->not->toBeNull();
 });
 
+test('oauth user cannot update email address', function () {
+    $user = User::factory()->create([
+        'google_id' => 'google-123',
+    ]);
+
+    $originalEmail = $user->email;
+
+    $response = $this
+        ->actingAs($user)
+        ->patch(route('profile.update'), [
+            'name' => 'OAuth User',
+            'email' => 'changed@example.com',
+        ]);
+
+    $response
+        ->assertSessionHasNoErrors()
+        ->assertRedirect(route('profile.edit'));
+
+    $user->refresh();
+
+    expect($user->name)->toBe('OAuth User');
+    expect($user->email)->toBe($originalEmail);
+});
+
 test('user can delete their account', function () {
     $user = User::factory()->create();
 

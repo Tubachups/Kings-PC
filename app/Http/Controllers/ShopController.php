@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use App\Http\Requests\GenerateBuildRequest;
 use App\Models\Category;
 use App\Models\Product;
-use App\Services\Shop\BuildFeedService;
-use App\Services\Shop\BuildGenerationService;
-use App\Services\Shop\BuildImageService;
+use App\Services\shop\BuildFeedService;
+use App\Services\shop\BuildGenerationService;
+use App\Services\shop\BuildImageService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class ShopController extends Controller
+class shopController extends Controller
 {
     public function __construct(
         private BuildFeedService $buildFeedService,
@@ -24,28 +24,28 @@ class ShopController extends Controller
 
     public function index(): InertiaResponse
     {
-        return Inertia::render('Shop/Index', [
+        return Inertia::render('shop/Index', [
             'topBuilds' => $this->buildFeedService->getTopBuilds(),
         ]);
     }
 
     public function contacts(): InertiaResponse
     {
-        return Inertia::render('Shop/Contacts', [
+        return Inertia::render('shop/Contacts', [
 
         ]);
     }
 
     public function components(): InertiaResponse
     {
-        return Inertia::render('Shop/Components', [
+        return Inertia::render('shop/Components', [
             'products' => Inertia::lazy(fn () => Product::where('is_active', true)->orderBy('name', 'asc')->with('category')->get()),
         ]);
     }
 
     public function showByCategory(Category $category): InertiaResponse
     {
-        return Inertia::render('Shop/Category', [
+        return Inertia::render('shop/Category', [
             'products' => $category->products()->where('is_active', true)->orderBy('name', 'asc')->with('category')->get(),
         ]);
     }
@@ -56,7 +56,7 @@ class ShopController extends Controller
         $minPrice = $request->query('min_price') !== null ? (int) $request->query('min_price') : null;
         $maxPrice = $request->query('max_price') !== null ? (int) $request->query('max_price') : null;
 
-        return Inertia::render('Shop/Builds', [
+        return Inertia::render('shop/Builds', [
             'builds' => Inertia::scroll(fn () => $this->buildFeedService->getBuildFeed($sort, $minPrice, $maxPrice)),
             'sort' => $sort,
             'minPrice' => $minPrice,
@@ -71,7 +71,7 @@ class ShopController extends Controller
 
     public function builder(): InertiaResponse
     {
-        return Inertia::render('Shop/Builder', [
+        return Inertia::render('shop/Builder', [
 
         ]);
     }
