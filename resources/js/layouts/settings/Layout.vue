@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
+import { confirm as confirmPassword } from '@/routes/password';
 import { edit as editProfile } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
@@ -19,6 +20,14 @@ const isOauthUser = computed(() => {
 });
 
 const sidebarNavItems = computed<NavItem[]>(() => {
+    const twoFactorHref = isOauthUser.value
+        ? confirmPassword({
+              query: {
+                  intended: show.url(),
+              },
+          })
+        : show();
+
     const items: NavItem[] = [
         {
             title: 'Profile',
@@ -26,7 +35,7 @@ const sidebarNavItems = computed<NavItem[]>(() => {
         },
         {
             title: 'Two-Factor Auth',
-            href: show(),
+            href: twoFactorHref,
         },
         {
             title: 'Appearance',
