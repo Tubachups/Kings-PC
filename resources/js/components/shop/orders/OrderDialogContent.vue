@@ -17,12 +17,19 @@ defineProps<{
 
 <template>
     <DialogContent class="max-h-[80vh] overflow-y-auto sm:max-w-2xl">
+        <DialogTitle class="sr-only">
+            {{ selectedOrder ? `Order #${selectedOrder.order_number}` : 'Order details' }}
+        </DialogTitle>
+        <DialogDescription class="sr-only">
+            {{ selectedOrder ? `Placed on ${dayjs(selectedOrder.created_at).format('MMMM D, YYYY h:mm A')}` : 'View order details and items.' }}
+        </DialogDescription>
+
         <div v-if="isLoading" class="flex justify-center p-8">
             <p>Loading items...</p> </div>
 
         <div v-else-if="selectedOrder" class="space-y-4">
             <div>
-                <DialogTitle class="text-lg font-semibold">Order #{{ selectedOrder.order_number }}</DialogTitle>
+                <h2 class="text-lg font-semibold">Order #{{ selectedOrder.order_number }}</h2>
                 <DialogDescription class="text-sm text-muted-foreground">
                     Placed on {{ dayjs(selectedOrder.created_at).format('MMMM D, YYYY h:mm A') }}
                 </DialogDescription>

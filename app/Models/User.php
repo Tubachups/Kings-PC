@@ -52,6 +52,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function isOauthUser(): bool
+    {
+        return filled($this->google_id) || filled($this->fb_id);
+    }
+
     public function orders()
     {
         return $this->hasMany(Order::class);

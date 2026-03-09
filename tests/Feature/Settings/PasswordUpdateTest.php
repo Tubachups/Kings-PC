@@ -48,3 +48,35 @@ test('correct password must be provided to update password', function () {
         ->assertSessionHasErrors('current_password')
         ->assertRedirect(route('user-password.edit'));
 });
+
+test('oauth user is redirected away from password settings page', function () {
+    $user = User::factory()->create([
+        'google_id' => 'google-123',
+    ]);
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('user-password.edit'));
+
+    $response->assertRedirect(route('profile.edit'));
+});
+
+test('oauth user cannot update password', function () {
+    $user = User::factory()->create([
+        'fb_id' => 'facebook-123',
+    ]);
+
+    $oldHash = $user->password;
+
+    $response = $this
+        ->actingAs($user)
+        ->put(route('user-password.update'), [
+            'current_password' => 'password',
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ]);
+
+    $response->assertRedirect(route('profile.edit'));
+
+    expect($user->refresh()->password)->toBe($oldHash);
+});

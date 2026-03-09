@@ -83,7 +83,7 @@ function onSubmit(values: any) {
           const result = await validate();
           if (stepIndex === steps.length && result.valid) onSubmit(values);
       }">
-        <div class="mb-8 flex w-full flex-start gap-2">
+        <div class="mb-8 flex w-full flex-start gap-2 ">
           <StepperItem
             v-for="(step, index) in steps"
             :key="step.step"
@@ -96,7 +96,14 @@ function onSubmit(values: any) {
               class="absolute left-[calc(50%+20px)] right-[calc(-50%+10px)] top-5 block h-0.5 bg-muted group-data-[state=completed]:bg-primary"
             />
             <StepperTrigger as-child>
-              <Button :variant="state === 'completed' || state === 'active' ? 'default' : 'outline'" size="icon" class="z-10 rounded-full">
+              <Button
+                :variant="state === 'completed' || state === 'active' ? 'default' : 'outline'"
+                size="icon"
+                type="button"
+                tabindex="-1"
+                aria-disabled="true"
+                class="z-10 rounded-full pointer-events-none"
+              >
                 <Check v-if="state === 'completed'" class="size-5" />
                 <Circle v-if="state === 'active'" />
                 <Dot v-if="state === 'inactive'" />

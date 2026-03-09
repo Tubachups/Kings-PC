@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Dashboard Route
 Route::middleware(['auth', 'verified'])
     ->group(base_path('routes/web/dashboard.php'));
 
@@ -10,7 +11,6 @@ Route::middleware(['auth', 'verified', 'is_admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(base_path('routes/web/admin/products.php'));
-
 
 // Checkout
 Route::middleware(['auth', 'cart.not_empty'])

@@ -22,7 +22,8 @@ class CheckoutController extends Controller
 
         $freshCart = $checkout->validateCart($redisKey, $cart);
 
-        return Inertia::render('Shop/Checkout', [
+        return Inertia::render('shop/Checkout', [
+            'currentUser' => Auth::user(),
             'freshCart' => $freshCart ?? [],
             'shippingFee' => 150.00,
         ]);
@@ -40,6 +41,53 @@ class CheckoutController extends Controller
 
             foreach ($cart_items as $product_id => $item_json) {
                 $item = json_decode($item_json, true);
+                $product = null;
+
+                // Backward compatibility: some cart entries are stored as raw quantity ints.
+                if (is_int($item) || (is_string($item) && is_numeric($item))) {
+                    $quantity = (int) $item;
+                    if ($quantity <= 0) {
+                        continue;
+                    }
+
+                    $product = Product::find((int) $product_id);
+                    if (! $product) {
+                        continue;
+                    }
+
+                    $item = [
+                        'quantity' => $quantity,
+                        'product' => [
+                            'id' => $product->id,
+                            'price' => $product->price,
+                        ],
+                    ];
+                }
+
+                if (
+                    ! is_array($item)
+                    || ! isset($item['quantity'], $item['product'])
+                    || ! is_array($item['product'])
+                    || ! isset($item['product']['id'])
+                ) {
+                    continue;
+                }
+
+                $quantity = (int) $item['quantity'];
+                if ($quantity <= 0) {
+                    continue;
+                }
+
+                $productId = (int) $item['product']['id'];
+                $product ??= Product::find($productId);
+                if (! $product) {
+                    continue;
+                }
+
+                // Always use latest DB price to avoid malformed/stale cart prices.
+                $item['product']['price'] = $product->price;
+                $item['quantity'] = $quantity;
+
                 $subtotal = $item['product']['price'] * $item['quantity'];
                 $grandTotal += $subtotal;
                 OrderItem::createOrderItem($order->id, $item);

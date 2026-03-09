@@ -2,7 +2,7 @@ import { h } from 'vue';
 import { Button } from '@/components/ui/button';
 import { ArrowUpDown } from 'lucide-vue-next';
 
-const pesoFormatter = new Intl.NumberFormat('en-PH', {
+export const pesoFormatter = new Intl.NumberFormat('en-PH', {
     style: 'currency',
     currency: 'PHP',
     maximumFractionDigits: 0,

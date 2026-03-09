@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faComputer, faHouse, faPhone, faRobot } from '@fortawesome/free-solid-svg-icons';
+import { faComputer, faHouse, faPhone, faRobot, faCartArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
@@ -23,14 +23,16 @@ import {
 import {
     Sheet,
     SheetContent,
+    SheetHeader,
+    SheetTitle,
     SheetTrigger,
     SheetClose,
 } from '@/components/ui/sheet';
-import type { Category } from '@/types/product';
 import { categoryOrder } from '@/constants/constants';
+import type { Category } from '@/types/product';
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-library.add(faHouse, faRobot, faComputer, faPhone);
+library.add(faHouse, faRobot, faComputer, faPhone, faCartArrowDown);
 
 const page = usePage();
 
@@ -105,7 +107,7 @@ const sortedCategories = computed(() => {
                                 as-child
                                 :class="navigationMenuTriggerStyle()"
                             >
-                                <Link href="/components" :only="['products']"
+                                <Link href="/components" :only="['products']" 
                                     ><span>
                                         <FontAwesomeIcon :icon="faComputer"/> Products
                                     </span></Link
@@ -136,26 +138,16 @@ const sortedCategories = computed(() => {
                         </NavigationMenuContent>
                     </NavigationMenuItem>
 
-                    <NavigationMenuItem>
-                        <NavigationMenuLink
-                            as-child
-                            :class="navigationMenuTriggerStyle()"
-                        >
-                            <Link href="/contacts"><span>
-                                <FontAwesomeIcon :icon="faPhone"/> Contact Us
-                            </span></Link>
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
-
                     <NavigationMenuItem v-if="page.props.auth && page.props.auth.user">
                         <NavigationMenuLink
                             as-child
                             :class="navigationMenuTriggerStyle()"
                         >
-                            <Link href="/orders">Orders</Link>
+                            <Link href="/orders"><span>
+                                <FontAwesomeIcon :icon="faCartArrowDown"/> Orders
+                            </span></Link>
                         </NavigationMenuLink>
                     </NavigationMenuItem>
-
 
                     <NavigationMenuItem>
                         <NavigationMenuLink
@@ -185,6 +177,9 @@ const sortedCategories = computed(() => {
                         side="right"
                         class="w-75 sm:w-100 [&_.sheet-close]:cursor-pointer"
                     >
+                        <SheetHeader>
+                            <SheetTitle class="sr-only">Navigation Menu</SheetTitle>
+                        </SheetHeader>
                         <nav class="mt-8 flex flex-col gap-6 pl-3">
                             <SheetClose as-child>
                                 <Link
@@ -233,12 +228,16 @@ const sortedCategories = computed(() => {
                                 </div>
                             </div>
 
-                            <SheetClose as-child>
+                            <SheetClose
+                                v-if="page.props.auth && page.props.auth.user"
+                                as-child
+                            >
                                 <Link
-                                    href="/contacts"
+                                    href="/orders"
                                     class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
-                                    ><FontAwesomeIcon :icon="faPhone" /> Contact Us</Link
                                 >
+                                    <FontAwesomeIcon :icon="faCartArrowDown" /> Orders
+                                </Link>
                             </SheetClose>
 
                             <SheetClose as-child>

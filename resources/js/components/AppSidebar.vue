@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Package, Plus, ShoppingCart } from 'lucide-vue-next';
+import { BookOpen, CheckCircle2, Clock3, FolderKanban, Folder, LayoutGrid, Plus, Settings, Store, Truck } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { create as productsCreate, deliveredOrders, index as productsIndex, pendingOrders } from '@/actions/App/Http/Controllers/Admin/ProductController';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -13,11 +15,9 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { dashboard, shop } from '@/routes';
 import { type NavItem } from '@/types';
 import AppLogo from './AppLogo.vue';
-import { dashboard, shop } from '@/routes';
-import { index as productsIndex, create as productsCreate } from '@/actions/App/Http/Controllers/Admin/ProductController';
-import { computed } from 'vue';
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
@@ -38,7 +38,7 @@ const quickLinkItems = computed(() => {
         {
             title: 'Manage Products',
             href: productsIndex().url,
-            icon: Package,
+            icon: FolderKanban,
         },
         {
             title: 'Add New Product',
@@ -48,7 +48,27 @@ const quickLinkItems = computed(() => {
         {
             title: 'View Shop',
             href: shop().url,
-            icon: ShoppingCart,
+            icon: Store,
+        },
+        {
+            title: 'Pending Orders',
+            href: pendingOrders().url,
+            icon: Clock3,
+        },
+        {
+            title: 'Processed Orders',
+            href: '/admin/products/processed-orders',
+            icon: Settings,
+        },
+        {
+            title: 'Shipped Orders',
+            href: '/admin/products/shipped-orders',
+            icon: Truck,
+        },
+        {
+            title: 'Delivered Orders',
+            href: deliveredOrders().url,
+            icon: CheckCircle2,
         },
     ];
 });

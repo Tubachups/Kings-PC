@@ -15,6 +15,7 @@ import { type BreadcrumbItem } from '@/types';
 
 type Props = {
     mustVerifyEmail: boolean;
+    canUpdateEmail: boolean;
     status?: string;
 };
 
@@ -72,11 +73,19 @@ const user = page.props.auth.user;
                             class="mt-1 block w-full"
                             name="email"
                             :default-value="user.email"
+                            :readonly="!canUpdateEmail"
                             required
                             autocomplete="username"
                             placeholder="Email address"
                         />
                         <InputError class="mt-2" :message="errors.email" />
+                        <p
+                            v-if="!canUpdateEmail"
+                            class="text-xs text-muted-foreground"
+                        >
+                            Email is managed by your social login provider and
+                            cannot be changed here.
+                        </p>
                     </div>
 
                     <div v-if="mustVerifyEmail && !user.email_verified_at">

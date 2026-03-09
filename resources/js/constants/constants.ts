@@ -2,6 +2,7 @@ import {
     builder as builderRoute,
     builds as buildsRoute,
     components as componentsRoute,
+    contacts as contactsRoute,
 } from '@/routes';
 
 export const PART_CATEGORIES = [
@@ -46,7 +47,7 @@ export const pages = [
     { label: 'Builder', route: builderRoute() },
     { label: 'Products', route: componentsRoute() },
     { label: 'Completed Builds', route: buildsRoute() },
-    { label: 'Testimonials' },
+    { label: 'Contact Us', route: contactsRoute() },
     { label: 'Blogs' },
 ];
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedInteger('quantity')->default(1);
             $table->decimal('unit_price', 10, 2);
             $table->string('variant')->nullable();
-            $table->unique(['order_id', 'product_id'], 'cart_user_product_unique');
+            $table->unique(['order_id', 'product_id'], 'order_product_unique');
             $table->timestamps();
         });
     }

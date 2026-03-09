@@ -13,7 +13,7 @@ const { product, isLoading = false } = defineProps<{
     isLoading?: boolean;
 }>();
 
-const filteredImageUrl = computed(() => 
+const filteredImageUrl = computed(() =>
     product?.image_url ? getFilteredImageUrl(product.image_url) : ''
 );
 </script>
@@ -46,42 +46,41 @@ const filteredImageUrl = computed(() =>
     </template>
 
     <template v-else-if="product">
-        <img
-            :src="filteredImageUrl"
-            :alt="product.name"
-            class="my-2 aspect-square w-full rounded-lg object-cover dark:bg-neutral-950"
-        />
-
-        <h2 class="mt-2 mb-2 text-lg leading-tight font-bold">
-            {{ product.name }}
-        </h2>
-
-        <p class="mb-4 text-xl font-extrabold text-green-600">
-            ₱{{ product.price }}
-        </p>
-
-        <div class="mb-4 rounded bg-gray-50 dark:bg-neutral-950 p-3 text-sm">
-            <h3 class="mb-2 border-b pb-1 font-bold text-gray-700 dark:text-gray-300">
-                Specifications
-            </h3>
-            <ul>
-                <template v-for="(value, key) in product.specs" :key="key">
-                    <li
-                        class="flex justify-between py-1"
-                    >
-                        <span class="text-gray-600 dark:text-gray-200 capitalize"
-                            >{{ String(key).replace('_', ' ') }}:</span
+        <div class="flex h-full flex-col">
+            <img
+                :src="filteredImageUrl"
+                :alt="product.name"
+                class="my-2 aspect-square w-full rounded-lg object-cover dark:bg-neutral-950"
+            />
+            <h2 class="mt-2 mb-2 text-lg leading-tight font-bold">
+                {{ product.name }}
+            </h2>
+            <p class="mb-4 text-xl font-extrabold text-green-600">
+                ₱{{ product.price }}
+            </p>
+            <div class="mb-4 rounded bg-gray-50 dark:bg-neutral-950 p-3 text-sm">
+                <h3 class="mb-2 border-b pb-1 font-bold text-gray-700 dark:text-gray-300">
+                    Specifications
+                </h3>
+                <ul>
+                    <template v-for="(value, key) in product.specs" :key="key">
+                        <li
+                            class="flex justify-between py-1"
                         >
-                        <span class="font-medium text-gray-900 dark:text-gray-300">{{
-                            value
-                        }}</span>
-                    </li>
-                </template>
-            </ul>
-        </div>
+                            <span class="text-gray-600 dark:text-gray-200 capitalize"
+                                >{{ String(key).replace('_', ' ') }}:</span
+                            >
+                            <span class="font-medium text-gray-900 dark:text-gray-300">{{
+                                value
+                            }}</span>
+                        </li>
+                    </template>
+                </ul>
+            </div>
 
-    <button v-if="page.props.auth && page.props.auth.user" @click="handleAddToCart(product)" class="w-full mt-auto bottom-0 bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700">
-        Add to Cart
-    </button>
+                <button v-if="page.props.auth && page.props.auth.user" @click="handleAddToCart(product)" class="w-full mt-auto bottom-0 bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition duration-300 active:scale-95 active:bg-blue-700 cursor-pointer">
+            Add to Cart
+                </button>
+        </div>
     </template>
 </template>

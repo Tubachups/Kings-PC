@@ -22,6 +22,17 @@ defineProps<{
     <Card class="p-5">
         <div class="grid grid-cols-1 gap-4 md:hidden">
             <div
+                v-if="orders.length === 0"
+                class="rounded-lg border border-dashed bg-muted/30 p-6 text-center"
+            >
+                <p class="text-base font-semibold">No orders yet</p>
+                <p class="mt-2 text-sm text-muted-foreground">
+                    Your orders will appear here after you complete checkout.
+                </p>
+            </div>
+
+            <div
+                v-else
                 v-for="order in orders"
                 :key="order.id"
                 class="flex flex-col gap-4 rounded-lg border bg-card p-4 shadow-sm"

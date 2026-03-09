@@ -41,16 +41,16 @@ const handlePageChange = (page: number): void => {
         <Pagination :total="totalItems" :items-per-page="perPage" :page="currentPage" :sibling-count="1" show-edges
             @update:page="handlePageChange">
             <PaginationContent v-slot="{ items }">
-                <PaginationItem :value="1" class="mr-3">
+                <PaginationItem :value="1" class="mr-3 cursor-pointer">
                     <PaginationFirst />
                 </PaginationItem>
                 <template v-for="(item, index) in items" :key="index">
                     <PaginationItem v-if="item.type === 'page'" :value="item.value">
                         <Button variant="outline" size="icon" :class="[
-                            'mx-1 rounded-md transition-colors duration-150',
+                            'mx-1 rounded-md transition-colors duration-150 cursor-pointer',
                             item.value === currentPage
-                                ? 'bg-primary border-primary text-primary-foreground hover:bg-primary/90'
-                                : 'border border-gray-200 bg-white text-black hover:bg-muted',
+                                ? 'bg-primary border-primary text-primary-foreground dark:text-white hover:bg-primary/90'
+                                : 'border border-gray-200 bg-white text-black dark:text-white hover:bg-muted',
                         ]">
                             {{ item.value }}
                         </Button>
@@ -59,7 +59,7 @@ const handlePageChange = (page: number): void => {
                         <PaginationEllipsis />
                     </PaginationItem>
                 </template>
-                <PaginationItem :value="totalPages" class="ml-3">
+                <PaginationItem :value="totalPages" class="ml-3 cursor-pointer">
                     <PaginationLast />
                 </PaginationItem>
             </PaginationContent>
