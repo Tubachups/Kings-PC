@@ -8,7 +8,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/cron', function () {
+Route::post('/cron', function () {
     Artisan::call('queue:restart');
     return response()->json(['message' => 'Restart signal sent to all workers.']);
 });
