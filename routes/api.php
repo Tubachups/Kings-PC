@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
@@ -20,6 +21,15 @@ Route::post('/cron', function (Request $request) {
         '--queue' => 'default',
         '--tries' => 3,
     ]);
+
+
+    Log::info('cron hit', [
+    'method' => request()->method(),
+    'token' => request()->header('X-CRON-TOKEN'),
+    'ua' => request()->userAgent(),
+    ]);
+
+    
 
     return response()->json(['ok' => true]);
 });
