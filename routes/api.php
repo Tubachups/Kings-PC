@@ -9,6 +9,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/cron', function () {
-    Artisan::call('queue:restart');
-    return response()->json(['message' => 'Restart signal sent to all workers.']);
+    Artisan::call('queue:work', ['--stop-when-empty' => true]);
 });
