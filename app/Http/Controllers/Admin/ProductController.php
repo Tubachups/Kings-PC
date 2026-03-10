@@ -117,7 +117,7 @@ class ProductController extends Controller
         $perPage = (int) $request->integer('per_page', 12);
         $perPage = max(6, min($perPage, 48));
 
-        return Inertia::render('admin/products/PendingOrders', [
+        return Inertia::render('admin/orders/PendingOrders', [
             'orders' => $this->pendingOrderService->getPendingOrdersPaginated($perPage)
                 ->withQueryString(),
         ]);
@@ -128,7 +128,7 @@ class ProductController extends Controller
         $perPage = (int) $request->integer('per_page', 12);
         $perPage = max(6, min($perPage, 48));
 
-        return Inertia::render('admin/products/ProcessedOrders', [
+        return Inertia::render('admin/orders/ProcessedOrders', [
             'orders' => $this->pendingOrderService->getProcessedOrdersPaginated($perPage)
                 ->withQueryString(),
         ]);
@@ -139,7 +139,7 @@ class ProductController extends Controller
         $perPage = (int) $request->integer('per_page', 12);
         $perPage = max(6, min($perPage, 48));
 
-        return Inertia::render('admin/products/ShippedOrders', [
+        return Inertia::render('admin/orders/ShippedOrders', [
             'orders' => $this->pendingOrderService->getShippedOrdersPaginated($perPage)
                 ->withQueryString(),
         ]);
@@ -150,7 +150,7 @@ class ProductController extends Controller
         $perPage = (int) $request->integer('per_page', 12);
         $perPage = max(6, min($perPage, 48));
 
-        return Inertia::render('admin/products/DeliveredOrders', [
+        return Inertia::render('admin/orders/DeliveredOrders', [
             'orders' => $this->pendingOrderService->getDeliveredOrdersPaginated($perPage)
                 ->withQueryString(),
         ]);

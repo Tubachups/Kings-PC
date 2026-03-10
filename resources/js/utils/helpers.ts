@@ -1,6 +1,6 @@
+import { ArrowUpDown } from 'lucide-vue-next';
 import { h } from 'vue';
 import { Button } from '@/components/ui/button';
-import { ArrowUpDown } from 'lucide-vue-next';
 
 export const pesoFormatter = new Intl.NumberFormat('en-PH', {
     style: 'currency',

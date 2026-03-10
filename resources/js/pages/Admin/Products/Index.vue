@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import type { ColumnDef } from '@tanstack/vue-table';
-import {  Pencil, Plus, Archive } from 'lucide-vue-next';
+import { Pencil, Plus, Archive } from 'lucide-vue-next';
 import type { AcceptableValue } from 'reka-ui';
 import { h, ref } from 'vue';
 import { toast } from 'vue-sonner';
@@ -22,6 +22,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useProductColumns } from '@/composables/useProductColumns';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
 import type { Product } from '@/types/product';
@@ -100,42 +101,18 @@ function bulkUpdateStatus(is_active: boolean) {
     );
 }
 
+const { columns: baseColumns } = useProductColumns({
+    selectedProducts,
+    toggleProductSelection,
+    formatSortableHeader,
+    formatCurrency,
+    stockHeader: 'Stock',
+    isStockSortable: true,
+    stockCellClass: (stock) => (stock < 10 ? 'text-destructive font-medium' : ''),
+});
+
 const columns: ColumnDef<Product>[] = [
-    {
-        id: 'select',
-        header: 'Select',
-        cell: ({ row }) =>
-            h('input', {
-                type: 'checkbox',
-                checked: selectedProducts.value.has(row.original.id),
-                onChange: () => toggleProductSelection(selectedProducts.value, row.original),
-                class: 'cursor-pointer',
-            }),
-    },
-    {
-        accessorKey: 'name',
-        header: formatSortableHeader('Name'),
-        cell: ({ row }) => h('div', { class: 'font-medium' }, row.getValue('name')),
-    },
-    {
-        accessorKey: 'category.name',
-        header: 'Category',
-        cell: ({ row }) => h('div', { class: 'text-sm' }, row.original.category?.name || 'N/A'),
-    },
-    {
-        accessorKey: 'price',
-        header: formatSortableHeader('Price'),
-        cell: ({ row }) =>
-            h('div', { class: 'font-medium' }, formatCurrency(row.getValue('price'))),
-    },
-    {
-        accessorKey: 'stock',
-        header: formatSortableHeader('Stock'),
-        cell: ({ row }) => {
-            const stock = parseInt(row.getValue('stock'));
-            return h('div', { class: stock < 10 ? 'text-destructive font-medium' : '' }, stock.toString());
-        },
-    },
+    ...baseColumns,
     {
         accessorKey: 'is_active',
         header: 'Status',
@@ -190,6 +167,7 @@ const breadcrumbs = [
 </script>
 
 <template>
+
     <Head title="Manage Products" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -231,19 +209,14 @@ const breadcrumbs = [
                 </div>
             </div>
 
-            <DataTable
-                :columns="columns"
-                :data="products.data"
-                :meta="{
-                    current_page: products.current_page,
-                    last_page: products.last_page,
-                    per_page: products.per_page,
-                    total: products.total,
-                    from: products.from,
-                    to: products.to,
-                }"
-                :filters="filters"
-            />
+            <DataTable :columns="columns" :data="products.data" :meta="{
+                current_page: products.current_page,
+                last_page: products.last_page,
+                per_page: products.per_page,
+                total: products.total,
+                from: products.from,
+                to: products.to,
+            }" :filters="filters" />
         </div>
     </AppLayout>
 </template>

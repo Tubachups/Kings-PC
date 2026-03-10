@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { CartItem } from '@/types/cart';
+import type { CartItem } from '@/types/cart';
 
 export const useCartStore = defineStore('cart', {
     state: () => ({

@@ -1,9 +1,9 @@
-import { useCartStore } from "@/stores/cartStore";
 import { router, usePage } from "@inertiajs/vue3";
-import { toast } from "vue-sonner";
-import { Product, CartItem } from "@/types/cart";
-import { computed } from "vue";
 import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { toast } from "vue-sonner";
+import { useCartStore } from "@/stores/cartStore";
+import type { Product, CartItem } from "@/types/cart";
 
 export function useCart() {
     const cartStore = useCartStore()

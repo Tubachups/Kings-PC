@@ -193,7 +193,7 @@ watch([nameFilter, categoryFilter], applyFilters);
                                     size="icon"
                                     :class="[
                                         'rounded-md transition-colors duration-150',
-                                        item.value === meta.current_page ? 'bg-primary text-primary-foreground hover:bg-primary/90 border-primary' : 'bg-white text-black hover:bg-muted border border-gray-200',
+                                        item.value === meta.current_page ? 'bg-primary text-primary-foreground dark:text-white hover:bg-primary/90 border-primary' : 'bg-white text-black dark:text-white hover:bg-muted border border-gray-200',
                                         'mx-1'
                                     ]"
                                 >

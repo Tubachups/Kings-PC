@@ -13,9 +13,9 @@ import {
 } from '@/actions/App/Http/Controllers/Admin/ProductController';
 import { Button } from '@/components/ui/button';
 import DataTable from '@/components/ui/data-table/DataTable.vue';
+import { useProductColumns } from '@/composables/useProductColumns';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-
 import type { Product } from '@/types/product';
 import type { ProductTableProps } from '@/types/product-table';
 import { formatCurrency, formatSortableHeader, toggleProductSelection } from '@/utils/helpers';
@@ -86,39 +86,15 @@ function bulkDelete() {
     });
 }
 
+const { columns: baseColumns } = useProductColumns({
+    selectedProducts,
+    toggleProductSelection,
+    formatSortableHeader,
+    formatCurrency,
+});
+
 const columns: ColumnDef<Product>[] = [
-    {
-        id: 'select',
-        header: 'Select',
-        cell: ({ row }) =>
-            h('input', {
-                type: 'checkbox',
-                checked: selectedProducts.value.has(row.original.id),
-                onChange: () => toggleProductSelection(selectedProducts.value, row.original),
-                class: 'cursor-pointer',
-            }),
-    },
-    {
-        accessorKey: 'name',
-        header: formatSortableHeader('Name'),
-        cell: ({ row }) => h('div', { class: 'font-medium' }, row.getValue('name')),
-    },
-    {
-        accessorKey: 'category.name',
-        header: 'Category',
-        cell: ({ row }) => h('div', { class: 'text-sm' }, row.original.category?.name || 'N/A'),
-    },
-    {
-        accessorKey: 'price',
-        header: formatSortableHeader('Price'),
-        cell: ({ row }) =>
-            h('div', { class: 'font-medium' }, formatCurrency(row.getValue('price'))),
-    },
-    {
-        accessorKey: 'stock',
-        header: 'Stock',
-        cell: ({ row }) => h('div', {}, parseInt(row.getValue('stock')).toString()),
-    },
+    ...baseColumns,
     {
         id: 'actions',
         header: 'Actions',
@@ -149,6 +125,7 @@ const breadcrumbs = [
 </script>
 
 <template>
+
     <Head title="Archived Products" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -181,19 +158,14 @@ const breadcrumbs = [
                 </div>
             </div>
 
-            <DataTable
-                :columns="columns"
-                :data="products.data"
-                :meta="{
-                    current_page: products.current_page,
-                    last_page: products.last_page,
-                    per_page: products.per_page,
-                    total: products.total,
-                    from: products.from,
-                    to: products.to,
-                }"
-                :filters="filters"
-            />
+            <DataTable :columns="columns" :data="products.data" :meta="{
+                current_page: products.current_page,
+                last_page: products.last_page,
+                per_page: products.per_page,
+                total: products.total,
+                from: products.from,
+                to: products.to,
+            }" :filters="filters" />
         </div>
     </AppLayout>
 </template>

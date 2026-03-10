@@ -1,24 +1,21 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
-import { Clock3, Mail, Package } from 'lucide-vue-next';
+import { Head, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import { index as productsIndex, pendingOrders as pendingOrdersAction } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import {
+    pendingOrders as pendingOrdersAction,
+} from '@/actions/App/Http/Controllers/Admin/ProductController';
 import PaginationControls from '@/components/PaginationControls.vue';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import OrderItemsDialog from '@/components/shop/orders/OrderItemsDialog.vue';
+import OrderList from '@/components/shop/orders/OrderList.vue';
+import OrdersHeader from '@/components/shop/orders/OrdersHeader.vue';
+import { Dialog } from '@/components/ui/dialog';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import type { PendingOrder } from '@/types/pending-order';
-import { pesoFormatter, formatCurrency, formatDate } from '@/utils/helpers';
+import type { PendingOrder, PaginatedOrders } from '@/types/orders';
+import { pesoFormatter } from '@/utils/helpers';
 
 const props = defineProps<{
-    orders: {
-        data: PendingOrder[];
-        current_page: number;
-        per_page: number;
-        total: number;
-    };
+    orders: PaginatedOrders;
 }>();
 
 const formattedOrders = computed(() => {
@@ -30,7 +27,6 @@ const formattedOrders = computed(() => {
 
 const breadcrumbs = [
     { title: 'Dashboard', href: dashboard().url },
-    { title: 'Products', href: productsIndex().url },
     { title: 'Pending Orders', href: pendingOrdersAction().url },
 ];
 
@@ -44,11 +40,15 @@ const openItemsDialog = (order: PendingOrder) => {
 };
 
 const changePage = (page: number) => {
-    router.get(pendingOrdersAction().url, { page, per_page: props.orders.per_page }, {
-        preserveScroll: true,
-        preserveState: true,
-        replace: true,
-    });
+    router.get(
+        pendingOrdersAction().url,
+        { page, per_page: props.orders.per_page },
+        {
+            preserveScroll: true,
+            preserveState: true,
+            replace: true,
+        },
+    );
 };
 
 const advanceOrderStatus = (order: PendingOrder) => {
@@ -58,12 +58,16 @@ const advanceOrderStatus = (order: PendingOrder) => {
 
     advancingOrderId.value = order.id;
 
-    router.patch(`${pendingOrdersAction().url}/${order.id}/advance`, {}, {
-        preserveScroll: true,
-        onFinish: () => {
-            advancingOrderId.value = null;
+    router.patch(
+        `${pendingOrdersAction().url}/${order.id}/advance`,
+        {},
+        {
+            preserveScroll: true,
+            onFinish: () => {
+                advancingOrderId.value = null;
+            },
         },
-    });
+    );
 };
 </script>
 
@@ -72,65 +76,14 @@ const advanceOrderStatus = (order: PendingOrder) => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold tracking-tight">Pending Customer Orders</h1>
-                    <p class="text-muted-foreground">
-                        Review pending orders and contact customers for follow-up.
-                    </p>
-                </div>
-                <Link :href="productsIndex().url">
-                    <Button variant="outline">Back to Products</Button>
-                </Link>
-            </div>
+            <OrdersHeader title="Pending Orders" description="Review pending orders and contact customers for follow-up." />
 
-            <div class="grid gap-4 md:grid-cols-2">
-                <Card v-for="order in formattedOrders" :key="order.id">
-                    <CardHeader>
-                        <CardTitle class="text-base">Order #{{ order.order_number }}</CardTitle>
-                        <CardDescription>
-                            {{ order.status || order.payment_status || 'Pending' }}
-                            - {{ order.payment_method ? order.payment_method.toUpperCase() : 'Unknown payment method' }}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent class="space-y-2 text-sm">
-                        <p><span class="font-medium">Customer:</span> {{ order.customer?.name || 'Unknown customer' }}</p>
-                        <p><span class="font-medium">Status:</span> {{ order.status || 'Pending' }}</p>
-                        <p>
-                            <span class="font-medium">Email:</span>
-                            <a
-                                v-if="order.customer?.email"
-                                :href="`mailto:${order.customer.email}`"
-                                class="inline-flex items-center gap-1 text-primary hover:underline"
-                            >
-                                <Mail class="h-3.5 w-3.5" />
-                                {{ order.customer.email }}
-                            </a>
-                            <span v-else>No email</span>
-                        </p>
-                        <button
-                            type="button"
-                            class="flex items-center gap-1 text-left hover:text-primary cursor-pointer"
-                            @click="openItemsDialog(order)"
-                        >
-                            <Package class="h-4 w-4 text-muted-foreground" />
-                            {{ order.items_count }} item(s)
-                        </button>
-                        <p><span class="font-medium">Total:</span> {{ order.totalFormatted }}</p>
-                        <p class="text-xs text-muted-foreground">Created: {{ formatDate(order.created_at || '') || '-' }}</p>
-                        <Button
-                            v-if="order.next_action_label"
-                            type="button"
-                            size="sm"
-                            class="mt-2"
-                            :disabled="advancingOrderId === order.id"
-                            @click="advanceOrderStatus(order)"
-                        >
-                            {{ advancingOrderId === order.id ? 'Updating...' : order.next_action_label }}
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
+            <OrderList
+                :formattedOrders
+                :advancingOrderId
+                @open-items-dialog="openItemsDialog"
+                @advance-order-status="advanceOrderStatus"
+            />
 
             <PaginationControls
                 v-if="orders.total > orders.per_page"
@@ -141,39 +94,7 @@ const advanceOrderStatus = (order: PendingOrder) => {
             />
 
             <Dialog v-model:open="isItemsDialogOpen">
-                <DialogContent class="max-h-[80vh] overflow-y-auto sm:max-w-2xl">
-                    <DialogHeader>
-                        <DialogTitle>
-                            {{ selectedOrder ? `Order #${selectedOrder.order_number} Items` : 'Order Items' }}
-                        </DialogTitle>
-                        <DialogDescription>
-                            Products included in this customer's cart/order.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    <div v-if="selectedOrder" class="space-y-3">
-                        <div
-                            v-for="item in selectedOrder.order_items"
-                            :key="item.id"
-                            class="flex items-center gap-3 rounded border p-3"
-                        >
-                            <img
-                                :src="item.product?.image_url || 'https://via.placeholder.com/150'"
-                                alt="Product image"
-                                class="h-14 w-14 rounded object-cover"
-                            />
-                            <div class="min-w-0 flex-1">
-                                <p class="truncate font-medium">{{ item.product?.name || 'Unknown product' }}</p>
-                                <p class="text-sm text-muted-foreground">Qty: {{ item.quantity }}</p>
-                            </div>
-                            <p class="text-sm font-medium">{{ formatCurrency(item.unit_price) }}</p>
-                        </div>
-
-                        <p v-if="selectedOrder.order_items.length === 0" class="text-sm text-muted-foreground">
-                            No items found for this order.
-                        </p>
-                    </div>
-                </DialogContent>
+                <OrderItemsDialog :selectedOrder />
             </Dialog>
         </div>
     </AppLayout>

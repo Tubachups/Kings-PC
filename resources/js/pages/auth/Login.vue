@@ -11,12 +11,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
+import Layout from '@/layouts/MainLayout.vue';
 import { register } from '@/routes';
+import { redirect as facebookRedirect } from '@/routes/facebook';
+import { redirect as googleRedirect } from '@/routes/google';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-import Layout from '@/layouts/MainLayout.vue';
-import { redirect as googleRedirect } from '@/routes/google';
-import { redirect as facebookRedirect } from '@/routes/facebook';
 
 library.add(faGoogle, faFacebook);
 
