@@ -17,7 +17,9 @@ defineProps<{
         title="Verify email"
         description="Please verify your email address by clicking on the link we just emailed to you."
     >
-        <Head title="Email verification" />
+        <Head title="Email verification">
+            <meta head-key="description" name="description" content="Verify your email address to secure and activate your King's PC account." />
+        </Head>
 
         <div
             v-if="status === 'verification-link-sent'"

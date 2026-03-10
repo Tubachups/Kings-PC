@@ -20,7 +20,9 @@ defineOptions({ layout: Layout });
         title="Create an account"
         description="Enter your details below to create your account"
     >
-        <Head title="Register" />
+        <Head title="Register">
+            <meta head-key="description" name="description" content="Create a new King's PC account to shop components, builds, and services online." />
+        </Head>
 
         <Form
             v-bind="store.form()"

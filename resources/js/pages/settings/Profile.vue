@@ -34,7 +34,9 @@ const user = page.props.auth.user;
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Profile settings" />
+        <Head title="Profile settings">
+            <meta head-key="description" name="description" content="Update your profile information and account details on King's PC." />
+        </Head>
 
         <h1 class="sr-only">Profile Settings</h1>
 

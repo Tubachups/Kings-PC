@@ -22,7 +22,9 @@ const inputEmail = ref(props.email);
         title="Reset password"
         description="Please enter your new password below"
     >
-        <Head title="Reset password" />
+        <Head title="Reset password">
+            <meta head-key="description" name="description" content="Reset your King's PC account password securely and regain access to your account." />
+        </Head>
 
         <Form
             v-bind="update.form()"

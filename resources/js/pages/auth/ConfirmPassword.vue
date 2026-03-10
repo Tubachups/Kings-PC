@@ -72,7 +72,9 @@ const oauthErrorMessage = computed(() => {
                 : 'This is a secure area of the application. Please confirm your password before continuing.'
         "
     >
-        <Head :title="isOauthUser ? 'Confirm social login' : 'Confirm password'" />
+        <Head :title="isOauthUser ? 'Confirm social login' : 'Confirm password'">
+            <meta head-key="description" name="description" content="Confirm your credentials to continue with sensitive actions in your King's PC account." />
+        </Head>
 
         <div v-if="isOauthUser" class="space-y-4">
             <Button

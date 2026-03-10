@@ -72,7 +72,9 @@ const advanceOrderStatus = (order: PendingOrder) => {
 </script>
 
 <template>
-    <Head title="Pending Orders" />
+    <Head title="Pending Orders">
+        <meta head-key="description" name="description" content="Monitor newly placed pending orders awaiting review in King's PC admin." />
+    </Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">

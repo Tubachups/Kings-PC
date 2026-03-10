@@ -17,7 +17,9 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Appearance settings" />
+        <Head title="Appearance settings">
+            <meta head-key="description" name="description" content="Customize your interface appearance preferences for your King's PC experience." />
+        </Head>
 
         <h1 class="sr-only">Appearance Settings</h1>
 

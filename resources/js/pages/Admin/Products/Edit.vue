@@ -61,7 +61,9 @@ const breadcrumbs = [
 </script>
 
 <template>
-    <Head title="Edit Product" />
+    <Head title="Edit Product">
+        <meta head-key="description" name="description" content="Edit existing product details, pricing, and visibility in King's PC admin." />
+    </Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">

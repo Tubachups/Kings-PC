@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useForm, usePage } from '@inertiajs/vue3'
+import { Head, useForm, usePage } from '@inertiajs/vue3'
 import Layout from '@/layouts/MainLayout.vue'
 
 defineOptions({ layout: Layout })
@@ -29,6 +29,10 @@ function submitForm() {
 </script>
 
 <template>
+    <Head title="Contact Us">
+        <meta head-key="description" name="description" content="Contact King's PC for inquiries, support, and personalized assistance." />
+    </Head>
+
     <div class="bg-gray-50 px-4 py-8 dark:bg-neutral-950">
         <div class="mx-auto max-w-5xl">
             <h1 class="mb-2 text-center text-3xl font-bold text-gray-900 dark:text-gray-100 md:text-4xl">Stay Connected with Us</h1>

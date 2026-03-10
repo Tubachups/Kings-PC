@@ -44,7 +44,9 @@ const breadcrumbs = [
 </script>
 
 <template>
-    <Head title="Create Product" />
+    <Head title="Create Product">
+        <meta head-key="description" name="description" content="Create and publish a new product listing in the King's PC admin dashboard." />
+    </Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
 import { ref } from 'vue';
 import OrderDialogContent from '@/components/shop/orders/OrderDialogContent.vue';
 import OrdersTable from '@/components/shop/orders/OrdersTable.vue';
@@ -33,6 +33,9 @@ const handleViewDetails = (id: any) => {
 </script>
 
 <template>
+<Head title="My Orders">
+    <meta head-key="description" name="description" content="View your King's PC order history, statuses, and detailed order information." />
+</Head>
 <div class="mx-auto pb-10 max-w-7xl px-4 sm:px-6 lg:px-8">
 <h2 class="my-4 text-2xl font-bold">My Orders</h2>
 <OrdersTable :orders="orders" :handleViewDetails="handleViewDetails" />

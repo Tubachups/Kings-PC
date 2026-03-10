@@ -55,7 +55,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Dashboard">
+        <meta head-key="description" name="description" content="View your King's PC dashboard, account activity, and quick actions." />
+    </Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4">
