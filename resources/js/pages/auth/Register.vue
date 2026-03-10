@@ -7,9 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
+import Layout from '@/layouts/MainLayout.vue';
 import { login } from '@/routes';
 import { store } from '@/routes/register';
-import Layout from '@/layouts/MainLayout.vue';
 
 defineOptions({ layout: Layout });
 

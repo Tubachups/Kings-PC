@@ -23,3 +23,10 @@ export interface PendingOrder {
         };
     }>;
 };
+
+export interface PaginatedOrders {
+    data: PendingOrder[];
+    current_page: number;
+    per_page: number;
+    total: number;
+}

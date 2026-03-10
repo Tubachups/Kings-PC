@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { debounce } from 'lodash';
+import { watch } from 'vue';
+import { Label } from '@/components/ui/label'
 import {
   NumberField,
   NumberFieldContent,
@@ -6,11 +9,8 @@ import {
   NumberFieldIncrement,
   NumberFieldInput,
 } from '@/components/ui/number-field'
-import { Label } from '@/components/ui/label'
-import { watch } from 'vue';
-import { debounce } from 'lodash';
 import { useCart } from '@/composables/useCart';
-import { CartItem } from '@/types/cart';
+import type { CartItem } from '@/types/cart';
 
 const props = defineProps<{
     item: CartItem;

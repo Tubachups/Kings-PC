@@ -36,7 +36,7 @@ function firstImage(build: { image_preview_1?: string; image_preview_2?: string;
 
     <div class="container mx-auto p-6 w-full flex flex-col justify-center">
         <div class="flex flex-row justify-between items-baseline mb-2">
-            <p class="text-xl md:text-3xl font-bold underline">Components</p>
+            <p class="text-xl md:text-3xl font-bold underline">Products</p>
             <Link href="/components" class="text-sm md:text-lg">See more...</Link>
         </div>
 

@@ -3,9 +3,9 @@ import { InfiniteScroll } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import Card from '@/components/ui/card/Card.vue';
 import { PART_CATEGORIES } from '@/constants/constants';
+import type { Build, ParsedBuild, PartCategory } from '@/types/build';
 import ImageCarousel from './ImageCarousel.vue';
 import InfoBuilds from './InfoBuilds.vue';
-import type { Build, ParsedBuild, PartCategory } from '@/types/build';
 
 const props = defineProps<{
     builds: { data: Build[] };

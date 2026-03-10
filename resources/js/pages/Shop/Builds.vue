@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import {  router } from '@inertiajs/vue3';
-import { ArrowBigUpDash } from 'lucide-vue-next';
 import { useDebounceFn } from '@vueuse/core';
+import { ArrowBigUpDash } from 'lucide-vue-next';
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
+import InfiniteBuilds from '@/components/shop/builds/InfiniteBuilds.vue';
 import {
     Select,
     SelectContent,
@@ -13,7 +14,6 @@ import {
 import Slider from '@/components/ui/slider/Slider.vue';
 import { SORT_OPTIONS } from '@/constants/constants';
 import Layout from '@/layouts/MainLayout.vue';
-import InfiniteBuilds from '@/components/shop/builds/InfiniteBuilds.vue';
 import { builds as buildsRoute } from '@/routes';
 import type { Build } from '@/types/build';
 import { formatSliderPrice } from '@/utils/helpers';

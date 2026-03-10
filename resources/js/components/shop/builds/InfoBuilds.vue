@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { formatDate, formatPrice } from '@/utils/helpers';
 import type { Build, ParsedBuild, PartCategory } from '@/types/build';
+import { formatDate, formatPrice } from '@/utils/helpers';
 
 type BuildCard = Build & {
     parsed: ParsedBuild;
