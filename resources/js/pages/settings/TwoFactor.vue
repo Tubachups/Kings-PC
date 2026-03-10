@@ -40,7 +40,9 @@ onUnmounted(() => {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
-        <Head title="Two-Factor Authentication" />
+        <Head title="Two-Factor Authentication">
+            <meta head-key="description" name="description" content="Manage two-factor authentication settings to improve your King's PC account security." />
+        </Head>
 
         <h1 class="sr-only">Two-Factor Authentication Settings</h1>
 

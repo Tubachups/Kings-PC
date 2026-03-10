@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { computed, reactive, ref } from 'vue';
 import { toast } from 'vue-sonner';
@@ -48,6 +49,10 @@ const handleSubmit = async () => {
 </script>
 
 <template>
+    <Head title="AI Builder">
+        <meta head-key="description" name="description" content="Generate an AI-powered custom PC build based on your budget and needs at King's PC." />
+    </Head>
+
     <div class="m-5 flex flex-col lg:flex-row gap-4">
         <Card class="w-full  lg:w-1/3 lg:max-w-sm  self-start">
             <div class="flex flex-col justify-center p-6">

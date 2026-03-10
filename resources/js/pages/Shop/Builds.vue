@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {  router } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
 import { ArrowBigUpDash } from 'lucide-vue-next';
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
@@ -88,6 +88,10 @@ watch(priceRange, (range) => navigateWithPrice(range));
 </script>
 
 <template>
+    <Head title="Completed Builds">
+        <meta head-key="description" name="description" content="Explore completed custom PC builds from King's PC with pricing and details." />
+    </Head>
+
     <div class="p-3 md:p-12 lg:p-24">
         <div class="mb-6 flex flex-col gap-3 md:flex-row  md:justify-between ">
             <div class=" flex flex-col md:w-1/2">

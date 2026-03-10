@@ -34,7 +34,9 @@ defineProps<{
         title="Sign in to your account"
         description="Enter your email and password below to Sign in"
     >
-        <Head title="Sign in" />
+        <Head title="Sign in">
+            <meta head-key="description" name="description" content="Sign in to your King's PC account to manage orders, profile settings, and checkout." />
+        </Head>
 
         <div
             v-if="status"

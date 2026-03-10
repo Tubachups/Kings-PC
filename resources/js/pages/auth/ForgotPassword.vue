@@ -24,7 +24,9 @@ defineProps<{
         title="Forgot password"
         description="Enter your email to receive a password reset link"
     >
-        <Head title="Forgot password" />
+        <Head title="Forgot password">
+            <meta head-key="description" name="description" content="Request a secure password reset link for your King's PC account." />
+        </Head>
 
         <div
             v-if="status"

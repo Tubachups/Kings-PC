@@ -13,12 +13,16 @@ class BuildPost extends Model
     protected $fillable = [
         'image_preview_1',
         'image_preview_1_blob',
+        'image_preview_1_webp',
         'image_preview_2',
         'image_preview_2_blob',
+        'image_preview_2_webp',
         'image_preview_3',
         'image_preview_3_blob',
+        'image_preview_3_webp',
         'image_preview_4',
         'image_preview_4_blob',
+        'image_preview_4_webp',
         'text',
         'likes',
     ];

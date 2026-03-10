@@ -47,12 +47,8 @@ const email = ref('');
                         <p class="mb-1 text-sm font-semibold text-black dark:text-white">
                             Subscribe to newsletter
                         </p>
-                        <p class="mb-4 text-xs text-gray-500 dark:text-gray-400">
-                            Have questions or need assistance?
-                            <a href="#" class="text-orange-500 hover:underline dark:text-orange-400"
-                                >Get in touch</a
-                            >
-                            with our team for personalised support.
+                        <p class="mb-4 text-xs text-black dark:text-gray-400">
+                            Have questions or need assistance? Get in touch with our team for personalised support.
                         </p>
                         <div class="flex items-center gap-2">
                             <input
@@ -62,6 +58,7 @@ const email = ref('');
                                 class="w-full rounded-full border border-gray-300 px-4 py-2 text-sm outline-none focus:border-gray-400 dark:border-gray-700 dark:bg-neutral-900 dark:text-gray-100 dark:placeholder:text-gray-500"
                             />
                             <button
+                                aria-label="Subscribe to newsletter"
                                 class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black text-white transition-colors hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                             >
                                 <svg
@@ -99,7 +96,7 @@ const email = ref('');
 
                 <!-- Useful Links -->
                 <div>
-                    <p class="mb-6 text-sm font-medium text-gray-400 dark:text-gray-500">
+                    <p class="mb-6 text-sm font-medium text-gray-700 dark:text-gray-300">
                         Useful links
                     </p>
                     <ul class="space-y-3">
@@ -108,7 +105,7 @@ const email = ref('');
                             :key="link.label"
                             class="flex items-baseline gap-4"
                         >
-                            <span class="w-6 text-xs text-gray-400 dark:text-gray-500">{{
+                            <span class="w-6 text-xs text-gray-700 dark:text-gray-300">{{
                                 String(index + 1).padStart(2, '0')
                             }}</span>
                             <a
@@ -123,7 +120,7 @@ const email = ref('');
 
                 <!-- Pages -->
                 <div>
-                    <p class="mb-6 text-sm font-medium text-gray-400 dark:text-gray-500">Pages</p>
+                    <p class="mb-6 text-sm font-medium text-gray-700 dark:text-gray-300">Pages</p>
                     <ul class="space-y-3">
 
                         <li
@@ -131,7 +128,7 @@ const email = ref('');
                             :key="page.label"
                             class="flex items-baseline gap-4"
                         >
-                            <span class="w-6 text-xs text-gray-400 dark:text-gray-500">{{
+                            <span class="w-6 text-xs text-gray-700 dark:text-gray-300">{{
                                 String(index + 1).padStart(2, '0')
                             }}</span>
                             <Link
@@ -155,7 +152,7 @@ const email = ref('');
 
             <!-- Bottom Bar -->
             <div
-                class="mt-12 flex flex-col items-center justify-end gap-2 border-t border-gray-100 pt-6 text-xs text-gray-400 dark:border-gray-800 dark:text-gray-500 sm:flex-row sm:gap-4"
+                class="mt-12 flex flex-col items-center justify-end gap-2 border-t border-gray-100 pt-6 text-xs text-gray-700 dark:text-gray-300 sm:flex-row sm:gap-4"
             >
                 <a href="#" class="transition-colors hover:text-black dark:hover:text-white"
                     >Terms &amp; condition</a

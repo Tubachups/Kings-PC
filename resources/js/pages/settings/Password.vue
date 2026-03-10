@@ -21,7 +21,9 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Password settings" />
+        <Head title="Password settings">
+            <meta head-key="description" name="description" content="Change and secure your King's PC account password from your settings page." />
+        </Head>
 
         <h1 class="sr-only">Password Settings</h1>
 

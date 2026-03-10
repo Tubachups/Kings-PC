@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3'
+import { Head, Link } from '@inertiajs/vue3'
 import { ref } from 'vue';
 import BannerCarousel from '@/components/shop/carousels/BannerCarousel.vue';
 import ComponentsCarousel from '@/components/shop/carousels/ComponentsCarousel.vue';
@@ -29,6 +29,10 @@ function firstImage(build: { image_preview_1?: string; image_preview_2?: string;
 </script>
 
 <template>
+
+    <Head title="Home">
+        <meta head-key="description" name="description" content="Shop custom PCs, premium components, and featured builds at King's PC." />
+    </Head>
 
     <div class="container mx-auto p-6 w-full flex justify-center">
         <BannerCarousel />

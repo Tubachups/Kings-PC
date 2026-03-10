@@ -47,7 +47,9 @@ const code = ref<string>('');
         :title="authConfigContent.title"
         :description="authConfigContent.description"
     >
-        <Head title="Two-Factor Authentication" />
+        <Head title="Two-Factor Authentication">
+            <meta head-key="description" name="description" content="Complete two-factor authentication to continue securely in your King's PC account." />
+        </Head>
 
         <div class="space-y-6">
             <template v-if="!showRecoveryInput">

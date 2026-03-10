@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
 import { ref, watch, computed } from 'vue';
 import PaginationControls from '@/components/PaginationControls.vue';
 import SearchBar from '@/components/shop/layout/SearchBar.vue';
@@ -36,6 +37,10 @@ watch(searchQuery, () => {
 </script>
 
 <template>
+    <Head title="Category Products">
+        <meta head-key="description" name="description" content="Browse King's PC products by category and quickly find the right parts." />
+    </Head>
+
     <div class="container mx-auto p-6">
         <div class="mb-8 flex flex-col items-center justify-between md:flex-row">
             <h1 class="mb-9 text-3xl font-bold md:mb-0">

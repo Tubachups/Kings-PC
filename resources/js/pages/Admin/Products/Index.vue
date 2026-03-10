@@ -168,7 +168,9 @@ const breadcrumbs = [
 
 <template>
 
-    <Head title="Manage Products" />
+    <Head title="Manage Products">
+        <meta head-key="description" name="description" content="Manage King's PC product catalog, stock levels, and listing status." />
+    </Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">

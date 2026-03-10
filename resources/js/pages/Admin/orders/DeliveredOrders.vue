@@ -52,7 +52,9 @@ const changePage = (page: number) => {
 </script>
 
 <template>
-    <Head title="Delivered Orders" />
+    <Head title="Delivered Orders">
+        <meta head-key="description" name="description" content="View delivered customer orders and completed shipments in King's PC admin." />
+    </Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">

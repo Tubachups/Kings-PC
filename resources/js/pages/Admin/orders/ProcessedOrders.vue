@@ -73,7 +73,9 @@ const advanceOrderStatus = (order: PendingOrder) => {
 </script>
 
 <template>
-    <Head title="Processed Orders" />
+    <Head title="Processed Orders">
+        <meta head-key="description" name="description" content="View processed orders and manage fulfillment progress in King's PC admin." />
+    </Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">

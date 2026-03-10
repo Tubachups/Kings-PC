@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { ChevronDown } from "lucide-vue-next";
 import { onMounted, ref, computed, watch } from 'vue';
 import PaginationControls from '@/components/PaginationControls.vue';
@@ -78,6 +78,10 @@ const handlePageChange = (page: number): void => {
 </script>
 
 <template>
+    <Head title="Components">
+        <meta head-key="description" name="description" content="Browse all PC components at King's PC with filters for search and category." />
+    </Head>
+
     <div class="container mx-auto p-4 xl:p-6">
 
         <div class="flex flex-col md:flex-row justify-between items-center mb-8">
