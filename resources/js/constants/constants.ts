@@ -3,6 +3,7 @@ import {
     builds as buildsRoute,
     components as componentsRoute,
     contacts as contactsRoute,
+    about as aboutRoute,
 } from '@/routes';
 
 export const PART_CATEGORIES = [
@@ -48,7 +49,46 @@ export const pages = [
     { label: 'Products', route: componentsRoute() },
     { label: 'Completed Builds', route: buildsRoute() },
     { label: 'Contact Us', route: contactsRoute() },
-    { label: 'Blogs' },
+    { label: 'About', route: aboutRoute() },
+];
+
+export const aboutStats = [
+    { label: 'Custom builds delivered', value: '1,000+' },
+    { label: 'Average build time', value: '5-7 days' },
+    { label: 'Customer satisfaction', value: '100%' },
+    { label: 'Serving customers', value: '7+ years' },
+];
+
+export const aboutHighlights = [
+    {
+        title: 'Consult-first builds',
+        description: 'We align budgets, performance goals, and aesthetic preferences before recommending parts.',
+    },
+    {
+        title: 'Trusted sourcing',
+        description: 'We work with reliable distributors and validate every component before assembly.',
+    },
+    {
+        title: 'Post-build support',
+        description: 'We help with upgrades, troubleshooting, and tuning long after your system ships.',
+    },
+];
+
+export const aboutValues = [
+    {
+        title: 'Performance with purpose',
+        description: 'Every component is selected to balance speed, stability, and power efficiency.',
+    },
+    {
+        title: 'Clean, documented builds',
+        description: 'We share build notes, benchmarks, and cable management details for transparency.',
+    },
+    {
+        title: 'People-first service',
+        description: 'We answer questions quickly and keep communication clear from start to finish.',
+    },
+
+
 ];
 
 export const categoryOrder = [
@@ -61,4 +101,3 @@ export const categoryOrder = [
     'case',
     'cooling',
 ]
-

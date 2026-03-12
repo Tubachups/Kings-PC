@@ -36,6 +36,13 @@ class shopController extends Controller
         ]);
     }
 
+    public function about(): InertiaResponse
+    {
+        return Inertia::render('shop/About', [
+
+        ]);
+    }
+
     public function components(): InertiaResponse
     {
         return Inertia::render('shop/Components', [

@@ -21,7 +21,7 @@ class BuildFeedService
             ->values();
     }
 
-    public function getBuildFeed(string $sort, ?int $minPrice, ?int $maxPrice, int $perPage = 16): LengthAwarePaginator
+    public function getBuildFeed(string $sort, ?int $minPrice, ?int $maxPrice, int $perPage = 15): LengthAwarePaginator
     {
         return $this->baseBuildQuery()
             ->applySort($sort)
@@ -43,10 +43,11 @@ class BuildFeedService
                 'image_preview_3',
                 'image_preview_4',
             ])
-            ->selectRaw('image_preview_1_blob IS NOT NULL as has_image_preview_1_blob')
-            ->selectRaw('image_preview_2_blob IS NOT NULL as has_image_preview_2_blob')
-            ->selectRaw('image_preview_3_blob IS NOT NULL as has_image_preview_3_blob')
-            ->selectRaw('image_preview_4_blob IS NOT NULL as has_image_preview_4_blob');
+            ->selectRaw('image_preview_1_webp IS NOT NULL as has_image_preview_1_webp')
+            ->selectRaw('image_preview_2_webp IS NOT NULL as has_image_preview_2_webp')
+            ->selectRaw('image_preview_3_webp IS NOT NULL as has_image_preview_3_webp')
+            ->selectRaw('image_preview_4_webp IS NOT NULL as has_image_preview_4_webp')
+            ->selectRaw('image_preview_4_webp IS NOT NULL as has_image_preview_4_webp');
     }
 
     private function mapBuildPost(BuildPost $buildPost): array

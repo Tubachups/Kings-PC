@@ -6,8 +6,7 @@ use Inertia\Testing\AssertableInertia as Assert;
 test('shop index top builds uses application image route when source exists', function () {
     $buildPost = BuildPost::query()->create([
         'text' => 'Unit price: 10000',
-        'image_preview_1' => 'https://scontent.fakesource/image.jpg',
-        'image_preview_1_blob' => 'fake-image-bytes',
+        'image_preview_1_webp' => 'fake-webp-image-bytes',
         'likes' => 5,
     ]);
 
