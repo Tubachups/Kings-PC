@@ -15,15 +15,15 @@ class BuildImageService
             abort(404);
         }
 
-        $filename = "facebook_images/{$buildPostId}_preview_{$slot}.jpg";
+        $webpFilename = "facebook_images/{$buildPostId}_preview_{$slot}.webp";
         $sourceCacheKey = "build-image-source:{$buildPostId}:{$slot}";
 
-        if (Storage::exists($filename)) {
-            Cache::put($sourceCacheKey, 'file', now()->addDay());
-            $file = Storage::get($filename);
+        if (Storage::exists($webpFilename)) {
+            Cache::put($sourceCacheKey, 'file:webp', now()->addDay());
+            $file = Storage::get($webpFilename);
 
             return response($file, 200, [
-                'Content-Type' => 'image/jpeg',
+                'Content-Type' => 'image/webp',
                 'Cache-Control' => 'public, max-age=31536000',
                 'Content-Length' => (string) strlen($file),
             ]);
@@ -38,24 +38,34 @@ class BuildImageService
             return redirect()->away(substr($cachedSource, 4));
         }
 
-        $blobColumn = "image_preview_{$slot}_blob";
+        if ($cachedSource === 'file:webp' && Storage::exists($webpFilename)) {
+            $file = Storage::get($webpFilename);
+
+            return response($file, 200, [
+                'Content-Type' => 'image/webp',
+                'Cache-Control' => 'public, max-age=31536000',
+                'Content-Length' => (string) strlen($file),
+            ]);
+        }
+
+        $webpBlobColumn = "image_preview_{$slot}_webp";
         $urlColumn = "image_preview_{$slot}";
 
-        $post = BuildPost::query()->whereKey($buildPostId)->first([$blobColumn, $urlColumn]);
+        $post = BuildPost::query()->whereKey($buildPostId)->first([$webpBlobColumn, $urlColumn]);
         if (! $post) {
             Cache::put($sourceCacheKey, 'missing', now()->addMinutes(10));
             abort(404);
         }
 
-        $blob = $post->{$blobColumn};
-        if (is_string($blob) && $blob !== '') {
-            Storage::put($filename, $blob);
-            Cache::put($sourceCacheKey, 'file', now()->addDay());
+        $webpBlob = $post->{$webpBlobColumn};
+        if (is_string($webpBlob) && $webpBlob !== '') {
+            Storage::put($webpFilename, $webpBlob);
+            Cache::put($sourceCacheKey, 'file:webp', now()->addDay());
 
-            return response($blob, 200, [
-                'Content-Type' => 'image/jpeg',
+            return response($webpBlob, 200, [
+                'Content-Type' => 'image/webp',
                 'Cache-Control' => 'public, max-age=31536000',
-                'Content-Length' => (string) strlen($blob),
+                'Content-Length' => (string) strlen($webpBlob),
             ]);
         }
 
@@ -73,12 +83,12 @@ class BuildImageService
     public function resolveBuildImageUrl(BuildPost $buildPost, int $slot): ?string
     {
         $urlColumn = "image_preview_{$slot}";
-        $hasBlobColumn = "has_image_preview_{$slot}_blob";
+        $hasWebpBlobColumn = "has_image_preview_{$slot}_webp";
 
-        $hasBlob = (bool) ($buildPost->{$hasBlobColumn} ?? false);
+        $hasWebpBlob = (bool) ($buildPost->{$hasWebpBlobColumn} ?? false);
         $hasSourceUrl = is_string($buildPost->{$urlColumn}) && $buildPost->{$urlColumn} !== '';
 
-        if (! $hasBlob && ! $hasSourceUrl) {
+        if (! $hasWebpBlob && ! $hasSourceUrl) {
             return null;
         }
 
