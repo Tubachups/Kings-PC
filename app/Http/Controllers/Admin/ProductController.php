@@ -9,7 +9,7 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use App\Services\Admin\PendingOrderService;
-use App\Services\Productservice;
+use App\Services\ProductService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;

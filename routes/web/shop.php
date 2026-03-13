@@ -8,6 +8,9 @@ Route::controller(ShopController::class)->group(function () {
     Route::get('/', 'index')->name('shop');
     Route::get('/contacts', 'contacts')->name('contacts');
     Route::get('/about', 'about')->name('about');
+    Route::get('/terms-and-condition', 'termsAndCondition')->name('termsAndCondition');
+    Route::get('/privacy-policy', 'privacyPolicy')->name('privacyPolicy');
+    Route::get('/accessibility-statement', 'accessibilityStatement')->name('accessibilityStatement');
     Route::get('/components', 'components')->name('components');
     Route::get('/builds', 'builds')->name('builds');
     Route::get('/builder', 'builder')->name('builder');
