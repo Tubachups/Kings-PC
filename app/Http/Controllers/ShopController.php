@@ -43,6 +43,27 @@ class shopController extends Controller
         ]);
     }
 
+    public function termsAndCondition(): InertiaResponse
+    {
+        return Inertia::render('shop/TermsAndCondition', [
+
+        ]);
+    }
+
+    public function privacyPolicy(): InertiaResponse
+    {
+        return Inertia::render('shop/PrivacyPolicy', [
+
+        ]);
+    }
+
+    public function accessibilityStatement(): InertiaResponse
+    {
+        return Inertia::render('shop/AccessibilityStatement', [
+
+        ]);
+    }
+
     public function components(): InertiaResponse
     {
         return Inertia::render('shop/Components', [

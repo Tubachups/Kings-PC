@@ -4,6 +4,9 @@ import {
     components as componentsRoute,
     contacts as contactsRoute,
     about as aboutRoute,
+    termsAndCondition as termsAndConditionRoute,
+    privacyPolicy as privacyPolicyRoute,
+    accessibilityStatement as accessibilityStatementRoute,
 } from '@/routes';
 
 export const PART_CATEGORIES = [
@@ -33,23 +36,20 @@ export const steps = [
   { step: 3, title: 'Payment', description: 'Pay method' },
 ]
 
-
 export const usefulLinks = [
-    { label: 'Career' },
-    { label: 'Help' },
-    { label: 'Works' },
-    { label: 'News' },
-    { label: 'Partners' },
-    { label: 'Community' },
-    { label: 'Support' },
+    { label: 'About', route: aboutRoute() },
+    { label: 'Contact Us', route: contactsRoute() },
+    // { label: 'FAQs', route: faqsRoute() },
+    { label: 'Privacy policy', route: privacyPolicyRoute() },
+    { label: 'Terms & condition', route: termsAndConditionRoute() },
+    { label: 'Accessibility statement', route: accessibilityStatementRoute() },
+
 ];
 
 export const pages = [
     { label: 'Builder', route: builderRoute() },
     { label: 'Products', route: componentsRoute() },
     { label: 'Completed Builds', route: buildsRoute() },
-    { label: 'Contact Us', route: contactsRoute() },
-    { label: 'About', route: aboutRoute() },
 ];
 
 export const aboutStats = [
