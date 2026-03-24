@@ -77,7 +77,7 @@ defineProps<{
 
                 <button
                     @click="handleViewDetails(order.id)"
-                    class="mt-1 w-full rounded bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600"
+                    class="mt-1 w-full rounded bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600 cursor-pointer"
                 >
                     View Details
                 </button>
@@ -116,7 +116,7 @@ defineProps<{
                         <TableCell class="text-right">
                             <button
                                 @click.stop="handleViewDetails(order.id)"
-                                class="rounded bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600"
+                                class="rounded bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600 cursor-pointer"
                             >
                                 View Details
                             </button>
