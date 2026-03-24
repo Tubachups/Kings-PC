@@ -13,7 +13,7 @@ defineOptions({ layout: Layout });
     </Head>
 
     <div class="flex w-full justify-center p-6 md:px-12">
-        <Card >
+        <Card class="w-full max-w-4xl">
             <CardContent>
                 <CheckoutForm />
             </CardContent>

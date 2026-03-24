@@ -7,6 +7,7 @@ type PsgcItem = {
 };
 
 type SetFieldValue = (field: string, value: string, shouldValidate?: boolean) => void;
+type InitialAddressValues = Partial<Record<'region' | 'province' | 'city' | 'barangay', string | null | undefined>>;
 
 const API = 'https://psgc.gitlab.io/api';
 
@@ -16,7 +17,7 @@ async function fetchJson<T>(url: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export function usePsgc(setFieldValue?: SetFieldValue) {
+export function usePsgc(setFieldValue?: SetFieldValue, initialValues?: InitialAddressValues) {
   const regions = ref<PsgcItem[]>([]);
   const provinces = ref<PsgcItem[]>([]);
   const cities = ref<PsgcItem[]>([]);
@@ -32,6 +33,20 @@ export function usePsgc(setFieldValue?: SetFieldValue) {
 
   const setField = (field: string, value: string, shouldValidate = false) => {
     setFieldValue?.(field, value, shouldValidate);
+  };
+
+  const normalizeValue = (value?: string | null): string => value?.trim().toLowerCase() ?? '';
+
+  const resolveItemCode = (items: PsgcItem[], value?: string | null): string => {
+    const normalizedValue = normalizeValue(value);
+
+    if (!normalizedValue) {
+      return '';
+    }
+
+    return items.find((item) => {
+      return normalizeValue(item.code) === normalizedValue || normalizeValue(item.name) === normalizedValue;
+    })?.code ?? '';
   };
 
   const resetProvinceDown = () => {
@@ -73,6 +88,93 @@ export function usePsgc(setFieldValue?: SetFieldValue) {
     }
   };
 
+  const loadRegionChildren = async (regionCode: string): Promise<void> => {
+    try {
+      const data = await fetchJson<PsgcItem[]>(`${API}/regions/${regionCode}/provinces/`);
+
+      if (!data.length) {
+        isRegionWithoutProvinces.value = true;
+        provinces.value = [];
+        cities.value = await fetchJson<PsgcItem[]>(
+          `${API}/regions/${regionCode}/cities-municipalities/`,
+        );
+        return;
+      }
+
+      isRegionWithoutProvinces.value = false;
+      provinces.value = data;
+      cities.value = [];
+    } catch (error) {
+      isRegionWithoutProvinces.value = false;
+      provinces.value = [];
+      cities.value = [];
+      barangays.value = [];
+      console.error('Failed to load region children from PSGC API.', error);
+    }
+  };
+
+  const loadCitiesForProvince = async (provinceCode: string): Promise<void> => {
+    try {
+      cities.value = await fetchJson<PsgcItem[]>(
+        `${API}/provinces/${provinceCode}/cities-municipalities/`,
+      );
+    } catch (error) {
+      cities.value = [];
+      barangays.value = [];
+      console.error('Failed to load cities from PSGC API.', error);
+    }
+  };
+
+  const loadBarangaysForCity = async (cityCode: string): Promise<void> => {
+    try {
+      barangays.value = await fetchJson<PsgcItem[]>(
+        `${API}/cities-municipalities/${cityCode}/barangays/`,
+      );
+    } catch (error) {
+      barangays.value = [];
+      console.error('Failed to load barangays from PSGC API.', error);
+    }
+  };
+
+  const hydrateSelections = async (valuesToHydrate: InitialAddressValues = initialValues ?? {}): Promise<void> => {
+    await loadRegions();
+
+    const regionCode = resolveItemCode(regions.value, valuesToHydrate.region);
+
+    if (!regionCode) {
+      return;
+    }
+
+    selectedRegionCode.value = regionCode;
+    await loadRegionChildren(regionCode);
+
+    if (!isRegionWithoutProvinces.value) {
+      const provinceCode = resolveItemCode(provinces.value, valuesToHydrate.province);
+
+      if (!provinceCode) {
+        return;
+      }
+
+      selectedProvinceCode.value = provinceCode;
+      await loadCitiesForProvince(provinceCode);
+    }
+
+    const cityCode = resolveItemCode(cities.value, valuesToHydrate.city);
+
+    if (!cityCode) {
+      return;
+    }
+
+    selectedCityCode.value = cityCode;
+    await loadBarangaysForCity(cityCode);
+
+    const barangayCode = resolveItemCode(barangays.value, valuesToHydrate.barangay);
+
+    if (barangayCode) {
+      selectedBarangayCode.value = barangayCode;
+    }
+  };
+
   const onRegionChange = async (regionCode: string) => {
     if (!regionCode) {
       return;
@@ -90,24 +192,7 @@ export function usePsgc(setFieldValue?: SetFieldValue) {
 
     resetProvinceDown();
 
-    try {
-      const data = await fetchJson<PsgcItem[]>(`${API}/regions/${regionCode}/provinces/`);
-      if (!data.length) {
-        isRegionWithoutProvinces.value = true;
-        cities.value = await fetchJson<PsgcItem[]>(
-          `${API}/regions/${regionCode}/cities-municipalities/`,
-        );
-      } else {
-        isRegionWithoutProvinces.value = false;
-        provinces.value = data;
-      }
-    } catch (error) {
-      isRegionWithoutProvinces.value = false;
-      provinces.value = [];
-      cities.value = [];
-      barangays.value = [];
-      console.error('Failed to load region children from PSGC API.', error);
-    }
+    await loadRegionChildren(regionCode);
   };
 
   const onProvinceChange = async (provinceCode: string) => {
@@ -127,15 +212,7 @@ export function usePsgc(setFieldValue?: SetFieldValue) {
 
     resetCityDown();
 
-    try {
-      cities.value = await fetchJson<PsgcItem[]>(
-        `${API}/provinces/${provinceCode}/cities-municipalities/`,
-      );
-    } catch (error) {
-      cities.value = [];
-      barangays.value = [];
-      console.error('Failed to load cities from PSGC API.', error);
-    }
+    await loadCitiesForProvince(provinceCode);
   };
 
   const onCityChange = async (cityCode: string) => {
@@ -155,14 +232,7 @@ export function usePsgc(setFieldValue?: SetFieldValue) {
 
     resetBarangay();
 
-    try {
-      barangays.value = await fetchJson<PsgcItem[]>(
-        `${API}/cities-municipalities/${cityCode}/barangays/`,
-      );
-    } catch (error) {
-      barangays.value = [];
-      console.error('Failed to load barangays from PSGC API.', error);
-    }
+    await loadBarangaysForCity(cityCode);
   };
 
   const onBarangayChange = (barangayCode: string) => {
@@ -171,7 +241,9 @@ export function usePsgc(setFieldValue?: SetFieldValue) {
     setField('barangay', name, true);
   };
 
-  onMounted(loadRegions);
+  onMounted(() => {
+    void hydrateSelections();
+  });
 
   return {
     regions,
@@ -185,6 +257,7 @@ export function usePsgc(setFieldValue?: SetFieldValue) {
     isRegionWithoutProvinces,
     isLoadingRegions,
     loadRegions,
+    hydrateSelections,
     onRegionChange,
     onProvinceChange,
     onCityChange,

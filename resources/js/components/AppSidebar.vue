@@ -2,7 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, CheckCircle2, Clock3, FolderKanban, Folder, LayoutGrid, Plus, Settings, Store, Truck } from 'lucide-vue-next';
 import { computed } from 'vue';
-import { create as productsCreate, deliveredOrders, index as productsIndex, pendingOrders } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import { create as productsCreate, deliveredOrders, index as productsIndex, pendingOrders, processedOrders, shippedOrders } from '@/actions/App/Http/Controllers/Admin/ProductController';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -57,12 +57,12 @@ const quickLinkItems = computed(() => {
         },
         {
             title: 'Processed Orders',
-            href: '/admin/products/processed-orders',
+            href: processedOrders().url,
             icon: Settings,
         },
         {
             title: 'Shipped Orders',
-            href: '/admin/products/shipped-orders',
+            href: shippedOrders().url,
             icon: Truck,
         },
         {

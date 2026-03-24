@@ -57,7 +57,7 @@ defineProps<{
                 <div
                     v-for="item in selectedOrder.order_items"
                     :key="item.id"
-                    class="mb-2 rounded border p-3 last:mb-0 flex flex-col items-start gap-2 sm:flex-row sm:items-center"
+                    class="mb-2 rounded border p-3 last:mb-0 flex flex-col  gap-2 sm:flex-row items-center "
                 >
                     <img
                         :src="item.product?.image_url || 'https://via.placeholder.com/150'"
