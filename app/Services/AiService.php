@@ -47,49 +47,48 @@ class AiService
         ];
     }
 
-    public function filterInventory($resolvedCategories, $requiredCategories, $userBudget): array
-    {
+    public function filterInventory(
+        array $resolvedCategories,
+        array $requiredCategories,
+        float $userBudget,
+        array $categoryBudgets = []
+    ): array {
         $filteredInventory = [];
         $inventoryDiagnostics = [];
 
         foreach ($resolvedCategories as $name => $categoryId) {
+            $cap = $categoryBudgets[$name] ?? $userBudget;
+
             $baseQuery = Product::query()
                 ->where('category_id', $categoryId)
-                ->where('stock', '>', 0);
+                ->where('stock', '>', 0)
+                ->where('price', '<=', $cap);
 
             $products = (clone $baseQuery)
-                ->where('price', '<=', $userBudget * 0.5)
-                ->orderBy('price', 'asc')
-                ->take(8)
+                ->orderBy('price', 'desc')
+                ->take(10)
                 ->get(['id', 'name', 'price', 'specs', 'image_url']);
 
-            if ($products->isEmpty()) {
-                $products = (clone $baseQuery)
-                    ->orderBy('price', 'asc')
-                    ->take(8)
-                    ->get(['id', 'name', 'price', 'specs', 'image_url']);
-            }
-
-            $filteredInventory[$name] = $products->map(function ($product) {
-                return [
-                    'id' => $product->id,
-                    'name' => $product->name,
-                    'price' => (float) $product->price,
-                    'specs' => $product->specs,
-                    'image_url' => $product->image_url,
-                ];
-            })->values();
+            $filteredInventory[$name] = $products->map(fn ($p) => [
+                'id' => $p->id,
+                'name' => $p->name,
+                'price' => (float) $p->price,
+                'specs' => $p->specs,
+                'image_url' => $p->image_url,
+                'max_price' => $cap,   // surfaced to the AI as a hard ceiling per slot
+            ])->values();
 
             $inventoryDiagnostics[$name] = [
                 'category_id' => $categoryId,
+                'category_cap' => $cap,
                 'total_products' => Product::query()->where('category_id', $categoryId)->count(),
-                'in_stock_products' => (clone $baseQuery)->count(),
+                'in_stock_products' => Product::query()->where('category_id', $categoryId)->where('stock', '>', 0)->count(),
                 'candidate_products' => count($filteredInventory[$name]),
             ];
         }
 
         $missingRequiredInventory = collect($requiredCategories)
-            ->filter(fn ($categoryName) => empty($filteredInventory[$categoryName]) || count($filteredInventory[$categoryName]) === 0)
+            ->filter(fn ($cat) => empty($filteredInventory[$cat]) || count($filteredInventory[$cat]) === 0)
             ->values()
             ->all();
 
@@ -100,7 +99,7 @@ class AiService
         ];
     }
 
-    public function aiPrompt($systemInstructions, $prompt, $inventoryString, $userBudget): Response
+    public function aiPrompt(string $systemInstructions, string $prompt, string $inventoryString, float $userBudget): Response
     {
         return Http::timeout(60)
             ->withHeaders([
@@ -112,7 +111,14 @@ class AiService
                 'model' => config('services.openrouter.model'),
                 'messages' => [
                     ['role' => 'system', 'content' => $systemInstructions],
-                    ['role' => 'user', 'content' => "User Prompt: {$prompt}\n\nAvailable Inventory: {$inventoryString}\n\nUsers Budget: {$userBudget}"],
+                    [
+                        'role' => 'user',
+                        'content' => implode("\n\n", [
+                            "User Prompt: {$prompt}",
+                            "Available Inventory (each product already has price <= its category's max_price — pick the highest-priced option that fits the user's needs): {$inventoryString}",
+                            "Total Budget: {$userBudget}",
+                        ]),
+                    ],
                 ],
                 'temperature' => 0.2,
                 'response_format' => ['type' => 'json_object'],

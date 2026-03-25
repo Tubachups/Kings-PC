@@ -8,7 +8,7 @@ import type { Product, CartItem } from "@/types/cart";
 export function useCart() {
     const cartStore = useCartStore()
     const page = usePage()
-    const { items } = storeToRefs(cartStore)
+    const { isSyncing, items } = storeToRefs(cartStore)
 
     const updateQuantity = (product: Product, newQty: number) => {
         const existingItem = cartStore.items.find(i => i.product.id === product.id);
@@ -77,16 +77,28 @@ export function useCart() {
     }
 
     const clearCart = () => {
+        const snapshot = [...cartStore.items]
         cartStore.clearItems()
         router.delete("/cart/clear", {
             preserveScroll: true,
             showProgress: false,
             preserveState: true,
+            only: ['cart'],
+            onStart: () => {
+                cartStore.setSyncing(true)
+            },
             onSuccess: () => {
                 cartStore.clearItems()
                 toast.success("Cart Updated", {
                     description: `Your Cart is now clear.`,
                 });
+            },
+            onFinish: () => {
+                cartStore.setSyncing(false)
+            },
+            onError: () => {
+                cartStore.setItems(snapshot)
+                toast.error("Error clearing cart")
             }
         })
     }
@@ -99,6 +111,7 @@ export function useCart() {
 
 
     return {
+        isSyncing,
         items,
         subTotal: computed(() => cartStore.subTotal),
         totalItems: computed(() => cartStore.totalItems),

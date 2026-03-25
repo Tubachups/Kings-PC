@@ -10,4 +10,5 @@ export type AiBuildResponse = {
     build: BuildProduct[];
     total_price?: number | null;
     explanation?: string;
+    budget?: number | null;
 };

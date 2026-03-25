@@ -81,5 +81,8 @@ test('dashboard includes order status cards counts', function () {
             ->where('processedOrdersCount', 1)
             ->where('shippedOrdersCount', 1)
             ->where('deliveredOrdersCount', 1)
+            ->has('salesChart.labels', 7)
+            ->has('salesChart.revenues', 7)
+            ->has('salesChart.orders', 7)
         );
 });

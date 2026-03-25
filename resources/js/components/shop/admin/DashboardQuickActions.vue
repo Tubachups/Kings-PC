@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { CheckCircle2, Clock3, FolderKanban, Plus, Settings, Store, Truck } from 'lucide-vue-next';
+import { CheckCircle2, Clock3, FolderKanban, Plus, Settings, Store, Truck, Users } from 'lucide-vue-next';
 import { create as productsCreate, deliveredOrders, index as productsIndex, pendingOrders, processedOrders, shippedOrders } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import { index as customersIndex } from '@/actions/App/Http/Controllers/Admin/CustomerController';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -41,6 +42,12 @@ import { shop } from '@/routes';
                 <Button variant="outline">
                     <Clock3 class="mr-2 h-4 w-4" />
                     Pending Orders
+                </Button>
+                </Link>
+                <Link :href="customersIndex().url">
+                <Button variant="outline">
+                    <Users class="mr-2 h-4 w-4" />
+                    Customers
                 </Button>
                 </Link>
                 <Link :href="processedOrders().url">

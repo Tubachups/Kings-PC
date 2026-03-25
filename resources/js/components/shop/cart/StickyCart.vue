@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { ChevronDown, ChevronUp, CreditCard, ShoppingCart } from 'lucide-vue-next';
+import { ChevronDown, ChevronUp, CreditCard, ShoppingCart, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import CartItems from '@/components/shop/cart/CartItems.vue';
 import TotalCard from '@/components/shop/cart/TotalCard.vue';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/composables/useCart';
 import { formatCurrency } from '@/utils/helpers';
 
-const { items, subTotal, totalItems } = useCart();
+const { clearCart, isSyncing, items, subTotal, totalItems } = useCart();
 const isExpanded = ref(false);
 
 const formattedSubtotal = computed(() => {
@@ -62,8 +62,19 @@ const collapseCart = (): void => {
                     <div v-if="isExpanded" class="border-t">
                         <div class="max-h-[66vh] overflow-y-auto px-4 py-4 sm:px-6">
                             <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-
                                 <div class="min-w-0 flex-1">
+                                    <div v-if="items.length > 0" class="mb-4 flex items-center justify-end">
+                                        <Button
+                                            variant="ghost"
+                                            class="gap-2 text-destructive hover:text-destructive"
+                                            :disabled="isSyncing"
+                                            @click="clearCart"
+                                        >
+                                            <Trash2 class="h-4 w-4" />
+                                            Delete all
+                                        </Button>
+                                    </div>
+
                                     <CartItems />
                                 </div>
 

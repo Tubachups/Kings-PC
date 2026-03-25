@@ -50,19 +50,19 @@ onMounted(() => {
             <div v-for="row in 2" :key="`skeleton-row-${row}`" class="group flex flex-col md:flex-row gap-4 overflow-hidden mask-edges">
                 <div class="flex flex-col md:flex-row shrink-0 gap-4">
                     <div v-for="i in 5" :key="`skel-${row}-${i}`" class="w-full md:w-auto md:min-w-75 md:max-w-75">
-                        <Card class="h-full bg-gray-50 border-gray-200">
+                        <Card class="h-full bg-gray-50 border-gray-200 dark:bg-neutral-950 dark:border-gray-800">
                             <CardContent class="flex flex-col gap-3 p-5 h-full">
-                                <Skeleton class="w-6 h-6 rounded-md shrink-0 bg-gray-200" />
+                                <Skeleton class="w-6 h-6 rounded-md shrink-0 bg-gray-200 dark:bg-gray-800" />
 
                                 <div class="space-y-2 mt-2">
-                                    <Skeleton class="h-4 w-full bg-gray-200" />
-                                    <Skeleton class="h-4 w-[90%] bg-gray-200" />
-                                    <Skeleton class="h-4 w-[80%] bg-gray-200" />
+                                    <Skeleton class="h-4 w-full bg-gray-200 dark:bg-gray-800" />
+                                    <Skeleton class="h-4 w-[90%] bg-gray-200 dark:bg-gray-800" />
+                                    <Skeleton class="h-4 w-[80%] bg-gray-200 dark:bg-gray-800" />
                                 </div>
 
-                                <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100">
-                                    <Skeleton class="w-8 h-8 rounded-full shrink-0 bg-gray-200" />
-                                    <Skeleton class="h-4 w-24 bg-gray-200" />
+                                <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
+                                    <Skeleton class="w-8 h-8 rounded-full shrink-0 bg-gray-200 dark:bg-gray-800" />
+                                    <Skeleton class="h-4 w-24 bg-gray-200 dark:bg-gray-800" />
                                 </div>
                             </CardContent>
                         </Card>
@@ -84,7 +84,7 @@ onMounted(() => {
                             <CardContent class="flex flex-col gap-3 p-5 h-full">
                                 <Quote class="text-gray-300 w-6 h-6 shrink-0  dark:text-white" />
                                 <p class="text-sm text-gray-700 line-clamp-4 dark:text-white">{{ review.Feedback }}</p>
-                                <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100">
+                                <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
                                     <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">
                                         {{ review.Name.charAt(0) }}
                                     </div>
@@ -108,7 +108,7 @@ onMounted(() => {
                             <CardContent class="flex flex-col gap-3 p-5 h-full">
                                 <Quote class="text-gray-300 dark:text-white w-6 h-6 shrink-0" />
                                 <p class="text-sm text-gray-700 dark:text-white line-clamp-4">{{ review.Feedback }}</p>
-                                <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100">
+                                <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
                                     <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">
                                         {{ review.Name.charAt(0) }}
                                     </div>
