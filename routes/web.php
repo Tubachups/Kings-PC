@@ -12,6 +12,11 @@ Route::middleware(['auth', 'verified', 'is_admin'])
     ->name('admin.')
     ->group(base_path('routes/web/admin/products.php'));
 
+Route::middleware(['auth', 'verified', 'is_admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(base_path('routes/web/admin/customers.php'));
+
 // Checkout
 Route::middleware(['auth', 'cart.not_empty'])
     ->prefix('checkout')

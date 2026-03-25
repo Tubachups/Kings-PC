@@ -3,7 +3,8 @@ import { Head, Link, usePage, usePoll } from '@inertiajs/vue3';
 import { ShoppingCart} from 'lucide-vue-next';
 import { computed, watch } from 'vue';
 import DashboardMetricsGrid from '@/components/shop/admin/DashboardMetricsGrid.vue';
-import DashboardQuickActions from '@/components/shop/admin/DashboardQuickActions.vue'
+import DashboardQuickActions from '@/components/shop/admin/DashboardQuickActions.vue';
+import DashboardRevenueChart from '@/components/shop/admin/DashboardRevenueChart.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -74,7 +75,8 @@ const breadcrumbs: BreadcrumbItem[] = [
             <!-- Admin Quick Actions -->
             <div v-if="user?.is_admin" >
                 <DashboardMetricsGrid />
-                <br/>
+                <DashboardRevenueChart class="mt-6" />
+                <br />
                 <DashboardQuickActions/>
             </div>
 

@@ -21,18 +21,14 @@ const form = reactive({
     budget: 0,
 });
 
-
 const toNumber = (value?: number | string | null) => Number(value ?? 0);
 const isInputEmpty = computed(() => form.prompt.trim().length === 0 || toNumber(form.budget) <= 0);
 
-// Use shared formatCurrency helper
-
 const handleSubmit = async () => {
-    if (isInputEmpty.value || isSubmitting.value) {
-        return;
-    }
+    if (isInputEmpty.value || isSubmitting.value) return;
 
     isSubmitting.value = true;
+    aiBuild.value = null;
 
     try {
         const { data } = await axios.post<AiBuildResponse>('/builder/ai', form);
@@ -45,7 +41,6 @@ const handleSubmit = async () => {
         isSubmitting.value = false;
     }
 };
-
 </script>
 
 <template>
@@ -54,66 +49,81 @@ const handleSubmit = async () => {
     </Head>
 
     <div class="m-5 flex flex-col lg:flex-row gap-4">
-        <Card class="w-full  lg:w-1/3 lg:max-w-sm  self-start">
+        <!-- ── Form ── -->
+        <Card class="w-full lg:w-1/3 lg:max-w-sm self-start">
             <div class="flex flex-col justify-center p-6">
                 <form @submit.prevent="handleSubmit" class="flex flex-col">
-                    <Label class="block text-sm font-medium text-slate-700">Build Idea</Label>
+                    <Label class="block text-sm font-medium text-slate-700 dark:text-white">Build Idea</Label>
                     <Textarea
                         v-model="form.prompt"
                         class="mt-2 h-40 resize-none lg:h-96"
                         placeholder="PC build idea here"
                     />
 
-                    <Label class="mt-4 block text-sm font-medium text-slate-700">Budget (PHP)</Label>
-                    <Input v-model="form.budget" type="number" class="mt-2" />
+                    <Label class="mt-4 block text-sm font-medium text-slate-700 dark:text-white">Budget (PHP)</Label>
+                    <Input v-model="form.budget" type="number" min="1" class="mt-2" />
 
-                    <Button :disabled="isSubmitting || isInputEmpty" type="submit" class="mt-6 w-full">
-                        {{ isSubmitting ? 'Generating...' : 'Submit' }}
+                    <Button :disabled="isSubmitting || isInputEmpty" type="submit" class="mt-6 w-full cursor-pointer">
+                        {{ isSubmitting ? 'Generating...' : 'Generate Build' }}
                     </Button>
                 </form>
             </div>
         </Card>
 
+        <!-- ── Results ── -->
         <div class="flex flex-1 flex-col min-w-0">
             <Card class="flex flex-1 flex-col items-center justify-center p-4 text-slate-600 min-h-[50vh]">
 
+                <!-- Idle state -->
                 <div v-if="!aiBuild && !isSubmitting" class="w-full max-w-sm">
                     <img class="w-full rounded-lg object-contain" src="/images/ai.png" alt="PC Build" />
                 </div>
 
+                <!-- Loading state -->
                 <div v-else-if="isSubmitting" class="flex w-full max-w-sm flex-col items-center gap-4 text-center">
                     <span class="animate-pulse font-medium">Generating your build...</span>
                     <img class="w-full rounded-lg object-cover" src="/images/053.jpg" alt="PC Build" />
                 </div>
 
+                <!-- Build result -->
                 <div v-if="aiBuild" class="flex w-full flex-col gap-4">
-                    <Card class=" rounded-xl border bg-slate-50 p-4">
-                        <p class="text-xs uppercase tracking-wide text-slate-500">Build Summary</p>
-                        <p class=" text-lg font-semibold text-slate-900">
-                            Total: {{ formatCurrency(toNumber(aiBuild?.total_price)) }}
+
+                    <!-- Summary card -->
+                    <Card class="rounded-xl border bg-slate-50 dark:bg-neutral-950 dark:border-gray-800 p-4">
+                        <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                            Build Summary
                         </p>
-                        <p class=" text-xs leading-relaxed text-slate-700">
-                            {{ aiBuild?.explanation || 'No explanation returned by AI.' }}
+
+                        <!-- Price row -->
+                        <div class="flex  items-baseline ">
+                            <p class="text-lg font-semibold text-slate-900 dark:text-white">
+                                Total: {{ formatCurrency(toNumber(aiBuild.total_price)) }} of {{ formatCurrency(toNumber(aiBuild.budget)) }} budget
+                            </p>
+                        </div>
+
+                        <p class="text-xs  text-slate-700 dark:text-white">
+                            {{ aiBuild.explanation || 'No explanation returned by AI.' }}
                         </p>
                     </Card>
 
-                    <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    <!-- Product grid -->
+                    <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                         <Card
                             v-for="product in aiBuild.build"
                             :key="product.id"
-                            class="flex flex-col rounded-xl border border-slate-200 p-4 shadow-sm"
+                            class="flex flex-col rounded-xl border border-slate-200 dark:border-gray-800 p-4 shadow-sm"
                         >
                             <ProductCard :product="{
-                                id: product.id,
-                                name: product.name,
-                                price: toNumber(product.price),
-                                image_url: product.image_url,
-                                specs: product.specs,
+                                id:          product.id,
+                                name:        product.name,
+                                price:       toNumber(product.price),
+                                image_url:   product.image_url,
+                                specs:       product.specs,
                                 description: product.description ?? '',
                                 category_id: product.category_id ?? 0,
-                                stock: product.stock ?? 0,
-                                is_active: product.is_active ?? true,
-                                category: product.category ?? '',
+                                stock:       product.stock ?? 0,
+                                is_active:   product.is_active ?? true,
+                                category:    product.category ?? '',
                             }" />
                         </Card>
                     </div>

@@ -18,4 +18,11 @@ export type DashboardPageProps = {
     processedOrdersCount?: number;
     shippedOrdersCount?: number;
     deliveredOrdersCount?: number;
+    salesChart?: {
+        labels: string[];
+        revenues: number[];
+        orders: number[];
+        totalRevenue: number;
+        totalSales: number;
+    };
 };

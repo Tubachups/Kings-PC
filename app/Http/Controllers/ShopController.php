@@ -14,7 +14,7 @@ use Inertia\Response as InertiaResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class shopController extends Controller
+class ShopController extends Controller
 {
     public function __construct(
         private BuildFeedService $buildFeedService,

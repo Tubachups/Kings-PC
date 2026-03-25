@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, CheckCircle2, Clock3, FolderKanban, Folder, LayoutGrid, Plus, Settings, Store, Truck } from 'lucide-vue-next';
+import { BookOpen, CheckCircle2, Clock3, FolderKanban, Folder, LayoutGrid, Plus, Settings, Store, Truck, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { create as productsCreate, deliveredOrders, index as productsIndex, pendingOrders, processedOrders, shippedOrders } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import { index as customersIndex } from '@/actions/App/Http/Controllers/Admin/CustomerController';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -28,28 +29,18 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+            title: 'View Shop',
+            href: shop().url,
+            icon: Store,
+    },
 ];
 
-const quickLinkItems = computed(() => {
+const orderLinkItems = computed(() => {
     if (!user.value?.is_admin) {
         return [];
     }
     return [
-        {
-            title: 'Manage Products',
-            href: productsIndex().url,
-            icon: FolderKanban,
-        },
-        {
-            title: 'Add New Product',
-            href: productsCreate().url,
-            icon: Plus,
-        },
-        {
-            title: 'View Shop',
-            href: shop().url,
-            icon: Store,
-        },
         {
             title: 'Pending Orders',
             href: pendingOrders().url,
@@ -72,6 +63,39 @@ const quickLinkItems = computed(() => {
         },
     ];
 });
+
+const productLinkItems = computed(() => {
+    if (!user.value?.is_admin) {
+        return [];
+    }
+    return [
+        {
+            title: 'Manage Products',
+            href: productsIndex().url,
+            icon: FolderKanban,
+        },
+        {
+            title: 'Add New Product',
+            href: productsCreate().url,
+            icon: Plus,
+        },
+    ];
+});
+
+const customerLinkItems = computed(() => {
+    if (!user.value?.is_admin) {
+        return [];
+    }
+
+    return [
+        {
+            title: 'Manage Customers',
+            href: customersIndex().url,
+            icon: Users,
+        },
+    ];
+});
+
 
 const footerNavItems: NavItem[] = [
     {
@@ -103,7 +127,9 @@ const footerNavItems: NavItem[] = [
 
         <SidebarContent>
             <NavMain :items="mainNavItems" />
-            <NavMain v-if="quickLinkItems.length > 0" :items="quickLinkItems" label="Quick Actions" />
+            <NavMain v-if="user?.is_admin" :items="productLinkItems" label="Products" />
+            <NavMain v-if="user?.is_admin" :items="customerLinkItems" label="Customers" />
+            <NavMain v-if="user?.is_admin" :items="orderLinkItems" label="Orders" />
         </SidebarContent>
 
         <SidebarFooter>
