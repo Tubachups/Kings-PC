@@ -2,8 +2,8 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, CheckCircle2, Clock3, FolderKanban, Folder, LayoutGrid, Plus, Settings, Store, Truck, Users } from 'lucide-vue-next';
 import { computed } from 'vue';
-import { create as productsCreate, deliveredOrders, index as productsIndex, pendingOrders, processedOrders, shippedOrders } from '@/actions/App/Http/Controllers/Admin/ProductController';
 import { index as customersIndex } from '@/actions/App/Http/Controllers/Admin/CustomerController';
+import { create as productsCreate, deliveredOrders, index as productsIndex, pendingOrders, processedOrders, shippedOrders } from '@/actions/App/Http/Controllers/Admin/ProductController';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
