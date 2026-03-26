@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Address;
 use App\Models\CartItem;
 use App\Models\Category;
+use App\Models\WishlistItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redis;
@@ -81,6 +83,39 @@ class HandleInertiaRequests extends Middleware
                     ->filter()
                     ->values()
                     ->toArray();
+            }),
+            'defaultAddress' => (function () {
+                if (! Auth::check()) {
+                    return null;
+                }
+
+                return Address::query()
+                    ->where('user_id', Auth::id())
+                    ->orderByDesc('is_default')
+                    ->latest('id')
+                    ->first([
+                        'id',
+                        'label',
+                        'full_name',
+                        'address',
+                        'region',
+                        'province',
+                        'city',
+                        'barangay',
+                        'is_default',
+                    ]);
+            }),
+            'wishlistProductIds' => (function () {
+                if (! Auth::check()) {
+                    return [];
+                }
+
+                return WishlistItem::query()
+                    ->where('user_id', Auth::id())
+                    ->pluck('product_id')
+                    ->map(fn ($id) => (int) $id)
+                    ->values()
+                    ->all();
             }),
         ];
     }

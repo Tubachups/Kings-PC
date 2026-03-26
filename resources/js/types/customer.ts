@@ -22,3 +22,11 @@ export interface PaginatedCustomers {
     per_page: number;
     total: number;
 }
+
+export type CustomerSortField =
+    | 'name'
+    | 'orders_count'
+    | 'delivered_spend'
+    | 'created_at';
+
+export type SortDirection = 'asc' | 'desc';

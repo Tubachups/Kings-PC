@@ -25,7 +25,7 @@ const emit = defineEmits<{
 }>();
 </script>
 <template>
-    <div class="grid gap-4 md:grid-cols-2">
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <Card v-for="order in formattedOrders" :key="order.id">
             <CardHeader>
                 <CardTitle class="text-base"
@@ -55,7 +55,7 @@ const emit = defineEmits<{
                     <a
                         v-if="order.customer?.email"
                         :href="`mailto:${order.customer.email}`"
-                        class="inline-flex items-center gap-1 text-primary hover:underline"
+                        class="inline-flex items-center gap-1 text-primary hover:underline text-xs"
                     >
                         <Mail class="h-3.5 w-3.5" />
                         {{ order.customer.email }}

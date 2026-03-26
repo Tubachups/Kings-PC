@@ -13,6 +13,14 @@ const { setFieldValue, values } = useFormContext()
 const page = usePage()
 const checkoutStore = useCheckoutStore()
 const authenticatedUserName = page.props.auth?.user?.name
+const defaultAddress = page.props.defaultAddress as {
+    full_name?: string
+    address?: string
+    region?: string
+    province?: string | null
+    city?: string
+    barangay?: string
+} | null
 
 const {
     regions, provinces, cities, barangays,
@@ -24,8 +32,30 @@ const {
 }, values)
 
 onMounted(() => {
-    if (!values.full_name && typeof authenticatedUserName === 'string' && authenticatedUserName.length > 0) {
+    if (!values.full_name && defaultAddress?.full_name) {
+        setFieldValue('full_name', defaultAddress.full_name, false)
+    } else if (!values.full_name && typeof authenticatedUserName === 'string' && authenticatedUserName.length > 0) {
         setFieldValue('full_name', authenticatedUserName, false)
+    }
+
+    if (!values.address && defaultAddress?.address) {
+        setFieldValue('address', defaultAddress.address, false)
+    }
+
+    if (!values.region && defaultAddress?.region) {
+        setFieldValue('region', defaultAddress.region, false)
+    }
+
+    if (!values.province && defaultAddress?.province) {
+        setFieldValue('province', defaultAddress.province, false)
+    }
+
+    if (!values.city && defaultAddress?.city) {
+        setFieldValue('city', defaultAddress.city, false)
+    }
+
+    if (!values.barangay && defaultAddress?.barangay) {
+        setFieldValue('barangay', defaultAddress.barangay, false)
     }
 })
 

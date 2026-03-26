@@ -24,9 +24,11 @@ Route::middleware(['auth', 'cart.not_empty'])
     ->group(base_path('routes/web/checkout.php'));
 
 require __DIR__.'/web/cart.php';
+require __DIR__.'/web/addresses.php';
 require __DIR__.'/web/order.php';
 require __DIR__.'/web/reviews.php';
-require __DIR__.'/web/shop.php';
+require __DIR__.'/web/wishlist.php';
 require __DIR__.'/web/socialite.php';
+require __DIR__.'/web/shop.php';
 
 require __DIR__.'/settings.php';

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class CheckoutController extends Controller
@@ -79,9 +80,15 @@ class CheckoutController extends Controller
                 }
 
                 $productId = (int) $item['product']['id'];
-                $product ??= Product::find($productId);
+                $product ??= Product::query()->whereKey($productId)->lockForUpdate()->first();
                 if (! $product) {
                     continue;
+                }
+
+                if ($quantity > $product->stock) {
+                    throw ValidationException::withMessages([
+                        'cart' => "{$product->name} only has {$product->stock} item(s) left in stock.",
+                    ]);
                 }
 
                 // Always use latest DB price to avoid malformed/stale cart prices.

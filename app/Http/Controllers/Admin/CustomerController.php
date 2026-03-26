@@ -15,6 +15,23 @@ class CustomerController extends Controller
         $search = trim((string) $request->string('search'));
         $perPage = (int) $request->integer('per_page', 12);
         $perPage = max(6, min($perPage, 48));
+        $sort = (string) $request->string('sort', 'name');
+        $direction = strtolower((string) $request->string('direction', 'asc'));
+
+        $allowedSorts = [
+            'name',
+            'orders_count',
+            'delivered_spend',
+            'created_at',
+        ];
+
+        if (! in_array($sort, $allowedSorts, true)) {
+            $sort = 'name';
+        }
+
+        if (! in_array($direction, ['asc', 'desc'], true)) {
+            $direction = 'asc';
+        }
 
         $customers = User::query()
             ->where('is_admin', false)
@@ -29,7 +46,8 @@ class CustomerController extends Controller
             ->withSum(['orders as delivered_spend' => function ($query): void {
                 $query->where('status', 'Delivered');
             }], 'total')
-            ->latest()
+            ->orderBy($sort, $direction)
+            ->orderBy('name')
             ->paginate($perPage)
             ->withQueryString()
             ->through(function (User $customer): array {
@@ -54,6 +72,8 @@ class CustomerController extends Controller
             'customers' => $customers,
             'filters' => [
                 'search' => $search,
+                'sort' => $sort,
+                'direction' => $direction,
             ],
             'summary' => [
                 'totalCustomers' => User::query()->where('is_admin', false)->count(),

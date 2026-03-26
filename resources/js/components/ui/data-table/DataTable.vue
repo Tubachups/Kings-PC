@@ -48,12 +48,14 @@ const props = defineProps<{
     filters?: {
         name?: string;
         category?: string;
+        low_stock?: boolean;
     };
 }>();
 
 const sorting = ref<SortingState>([]);
 const nameFilter = ref<string>(props.filters?.name ?? '');
 const categoryFilter = ref<string>(props.filters?.category ?? '');
+const lowStockFilter = ref<boolean>(props.filters?.low_stock ?? false);
 
 const table = useVueTable({
     get data() {
@@ -92,6 +94,7 @@ function applyFilters() {
             {
                 name: nameFilter.value || undefined,
                 category: categoryFilter.value || undefined,
+                low_stock: lowStockFilter.value || undefined,
                 page: 1,
             },
             { preserveState: true, preserveScroll: true },

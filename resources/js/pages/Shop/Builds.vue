@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
 import { useDebounceFn } from '@vueuse/core';
-import { ArrowBigUpDash } from 'lucide-vue-next';
-import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
+import { computed, ref, watch } from 'vue';
+import ScrollToTop from '@/components/ScrollToTop.vue';
 import InfiniteBuilds from '@/components/shop/builds/InfiniteBuilds.vue';
 import {
     Select,
@@ -23,7 +23,6 @@ defineOptions({ layout: Layout });
 const PRICE_MIN = 0;
 const PRICE_MAX = 200_000;
 const PRICE_STEP = 1_000;
-const showScrollTopButton = ref(false);
 
 const props = defineProps<{
     builds: {data: Build[];};
@@ -36,7 +35,6 @@ const priceRange = ref<[number, number]>([
     props.minPrice ?? PRICE_MIN,
     props.maxPrice ?? PRICE_MAX,
 ]);
-
 
 function resetPriceFilter(): void {
     priceRange.value = [PRICE_MIN, PRICE_MAX];
@@ -62,23 +60,6 @@ function onSortChange(value: any): void {
         router.get(buildsRoute(), params, { preserveScroll: false });
     }
 }
-
-function handleWindowScroll(): void {
-    showScrollTopButton.value = window.scrollY > 500;
-}
-
-function scrollToTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-onMounted(() => {
-    window.addEventListener('scroll', handleWindowScroll, { passive: true });
-    handleWindowScroll();
-});
-
-onUnmounted(() => {
-    window.removeEventListener('scroll', handleWindowScroll);
-});
 
 const isPriceFiltered = computed(
     () => priceRange.value[0] > PRICE_MIN || priceRange.value[1] < PRICE_MAX,
@@ -133,20 +114,7 @@ watch(priceRange, (range) => navigateWithPrice(range));
                 </Select>
             </div>
         </div>
-
         <InfiniteBuilds :builds="builds" />
-
-        <button
-            v-show="showScrollTopButton"
-            type="button"
-            class="fixed bottom-17 right-6 z-50 rounded-full bg-primary px-2 py-1 text-sm  text-primary-foreground shadow-lg transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer"
-            @click="scrollToTop"
-        >
-            <ArrowBigUpDash />
-        </button>
-
-
+        <ScrollToTop/>
     </div>
-
-
 </template>

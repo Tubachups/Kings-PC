@@ -2,6 +2,7 @@
 
 use App\Models\Order;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -19,6 +20,8 @@ test('authenticated users can visit the dashboard', function () {
 });
 
 test('dashboard includes order status cards counts', function () {
+    Carbon::setTestNow('2026-03-26 10:00:00');
+
     $admin = User::factory()->create();
     $admin->forceFill(['is_admin' => true])->save();
 
@@ -49,6 +52,8 @@ test('dashboard includes order status cards counts', function () {
         'status' => 'Processing',
         'payment_method' => 'cod',
         'payment_status' => 'Pending',
+        'created_at' => now()->copy()->subMonths(1),
+        'updated_at' => now()->copy()->subMonths(1),
     ]);
 
     Order::query()->create([
@@ -58,6 +63,8 @@ test('dashboard includes order status cards counts', function () {
         'status' => 'Shipped',
         'payment_method' => 'cod',
         'payment_status' => 'Pending',
+        'created_at' => now()->copy()->subMonths(1),
+        'updated_at' => now()->copy()->subMonths(1),
     ]);
 
     Order::query()->create([
@@ -67,6 +74,8 @@ test('dashboard includes order status cards counts', function () {
         'status' => 'Delivered',
         'payment_method' => 'cod',
         'payment_status' => 'Pending',
+        'created_at' => now(),
+        'updated_at' => now(),
     ]);
 
     $response = $this
@@ -81,8 +90,12 @@ test('dashboard includes order status cards counts', function () {
             ->where('processedOrdersCount', 1)
             ->where('shippedOrdersCount', 1)
             ->where('deliveredOrdersCount', 1)
-            ->has('salesChart.labels', 7)
-            ->has('salesChart.revenues', 7)
-            ->has('salesChart.orders', 7)
+            ->has('salesChart.labels', 12)
+            ->has('salesChart.revenues', 12)
+            ->has('salesChart.orders', 12)
+            ->where('salesChart.totalRevenue', 3899.97)
+            ->where('salesChart.totalSales', 3)
         );
+
+    Carbon::setTestNow();
 });

@@ -48,6 +48,50 @@ test('admins can view the customer management page with credential summaries', f
         );
 });
 
+test('customers are ordered alphabetically by default and can be sorted descending by customer name', function () {
+    $admin = User::factory()->create(['is_admin' => true]);
+
+    User::factory()->create([
+        'name' => 'Zara Customer',
+        'email' => 'zara@example.com',
+    ]);
+
+    User::factory()->create([
+        'name' => 'Alex Customer',
+        'email' => 'alex@example.com',
+    ]);
+
+    User::factory()->create([
+        'name' => 'Mia Customer',
+        'email' => 'mia@example.com',
+    ]);
+
+    $this->actingAs($admin)
+        ->get(route('admin.customers.index'))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('filters.sort', 'name')
+            ->where('filters.direction', 'asc')
+            ->where('customers.data.0.name', 'Alex Customer')
+            ->where('customers.data.1.name', 'Mia Customer')
+            ->where('customers.data.2.name', 'Zara Customer')
+        );
+
+    $this->actingAs($admin)
+        ->get(route('admin.customers.index', [
+            'sort' => 'name',
+            'direction' => 'desc',
+        ]))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('filters.sort', 'name')
+            ->where('filters.direction', 'desc')
+            ->where('customers.data.0.name', 'Zara Customer')
+            ->where('customers.data.1.name', 'Mia Customer')
+            ->where('customers.data.2.name', 'Alex Customer')
+        );
+});
+
 test('non admins cannot view the customer management page', function () {
     $customer = User::factory()->create();
 

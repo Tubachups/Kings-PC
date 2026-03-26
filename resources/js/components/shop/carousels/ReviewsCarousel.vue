@@ -50,19 +50,19 @@ onMounted(() => {
             <div v-for="row in 2" :key="`skeleton-row-${row}`" class="group flex flex-col md:flex-row gap-4 overflow-hidden mask-edges">
                 <div class="flex flex-col md:flex-row shrink-0 gap-4">
                     <div v-for="i in 5" :key="`skel-${row}-${i}`" class="w-full md:w-auto md:min-w-75 md:max-w-75">
-                        <Card class="h-full bg-gray-50 border-gray-200 dark:bg-neutral-950 dark:border-gray-800">
+                        <Card class="h-full border-border bg-card">
                             <CardContent class="flex flex-col gap-3 p-5 h-full">
-                                <Skeleton class="w-6 h-6 rounded-md shrink-0 bg-gray-200 dark:bg-gray-800" />
+                                <Skeleton class="w-6 h-6 rounded-md shrink-0 bg-muted" />
 
                                 <div class="space-y-2 mt-2">
-                                    <Skeleton class="h-4 w-full bg-gray-200 dark:bg-gray-800" />
-                                    <Skeleton class="h-4 w-[90%] bg-gray-200 dark:bg-gray-800" />
-                                    <Skeleton class="h-4 w-[80%] bg-gray-200 dark:bg-gray-800" />
+                                    <Skeleton class="h-4 w-full bg-muted" />
+                                    <Skeleton class="h-4 w-[90%] bg-muted" />
+                                    <Skeleton class="h-4 w-[80%] bg-muted" />
                                 </div>
 
-                                <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-                                    <Skeleton class="w-8 h-8 rounded-full shrink-0 bg-gray-200 dark:bg-gray-800" />
-                                    <Skeleton class="h-4 w-24 bg-gray-200 dark:bg-gray-800" />
+                                <div class="mt-auto flex items-center gap-2 border-t border-border pt-4">
+                                    <Skeleton class="h-8 w-8 shrink-0 rounded-full bg-muted" />
+                                    <Skeleton class="h-4 w-24 bg-muted" />
                                 </div>
                             </CardContent>
                         </Card>
@@ -80,15 +80,15 @@ onMounted(() => {
                     :aria-hidden="i === 2 ? 'true' : 'false'"
                 >
                     <div v-for="review in rowOne" :key="`r1-${review.id}`" class="w-full md:w-auto md:min-w-75 md:max-w-75">
-                        <Card class="h-full bg-gray-50 border-gray-200 dark:bg-neutral-950 dark:border-gray-800">
+                        <Card class="h-full border-border bg-card">
                             <CardContent class="flex flex-col gap-3 p-5 h-full">
-                                <Quote class="text-gray-300 w-6 h-6 shrink-0  dark:text-white" />
-                                <p class="text-sm text-gray-700 line-clamp-4 dark:text-white">{{ review.Feedback }}</p>
-                                <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-                                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">
+                                <Quote class="h-6 w-6 shrink-0 text-foreground/60" />
+                                <p class="line-clamp-4 text-sm text-foreground">{{ review.Feedback }}</p>
+                                <div class="mt-auto flex items-center gap-2 border-t border-border pt-4">
+                                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
                                         {{ review.Name.charAt(0) }}
                                     </div>
-                                    <span class="text-sm font-semibold text-gray-800 dark:text-white truncate">{{ review.Name }}</span>
+                                    <span class="truncate text-sm font-semibold text-foreground">{{ review.Name }}</span>
                                 </div>
                             </CardContent>
                         </Card>
@@ -104,15 +104,15 @@ onMounted(() => {
                     :aria-hidden="i === 2 ? 'true' : 'false'"
                 >
                     <div v-for="review in rowTwo" :key="`r2-${review.id}`" class="w-full md:w-auto md:min-w-75 md:max-w-75">
-                        <Card class="h-full bg-gray-50 border-gray-200 dark:bg-neutral-950 dark:border-gray-800">
+                        <Card class="h-full border-border bg-card">
                             <CardContent class="flex flex-col gap-3 p-5 h-full">
-                                <Quote class="text-gray-300 dark:text-white w-6 h-6 shrink-0" />
-                                <p class="text-sm text-gray-700 dark:text-white line-clamp-4">{{ review.Feedback }}</p>
-                                <div class="flex items-center gap-2 mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
-                                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-600 shrink-0">
+                                <Quote class="h-6 w-6 shrink-0 text-foreground/60" />
+                                <p class="line-clamp-4 text-sm text-foreground">{{ review.Feedback }}</p>
+                                <div class="mt-auto flex items-center gap-2 border-t border-border pt-4">
+                                    <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
                                         {{ review.Name.charAt(0) }}
                                     </div>
-                                    <span class="text-sm font-semibold text-gray-800 dark:text-white truncate">{{ review.Name }}</span>
+                                    <span class="truncate text-sm font-semibold text-foreground">{{ review.Name }}</span>
                                 </div>
                             </CardContent>
                         </Card>

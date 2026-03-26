@@ -84,7 +84,11 @@ function onSubmit(values: any) {
         },
         onError: (errors) => {
             toast.dismiss(loadingToastId);
-            toast.error('Order failed. Please check your details.');
+            const firstError = Object.values(errors).find(
+                (message): message is string =>
+                    typeof message === 'string' && message.length > 0,
+            );
+            toast.error(firstError ?? 'Order failed. Please check your details.');
             console.log('Server Validation Errors:', errors);
             isSubmitting.value = false;
         },

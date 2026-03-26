@@ -10,21 +10,61 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/dashboard', function (PendingOrderService $pendingOrderService) {
+    $user = request()->user();
+    $customerAddresses = collect();
+    $customerOrders = collect();
+    $customerWishlist = collect();
+
+    if ($user && ! $user->is_admin) {
+        $customerAddresses = $user->addresses()
+            ->orderByDesc('is_default')
+            ->latest('id')
+            ->get([
+                'id',
+                'label',
+                'full_name',
+                'address',
+                'region',
+                'province',
+                'city',
+                'barangay',
+                'is_default',
+            ]);
+
+        $customerOrders = $user->orders()
+            ->latest('id')
+            ->limit(8)
+            ->get([
+                'id',
+                'total',
+                'status',
+                'created_at',
+            ]);
+
+        $customerWishlist = Product::query()
+            ->whereHas('wishlistItems', function ($query) use ($user): void {
+                $query->where('user_id', $user->id);
+            })
+            ->with('category')
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+    }
 
     $orderStatusCounts = $pendingOrderService->getDashboardOrderStatusCounts();
-    $salesStartDate = now()->startOfDay()->subDays(6);
+    $salesStartMonth = now()->startOfMonth()->subMonths(11);
     $salesSeries = Order::query()
-        ->selectRaw('DATE(created_at) as order_date')
+        ->selectRaw("DATE_FORMAT(created_at, '%Y-%m-01') as order_month")
         ->selectRaw('COUNT(*) as total_orders')
         ->selectRaw('COALESCE(SUM(total), 0) as total_revenue')
         ->whereIn('status', ['Processing', 'Shipped', 'Delivered'])
-        ->where('created_at', '>=', $salesStartDate)
-        ->groupBy('order_date')
-        ->orderBy('order_date')
+        ->where('created_at', '>=', $salesStartMonth)
+        ->groupBy('order_month')
+        ->orderBy('order_month')
         ->get()
-        ->keyBy(fn (Order $order) => Carbon::parse($order->order_date)->toDateString());
+        ->keyBy(fn (Order $order) => Carbon::parse($order->order_month)->startOfMonth()->toDateString());
 
-    $chartDates = collect(CarbonPeriod::create($salesStartDate, now()->startOfDay()))
+    $chartMonths = collect(CarbonPeriod::create($salesStartMonth, '1 month', now()->startOfMonth()))
         ->map(fn (Carbon $date) => $date->copy());
 
     return Inertia::render('Dashboard', [
@@ -38,22 +78,32 @@ Route::get('/dashboard', function (PendingOrderService $pendingOrderService) {
         'deliveredOrdersCount' => $orderStatusCounts['delivered'],
         'pendingCustomerOrders' => $pendingOrderService->getPendingOrders(5),
         'salesChart' => [
-            'labels' => $chartDates
-                ->map(fn (Carbon $date) => $date->format('M d'))
+            'labels' => $chartMonths
+                ->map(fn (Carbon $date) => $date->format('M Y'))
                 ->values()
                 ->all(),
-            'revenues' => $chartDates
-                ->map(fn (Carbon $date) => (float) ($salesSeries->get($date->toDateString())?->total_revenue ?? 0))
+            'revenues' => $chartMonths
+                ->map(fn (Carbon $date) => (float) ($salesSeries->get($date->startOfMonth()->toDateString())?->total_revenue ?? 0))
                 ->values()
                 ->all(),
-            'orders' => $chartDates
-                ->map(fn (Carbon $date) => (int) ($salesSeries->get($date->toDateString())?->total_orders ?? 0))
+            'orders' => $chartMonths
+                ->map(fn (Carbon $date) => (int) ($salesSeries->get($date->startOfMonth()->toDateString())?->total_orders ?? 0))
                 ->values()
                 ->all(),
-            'totalRevenue' => (float) $chartDates
-                ->sum(fn (Carbon $date) => (float) ($salesSeries->get($date->toDateString())?->total_revenue ?? 0)),
-            'totalSales' => (int) $chartDates
-                ->sum(fn (Carbon $date) => (int) ($salesSeries->get($date->toDateString())?->total_orders ?? 0)),
+            'totalRevenue' => (float) $chartMonths
+                ->sum(fn (Carbon $date) => (float) ($salesSeries->get($date->startOfMonth()->toDateString())?->total_revenue ?? 0)),
+            'totalSales' => (int) $chartMonths
+                ->sum(fn (Carbon $date) => (int) ($salesSeries->get($date->startOfMonth()->toDateString())?->total_orders ?? 0)),
+        ],
+        'customerSummary' => [
+            'ordersCount' => $customerOrders->count(),
+            'addressCount' => $customerAddresses->count(),
+            'wishlistCount' => $customerWishlist->count(),
+        ],
+        'customerData' => [
+            'addresses' => $customerAddresses,
+            'orders' => $customerOrders,
+            'wishlist' => $customerWishlist,
         ],
     ]);
 })->name('dashboard');

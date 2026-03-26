@@ -3,10 +3,12 @@ import { usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import VueApexCharts from 'vue3-apexcharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useAppearance } from '@/composables/useAppearance';
 import type { DashboardPageProps } from '@/types/admin';
 import { pesoFormatter } from '@/utils/helpers';
 
 const page = usePage<DashboardPageProps>();
+const { resolvedAppearance } = useAppearance();
 
 const salesChart = computed(() => page.props.salesChart ?? {
     labels: [],
@@ -15,6 +17,9 @@ const salesChart = computed(() => page.props.salesChart ?? {
     totalRevenue: 0,
     totalSales: 0,
 });
+const isDarkMode = computed(() => resolvedAppearance.value === 'dark');
+const axisLabelColor = computed(() => isDarkMode.value ? '#f8fafc' : '#475569');
+const gridBorderColor = computed(() => isDarkMode.value ? '#334155' : '#e5e7eb');
 
 const averageOrderValue = computed(() => {
     if (!salesChart.value.totalSales) {
@@ -46,17 +51,18 @@ const chartOptions = computed(() => ({
             enabled: false,
         },
         fontFamily: 'Inter, sans-serif',
+        foreColor: axisLabelColor.value,
     },
     colors: ['#0f766e', '#f97316'],
     dataLabels: {
         enabled: false,
     },
     stroke: {
-        curve: 'smooth',
+        curve: 'smooth' as const,
         width: [3, 3],
     },
     fill: {
-        type: 'gradient',
+        type: 'gradient' as const,
         gradient: {
             shadeIntensity: 1,
             opacityFrom: 0.32,
@@ -72,29 +78,44 @@ const chartOptions = computed(() => ({
         axisTicks: {
             show: false,
         },
+        labels: {
+            style: {
+                colors: salesChart.value.labels.map(() => axisLabelColor.value),
+            },
+        },
     },
     yaxis: [
         {
             labels: {
+                style: {
+                    colors: [axisLabelColor.value],
+                },
                 formatter: (value: number) => pesoFormatter.format(value),
             },
         },
         {
             opposite: true,
             labels: {
+                style: {
+                    colors: [axisLabelColor.value],
+                },
                 formatter: (value: number) => Math.round(value).toString(),
             },
         },
     ],
     legend: {
-        position: 'top',
-        horizontalAlign: 'left',
+        position: 'top' as const,
+        horizontalAlign: 'left' as const,
+        labels: {
+            colors: axisLabelColor.value,
+        },
     },
     grid: {
-        borderColor: '#e5e7eb',
+        borderColor: gridBorderColor.value,
         strokeDashArray: 4,
     },
     tooltip: {
+        theme: isDarkMode.value ? 'dark' : 'light',
         shared: true,
         intersect: false,
         y: [
@@ -110,27 +131,27 @@ const chartOptions = computed(() => ({
 </script>
 
 <template>
-    <Card class="overflow-hidden border-slate-200 bg-linear-to-br from-white via-slate-50 to-teal-50/70">
+    <Card class="overflow-hidden border-border bg-linear-to-br from-background via-muted/60 to-accent/40">
         <CardHeader class="gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
                 <CardTitle>Revenue and Sales Tracking</CardTitle>
                 <CardDescription>
-                    Last 7 days of completed order revenue and sales activity.
+                    Last 12 months of completed order revenue and sales activity.
                 </CardDescription>
             </div>
 
             <div class="grid gap-3 sm:grid-cols-3">
-                <div class="rounded-xl border border-white/70 bg-white/80 px-4 py-3 shadow-sm">
+                <div class="rounded-xl border border-border/70 bg-card/80 px-4 py-3 shadow-sm">
                     <p class="text-muted-foreground text-xs uppercase tracking-[0.2em]">Revenue</p>
-                    <p class="mt-2 text-xl font-semibold">{{ pesoFormatter.format(salesChart.totalRevenue) }}</p>
+                    <p class="mt-2 text-xl font-semibold tracking-wider">{{ pesoFormatter.format(salesChart.totalRevenue) }}</p>
                 </div>
-                <div class="rounded-xl border border-white/70 bg-white/80 px-4 py-3 shadow-sm">
+                <div class="rounded-xl border border-border/70 bg-card/80 px-4 py-3 shadow-sm">
                     <p class="text-muted-foreground text-xs uppercase tracking-[0.2em]">Sales</p>
-                    <p class="mt-2 text-xl font-semibold">{{ salesChart.totalSales }}</p>
+                    <p class="mt-2 text-xl font-semibold tracking-wider">{{ salesChart.totalSales }}</p>
                 </div>
-                <div class="rounded-xl border border-white/70 bg-white/80 px-4 py-3 shadow-sm">
+                <div class="rounded-xl border border-border/70 bg-card/80 px-4 py-3 shadow-sm">
                     <p class="text-muted-foreground text-xs uppercase tracking-[0.2em]">Avg Order</p>
-                    <p class="mt-2 text-xl font-semibold">{{ pesoFormatter.format(averageOrderValue) }}</p>
+                    <p class="mt-2 text-xl font-semibold tracking-wider">{{ pesoFormatter.format(averageOrderValue) }}</p>
                 </div>
             </div>
         </CardHeader>

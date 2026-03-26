@@ -24,7 +24,11 @@ class ProductController extends Controller
 
     public function index(Request $request): Response
     {
-        $filters = $request->only(['name', 'category']);
+        $filters = [
+            'name' => $request->string('name')->toString() ?: null,
+            'category' => $request->string('category')->toString() ?: null,
+            'low_stock' => $request->boolean('low_stock'),
+        ];
 
         $products = Product::query()
             ->with('category')

@@ -7,6 +7,7 @@ import ProductCard from '@/components/shop/products/ProductCard.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Card from '@/components/ui/card/Card.vue';
 import Input from '@/components/ui/input/Input.vue';
+import Label from '@/components/ui/label/Label.vue';
 import Textarea from '@/components/ui/textarea/Textarea.vue';
 import Layout from '@/layouts/MainLayout.vue';
 import type { AiBuildResponse } from '@/types/ai';
@@ -53,14 +54,14 @@ const handleSubmit = async () => {
         <Card class="w-full lg:w-1/3 lg:max-w-sm self-start">
             <div class="flex flex-col justify-center p-6">
                 <form @submit.prevent="handleSubmit" class="flex flex-col">
-                    <Label class="block text-sm font-medium text-slate-700 dark:text-white">Build Idea</Label>
+                    <Label class="block text-sm font-medium text-foreground">Build Idea</Label>
                     <Textarea
                         v-model="form.prompt"
                         class="mt-2 h-40 resize-none lg:h-96"
                         placeholder="PC build idea here"
                     />
 
-                    <Label class="mt-4 block text-sm font-medium text-slate-700 dark:text-white">Budget (PHP)</Label>
+                    <Label class="mt-4 block text-sm font-medium text-foreground">Budget (PHP)</Label>
                     <Input v-model="form.budget" type="number" min="1" class="mt-2" />
 
                     <Button :disabled="isSubmitting || isInputEmpty" type="submit" class="mt-6 w-full cursor-pointer">
@@ -72,7 +73,7 @@ const handleSubmit = async () => {
 
         <!-- ── Results ── -->
         <div class="flex flex-1 flex-col min-w-0">
-            <Card class="flex flex-1 flex-col items-center justify-center p-4 text-slate-600 min-h-[50vh]">
+            <Card class="flex min-h-[50vh] flex-1 flex-col items-center justify-center p-4 text-muted-foreground">
 
                 <!-- Idle state -->
                 <div v-if="!aiBuild && !isSubmitting" class="w-full max-w-sm">
@@ -89,19 +90,19 @@ const handleSubmit = async () => {
                 <div v-if="aiBuild" class="flex w-full flex-col gap-4">
 
                     <!-- Summary card -->
-                    <Card class="rounded-xl border bg-slate-50 dark:bg-neutral-950 dark:border-gray-800 p-4">
-                        <p class="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                    <Card class="rounded-xl border border-border bg-muted/60 p-4">
+                        <p class="text-xs uppercase tracking-wide text-muted-foreground">
                             Build Summary
                         </p>
 
                         <!-- Price row -->
                         <div class="flex  items-baseline ">
-                            <p class="text-lg font-semibold text-slate-900 dark:text-white">
+                            <p class="text-lg font-semibold text-foreground">
                                 Total: {{ formatCurrency(toNumber(aiBuild.total_price)) }} of {{ formatCurrency(toNumber(aiBuild.budget)) }} budget
                             </p>
                         </div>
 
-                        <p class="text-xs  text-slate-700 dark:text-white">
+                        <p class="text-xs text-muted-foreground">
                             {{ aiBuild.explanation || 'No explanation returned by AI.' }}
                         </p>
                     </Card>
@@ -111,7 +112,7 @@ const handleSubmit = async () => {
                         <Card
                             v-for="product in aiBuild.build"
                             :key="product.id"
-                            class="flex flex-col rounded-xl border border-slate-200 dark:border-gray-800 p-4 shadow-sm"
+                            class="flex flex-col rounded-xl border border-border p-4 shadow-sm"
                         >
                             <ProductCard :product="{
                                 id:          product.id,
@@ -123,7 +124,9 @@ const handleSubmit = async () => {
                                 category_id: product.category_id ?? 0,
                                 stock:       product.stock ?? 0,
                                 is_active:   product.is_active ?? true,
-                                category:    product.category ?? '',
+                                category:    typeof product.category === 'string'
+                                    ? { id: product.category_id ?? 0, name: product.category, slug: '' }
+                                    : (product.category ?? { id: product.category_id ?? 0, name: '', slug: '' }),
                             }" />
                         </Card>
                     </div>

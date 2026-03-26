@@ -107,7 +107,7 @@ const sortedCategories = computed(() => {
                                 as-child
                                 :class="navigationMenuTriggerStyle()"
                             >
-                                <Link href="/components" :only="['products']" 
+                                <Link href="/components" :only="['products']"
                                     ><span>
                                         <FontAwesomeIcon :icon="faComputer"/> Products
                                     </span></Link
@@ -138,16 +138,6 @@ const sortedCategories = computed(() => {
                         </NavigationMenuContent>
                     </NavigationMenuItem>
 
-                    <NavigationMenuItem v-if="page.props.auth && page.props.auth.user">
-                        <NavigationMenuLink
-                            as-child
-                            :class="navigationMenuTriggerStyle()"
-                        >
-                            <Link href="/orders"><span>
-                                <FontAwesomeIcon :icon="faCartArrowDown"/> Orders
-                            </span></Link>
-                        </NavigationMenuLink>
-                    </NavigationMenuItem>
 
                     <NavigationMenuItem>
                         <NavigationMenuLink
@@ -233,10 +223,10 @@ const sortedCategories = computed(() => {
                                 as-child
                             >
                                 <Link
-                                    href="/orders"
+                                    href="/dashboard"
                                     class="rounded-md p-1 text-lg font-medium transition hover:bg-accent hover:text-primary"
                                 >
-                                    <FontAwesomeIcon :icon="faCartArrowDown" /> Orders
+                                    <FontAwesomeIcon :icon="faCartArrowDown" /> Dashboard
                                 </Link>
                             </SheetClose>
 
