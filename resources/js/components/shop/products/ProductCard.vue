@@ -3,8 +3,8 @@ import { router, usePage } from '@inertiajs/vue3';
 import { Heart } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { toast } from 'vue-sonner';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useCart } from '@/composables/useCart';
 import type { Product } from '@/types/product';
 import { getFilteredImageUrl } from '@/utils/helpers';
@@ -46,15 +46,10 @@ const toggleWishlist = (): void => {
         return;
     }
 
-    const wasWishlisted = isWishlisted.value;
-
     router.post(`/wishlist/${product.id}`, {}, {
         preserveScroll: true,
         preserveState: true,
         only: ['wishlistProductIds', 'flash'],
-        onSuccess: () => {
-            toast.success(wasWishlisted ? 'Removed from wishlist.' : 'Added to wishlist.');
-        },
         onError: () => {
             toast.error('Unable to update wishlist right now.');
         },
@@ -177,8 +172,8 @@ const toggleWishlist = (): void => {
                 </ul>
             </div>
 
-            <div v-if="page.props.auth && page.props.auth.user" class="mt-auto flex items-center gap-2">
-                <Button @click="handleAddToCart(product)" class="w-full cursor-pointer font-bold">
+            <div v-if="page.props.auth && page.props.auth.user" class="mt-auto flex items-center  gap-2">
+                <Button @click="handleAddToCart(product)" class=" cursor-pointer font-bold">
                     Add to Cart
                 </Button>
                 <Button
