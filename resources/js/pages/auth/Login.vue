@@ -2,7 +2,9 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faGoogle, faFacebook } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { Form, Head, usePage } from '@inertiajs/vue3';
+import { Form, Head } from '@inertiajs/vue3';
+import { Eye, EyeOff } from 'lucide-vue-next';
+import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -27,6 +29,8 @@ defineProps<{
     canResetPassword: boolean;
     canRegister: boolean;
 }>();
+
+const isPasswordVisible = ref<boolean>(false);
 </script>
 
 <template>
@@ -79,15 +83,30 @@ defineProps<{
                             Forgot password?
                         </TextLink>
                     </div>
-                    <Input
-                        id="password"
-                        required
-                        type="password"
-                        name="password"
-                        :tabindex="2"
-                        autocomplete="current-password"
-                        placeholder="Password"
-                    />
+                    <div class="relative">
+                        <Input
+                            id="password"
+                            required
+                            :type="isPasswordVisible ? 'text' : 'password'"
+                            name="password"
+                            :tabindex="2"
+                            autocomplete="current-password"
+                            placeholder="Password"
+                            class="pr-10"
+                        />
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-0 inline-flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+                            :aria-label="isPasswordVisible ? 'Hide password' : 'Show password'"
+                            :aria-pressed="isPasswordVisible"
+                            @click="isPasswordVisible = !isPasswordVisible"
+                        >
+                            <component
+                                :is="isPasswordVisible ? EyeOff : Eye"
+                                class="size-4"
+                            />
+                        </button>
+                    </div>
                     <InputError :message="errors.password" />
                 </div>
 

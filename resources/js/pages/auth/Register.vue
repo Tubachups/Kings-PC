@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import { Eye, EyeOff } from 'lucide-vue-next';
+import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
@@ -12,6 +14,9 @@ import { login } from '@/routes';
 import { store } from '@/routes/register';
 
 defineOptions({ layout: Layout });
+
+const isPasswordVisible = ref<boolean>(false);
+const isPasswordConfirmationVisible = ref<boolean>(false);
 
 </script>
 
@@ -62,29 +67,59 @@ defineOptions({ layout: Layout });
 
                 <div class="grid gap-2">
                     <Label for="password">Password</Label>
-                    <Input
-                        id="password"
-                        type="password"
-                        required
-                        :tabindex="3"
-                        autocomplete="new-password"
-                        name="password"
-                        placeholder="Password"
-                    />
+                    <div class="relative">
+                        <Input
+                            id="password"
+                            :type="isPasswordVisible ? 'text' : 'password'"
+                            required
+                            :tabindex="3"
+                            autocomplete="new-password"
+                            name="password"
+                            placeholder="Password"
+                            class="pr-10"
+                        />
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-0 inline-flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+                            :aria-label="isPasswordVisible ? 'Hide password' : 'Show password'"
+                            :aria-pressed="isPasswordVisible"
+                            @click="isPasswordVisible = !isPasswordVisible"
+                        >
+                            <component
+                                :is="isPasswordVisible ? EyeOff : Eye"
+                                class="size-4"
+                            />
+                        </button>
+                    </div>
                     <InputError :message="errors.password" />
                 </div>
 
                 <div class="grid gap-2">
                     <Label for="password_confirmation">Confirm password</Label>
-                    <Input
-                        id="password_confirmation"
-                        type="password"
-                        required
-                        :tabindex="4"
-                        autocomplete="new-password"
-                        name="password_confirmation"
-                        placeholder="Confirm password"
-                    />
+                    <div class="relative">
+                        <Input
+                            id="password_confirmation"
+                            :type="isPasswordConfirmationVisible ? 'text' : 'password'"
+                            required
+                            :tabindex="4"
+                            autocomplete="new-password"
+                            name="password_confirmation"
+                            placeholder="Confirm password"
+                            class="pr-10"
+                        />
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-0 inline-flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+                            :aria-label="isPasswordConfirmationVisible ? 'Hide confirm password' : 'Show confirm password'"
+                            :aria-pressed="isPasswordConfirmationVisible"
+                            @click="isPasswordConfirmationVisible = !isPasswordConfirmationVisible"
+                        >
+                            <component
+                                :is="isPasswordConfirmationVisible ? EyeOff : Eye"
+                                class="size-4"
+                            />
+                        </button>
+                    </div>
                     <InputError :message="errors.password_confirmation" />
                 </div>
 
