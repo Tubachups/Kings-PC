@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { BadgeCheck, KeyRound, MailCheck, Search, ShieldCheck, Users } from 'lucide-vue-next';
+import { ArrowDown, ArrowUp, ArrowUpDown, BadgeCheck, KeyRound, MailCheck, Search, ShieldCheck, Users } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import { index as customersIndex } from '@/actions/App/Http/Controllers/Admin/CustomerController';
 import PaginationControls from '@/components/PaginationControls.vue';
@@ -18,13 +18,19 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { dashboard } from '@/routes';
-import type { PaginatedCustomers } from '@/types/customer';
+import type {
+    CustomerSortField,
+    PaginatedCustomers,
+    SortDirection,
+} from '@/types/customer';
 import { formatDate, pesoFormatter } from '@/utils/helpers';
 
 const props = defineProps<{
     customers: PaginatedCustomers;
     filters: {
         search?: string;
+        sort?: CustomerSortField;
+        direction?: SortDirection;
     };
     summary: {
         totalCustomers: number;
@@ -34,6 +40,8 @@ const props = defineProps<{
 }>();
 
 const search = ref(props.filters.search ?? '');
+const currentSort = computed<CustomerSortField>(() => props.filters.sort ?? 'name');
+const currentDirection = computed<SortDirection>(() => props.filters.direction ?? 'asc');
 
 const summaryCards = computed(() => [
     {
@@ -60,17 +68,26 @@ const breadcrumbs = [
 
 let debounceTimer: ReturnType<typeof setTimeout>;
 
+const getQueryParams = (overrides: Partial<{
+    search: string | undefined;
+    sort: CustomerSortField;
+    direction: SortDirection;
+    page: number;
+}>) => ({
+    search: overrides.search ?? (search.value || undefined),
+    sort: overrides.sort ?? currentSort.value,
+    direction: overrides.direction ?? currentDirection.value,
+    page: overrides.page ?? props.customers.current_page,
+    per_page: props.customers.per_page,
+});
+
 watch(search, (value) => {
     clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(() => {
         router.get(
             customersIndex().url,
-            {
-                search: value || undefined,
-                page: 1,
-                per_page: props.customers.per_page,
-            },
+            getQueryParams({ search: value || undefined, page: 1 }),
             {
                 preserveState: true,
                 preserveScroll: true,
@@ -83,11 +100,7 @@ watch(search, (value) => {
 const changePage = (page: number) => {
     router.get(
         customersIndex().url,
-        {
-            search: search.value || undefined,
-            page,
-            per_page: props.customers.per_page,
-        },
+        getQueryParams({ page }),
         {
             preserveState: true,
             preserveScroll: true,
@@ -103,6 +116,35 @@ const credentialBadges = (customer: PaginatedCustomers['data'][number]) => [
     { label: customer.credentials.google_linked ? 'Google linked' : 'Google off', active: customer.credentials.google_linked, icon: BadgeCheck },
     { label: customer.credentials.facebook_linked ? 'Facebook linked' : 'Facebook off', active: customer.credentials.facebook_linked, icon: BadgeCheck },
 ];
+
+const toggleSort = (column: CustomerSortField) => {
+    const nextDirection: SortDirection =
+        currentSort.value === column && currentDirection.value === 'asc'
+            ? 'desc'
+            : 'asc';
+
+    router.get(
+        customersIndex().url,
+        getQueryParams({
+            sort: column,
+            direction: nextDirection,
+            page: 1,
+        }),
+        {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        },
+    );
+};
+
+const sortIcon = (column: CustomerSortField) => {
+    if (currentSort.value !== column) {
+        return ArrowUpDown;
+    }
+
+    return currentDirection.value === 'asc' ? ArrowUp : ArrowDown;
+};
 </script>
 
 <template>
@@ -139,7 +181,7 @@ const credentialBadges = (customer: PaginatedCustomers['data'][number]) => [
             </div>
 
             <Card class="overflow-hidden">
-                <CardHeader class="flex flex-col gap-3 border-b bg-slate-50/80 sm:flex-row sm:items-center sm:justify-between">
+                <CardHeader class="flex flex-col gap-3 border-b sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <CardTitle>Customer Accounts</CardTitle>
                         <CardDescription>
@@ -147,7 +189,7 @@ const credentialBadges = (customer: PaginatedCustomers['data'][number]) => [
                         </CardDescription>
                     </div>
                     <Link :href="dashboard().url">
-                        <Button variant="outline">Back to Dashboard</Button>
+                        <Button variant="outline" class="cursor-pointer">Back to Dashboard</Button>
                     </Link>
                 </CardHeader>
 
@@ -156,11 +198,47 @@ const credentialBadges = (customer: PaginatedCustomers['data'][number]) => [
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Customer</TableHead>
+                                    <TableHead>
+                                        <button
+                                            type="button"
+                                            class="flex items-center gap-1 font-medium cursor-pointer transition-colors hover:text-foreground"
+                                            @click="toggleSort('name')"
+                                        >
+                                            Customer
+                                            <component :is="sortIcon('name')" class="h-4 w-4" />
+                                        </button>
+                                    </TableHead>
                                     <TableHead>Credential Summary</TableHead>
-                                    <TableHead>Orders</TableHead>
-                                    <TableHead>Total Delivered Spend</TableHead>
-                                    <TableHead>Joined</TableHead>
+                                    <TableHead>
+                                        <button
+                                            type="button"
+                                            class="flex items-center gap-1 font-medium cursor-pointer transition-colors hover:text-foreground"
+                                            @click="toggleSort('orders_count')"
+                                        >
+                                            Orders
+                                            <component :is="sortIcon('orders_count')" class="h-4 w-4" />
+                                        </button>
+                                    </TableHead>
+                                    <TableHead>
+                                        <button
+                                            type="button"
+                                            class="flex items-center gap-1 font-medium cursor-pointer transition-colors hover:text-foreground"
+                                            @click="toggleSort('delivered_spend')"
+                                        >
+                                            Total Delivered Spend
+                                            <component :is="sortIcon('delivered_spend')" class="h-4 w-4" />
+                                        </button>
+                                    </TableHead>
+                                    <TableHead>
+                                        <button
+                                            type="button"
+                                            class="flex items-center gap-1 font-medium cursor-pointer transition-colors hover:text-foreground"
+                                            @click="toggleSort('created_at')"
+                                        >
+                                            Joined
+                                            <component :is="sortIcon('created_at')" class="h-4 w-4" />
+                                        </button>
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>

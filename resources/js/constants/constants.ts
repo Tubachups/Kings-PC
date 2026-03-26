@@ -22,6 +22,17 @@ export const PART_CATEGORIES = [
     { cat: 'extra',   keywords: ['monitor', '"', 'lcd screen', 'cable cover', 'flexible', 'keyboard'] },
 ]
 
+export const categories = [
+    'Motherboard',
+    'CPU',
+    'RAM',
+    'SSD/HDD',
+    'PSU',
+    'GPU',
+    'Case',
+    'Cooling',
+];
+
 export const SORT_OPTIONS = [
     { value: 'newest', label: 'Date Posted (Newest)' },
     { value: 'oldest', label: 'Date Posted (Oldest)' },

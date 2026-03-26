@@ -157,7 +157,7 @@ function submit(): void {
                 id="image"
                 type="file"
                 accept="image/png, image/jpeg"
-                class="block w-full cursor-pointer rounded-md border border-gray-300 text-sm text-gray-500 shadow-sm file:mr-4 file:rounded-md file:border-0 file:bg-black file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-gray-800"
+                class="block w-full cursor-pointer rounded-md border border-input bg-background text-sm text-muted-foreground shadow-sm file:mr-4 file:rounded-md file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground hover:file:bg-primary/90"
                 @change="event => form.image = (event.target as HTMLInputElement).files?.[0] ?? null"
             />
 
@@ -191,13 +191,13 @@ function submit(): void {
 
             <div
                 v-if="showSpecsReference && form.category_id"
-                class="mt-4 rounded-md border border-blue-200 bg-blue-50 dark:bg-black p-3"
+                class="mt-4 rounded-md border border-info/20 bg-info/10 p-3"
             >
-                <p class="mb-2 text-xs font-semibold text-blue-900 dark:text-blue-400">
+                <p class="mb-2 text-xs font-semibold text-info-foreground">
                     JSON Format Reference for {{ specsCategoryNames[String(form.category_id)] }}:
                 </p>
-                <pre class="overflow-x-auto rounded border border-blue-100 bg-white dark:bg-black p-2 text-xs">{{ form.specs }}</pre>
-                <p class="mt-2 text-xs text-blue-800 dark:text-blue-400">
+                <pre class="overflow-x-auto rounded border border-info/15 bg-background/80 p-2 text-xs text-foreground">{{ form.specs }}</pre>
+                <p class="mt-2 text-xs text-info-foreground">
                     Follow this structure and adjust values as needed. Ensure valid JSON format.
                 </p>
             </div>

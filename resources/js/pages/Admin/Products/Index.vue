@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import type { ColumnDef } from '@tanstack/vue-table';
-import { Pencil, Plus, Archive } from 'lucide-vue-next';
+import { Pencil, Archive } from 'lucide-vue-next';
 import type { AcceptableValue } from 'reka-ui';
-import { h, ref } from 'vue';
+import { computed, h, ref } from 'vue';
 import { toast } from 'vue-sonner';
 import {
     index as productsIndex,
-    create as productsCreate,
     edit as productsEdit,
     destroy as productsDestroy,
     updateStatus as productsUpdateStatus,
-    archived as productsArchived,
 } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import ProductActionBar from '@/components/shop/admin/ProductActionBar.vue';
 import { Button } from '@/components/ui/button';
 import DataTable from '@/components/ui/data-table/DataTable.vue';
 import {
@@ -29,9 +28,10 @@ import type { Product } from '@/types/product';
 import type { ProductTableProps } from '@/types/product-table';
 import { formatCurrency, formatSortableHeader, toggleProductSelection } from '@/utils/helpers';
 
-defineProps<ProductTableProps>();
+const props = defineProps<ProductTableProps>();
 
 const selectedProducts = ref<Set<number>>(new Set());
+const isLowStockFilterActive = computed(() => props.filters.low_stock === true);
 
 
 function updateProductStatus(product: Product, value: AcceptableValue) {
@@ -97,6 +97,22 @@ function bulkUpdateStatus(is_active: boolean) {
                 selectedProducts.value.clear();
                 toast.success(`${ids.length} product(s) ${statusLabel.toLowerCase()}d successfully!`);
             },
+        },
+    );
+}
+
+function toggleLowStockFilter() {
+    router.get(
+        productsIndex().url,
+        {
+            name: props.filters.name || undefined,
+            category: props.filters.category || undefined,
+            low_stock: isLowStockFilterActive.value ? undefined : true,
+            page: 1,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
         },
     );
 }
@@ -169,7 +185,8 @@ const breadcrumbs = [
 <template>
 
     <Head title="Manage Products">
-        <meta head-key="description" name="description" content="Manage King's PC product catalog, stock levels, and listing status." />
+        <meta head-key="description" name="description"
+            content="Manage King's PC product catalog, stock levels, and listing status." />
     </Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -183,32 +200,10 @@ const breadcrumbs = [
                         Manage your PC parts inventory
                     </p>
                 </div>
-                <div class="flex gap-2">
-                    <template v-if="selectedProducts.size > 0">
-                        <Button @click="bulkUpdateStatus(true)" variant="outline" size="sm">
-                            Activate ({{ selectedProducts.size }})
-                        </Button>
-                        <Button @click="bulkUpdateStatus(false)" variant="outline" size="sm">
-                            Inactivate ({{ selectedProducts.size }})
-                        </Button>
-                        <Button @click="bulkArchive" variant="destructive">
-                            <Archive class="mr-2 h-4 w-4" />
-                            Archive ({{ selectedProducts.size }})
-                        </Button>
-                    </template>
-                    <Link :href="productsArchived().url">
-                        <Button variant="outline">
-                            <Archive class="mr-2 h-4 w-4" />
-                            Archived
-                        </Button>
-                    </Link>
-                    <Link :href="productsCreate().url">
-                        <Button>
-                            <Plus class="mr-2 h-4 w-4" />
-                            Add Product
-                        </Button>
-                    </Link>
-                </div>
+
+                <ProductActionBar :selected-products="selectedProducts"
+                    :is-low-stock-filter-active="isLowStockFilterActive" @toggle-low-stock-filter="toggleLowStockFilter"
+                    @bulk-update-status="bulkUpdateStatus" @bulk-archive="bulkArchive" />
             </div>
 
             <DataTable :columns="columns" :data="products.data" :meta="{
@@ -218,7 +213,7 @@ const breadcrumbs = [
                 total: products.total,
                 from: products.from,
                 to: products.to,
-            }" :filters="filters" />
+            }" :filters="props.filters" />
         </div>
     </AppLayout>
 </template>

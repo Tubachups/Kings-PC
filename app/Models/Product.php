@@ -28,12 +28,17 @@ class Product extends Model
         'is_active' => 'boolean',
     ];
 
-    public function category()
+    public function category(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Category::class);
     }
 
-    public static function checkoutStock($item, $quantity)
+    public function wishlistItems(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(WishlistItem::class);
+    }
+
+    public static function checkoutStock($item, $quantity): int
     {
         return self::where('id', $item)->decrement('stock', $quantity);
     }
@@ -68,6 +73,8 @@ class Product extends Model
             $q->where('name', 'like', "%{$name}%");
         })->when($filters['category'] ?? null, function ($q, $category) {
             $q->whereHas('category', fn ($cq) => $cq->where('name', 'like', "%{$category}%"));
+        })->when($filters['low_stock'] ?? false, function ($q) {
+            $q->where('stock', '<', 10);
         });
     }
 }

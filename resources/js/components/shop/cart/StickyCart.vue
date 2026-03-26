@@ -28,10 +28,11 @@ const collapseCart = (): void => {
 <template>
     <div>
         <div
-            class="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/70 " >
+            class="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/70 ">
             <div class="mx-auto w-full max-w-7xl">
                 <div class="flex items-center justify-between gap-3 px-4 py-3 sm:px-6">
-                    <button type="button" class="flex min-w-0 items-center gap-3 text-left cursor-pointer" @click="toggleCart">
+                    <button type="button" class="flex min-w-0 items-center gap-3 text-left cursor-pointer"
+                        @click="toggleCart">
                         <span class="relative inline-flex">
                             <ShoppingCart class="h-6 w-6 shrink-0" />
                             <Badge v-if="totalItems > 0" variant="destructive"
@@ -44,8 +45,12 @@ const collapseCart = (): void => {
                     </button>
 
                     <div class="flex items-center gap-2">
-                        <Link href="/checkout"
-                            @click="collapseCart"
+                        <Button variant="ghost" class="gap-2 text-destructive hover:text-destructive border cursor-pointer"
+                            :disabled="isSyncing" @click="clearCart">
+                            <Trash2 class="h-4 w-4" />
+                            Delete all
+                        </Button>
+                        <Link href="/checkout" @click="collapseCart"
                             class=" h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-medium transition hover:bg-accent sm:px-4 sm:text-base hidden md:inline-flex">
                             <CreditCard class="h-4 w-4" />
                             <span>Checkout</span>
@@ -64,22 +69,15 @@ const collapseCart = (): void => {
                             <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
                                 <div class="min-w-0 flex-1">
                                     <div v-if="items.length > 0" class="mb-4 flex items-center justify-end">
-                                        <Button
-                                            variant="ghost"
-                                            class="gap-2 text-destructive hover:text-destructive"
-                                            :disabled="isSyncing"
-                                            @click="clearCart"
-                                        >
-                                            <Trash2 class="h-4 w-4" />
-                                            Delete all
-                                        </Button>
+
                                     </div>
 
                                     <CartItems />
                                 </div>
 
                                 <div class="w-full lg:w-80 lg:shrink-0">
-                                    <TotalCard :items="items" :show-checkout-button="true" @checkout-click="collapseCart" />
+                                    <TotalCard :items="items" :show-checkout-button="true"
+                                        @checkout-click="collapseCart" />
                                 </div>
 
                             </div>
