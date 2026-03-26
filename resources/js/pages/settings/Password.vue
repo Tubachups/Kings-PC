@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import { Eye, EyeOff } from 'lucide-vue-next';
+import { ref } from 'vue';
 import PasswordController from '@/actions/App/Http/Controllers/Settings/PasswordController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -17,6 +19,10 @@ const breadcrumbItems: BreadcrumbItem[] = [
         href: edit().url,
     },
 ];
+
+const isCurrentPasswordVisible = ref<boolean>(false);
+const isNewPasswordVisible = ref<boolean>(false);
+const isPasswordConfirmationVisible = ref<boolean>(false);
 </script>
 
 <template>
@@ -51,27 +57,55 @@ const breadcrumbItems: BreadcrumbItem[] = [
                 >
                     <div class="grid gap-2">
                         <Label for="current_password">Current password</Label>
-                        <Input
-                            id="current_password"
-                            name="current_password"
-                            type="password"
-                            class="mt-1 block w-full"
-                            autocomplete="current-password"
-                            placeholder="Current password"
-                        />
+                        <div class="relative">
+                            <Input
+                                id="current_password"
+                                name="current_password"
+                                :type="isCurrentPasswordVisible ? 'text' : 'password'"
+                                class="mt-1 block w-full pr-10"
+                                autocomplete="current-password"
+                                placeholder="Current password"
+                            />
+                            <button
+                                type="button"
+                                class="absolute inset-y-0 right-0 inline-flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+                                :aria-label="isCurrentPasswordVisible ? 'Hide current password' : 'Show current password'"
+                                :aria-pressed="isCurrentPasswordVisible"
+                                @click="isCurrentPasswordVisible = !isCurrentPasswordVisible"
+                            >
+                                <component
+                                    :is="isCurrentPasswordVisible ? EyeOff : Eye"
+                                    class="size-4"
+                                />
+                            </button>
+                        </div>
                         <InputError :message="errors.current_password" />
                     </div>
 
                     <div class="grid gap-2">
                         <Label for="password">New password</Label>
-                        <Input
-                            id="password"
-                            name="password"
-                            type="password"
-                            class="mt-1 block w-full"
-                            autocomplete="new-password"
-                            placeholder="New password"
-                        />
+                        <div class="relative">
+                            <Input
+                                id="password"
+                                name="password"
+                                :type="isNewPasswordVisible ? 'text' : 'password'"
+                                class="mt-1 block w-full pr-10"
+                                autocomplete="new-password"
+                                placeholder="New password"
+                            />
+                            <button
+                                type="button"
+                                class="absolute inset-y-0 right-0 inline-flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+                                :aria-label="isNewPasswordVisible ? 'Hide new password' : 'Show new password'"
+                                :aria-pressed="isNewPasswordVisible"
+                                @click="isNewPasswordVisible = !isNewPasswordVisible"
+                            >
+                                <component
+                                    :is="isNewPasswordVisible ? EyeOff : Eye"
+                                    class="size-4"
+                                />
+                            </button>
+                        </div>
                         <InputError :message="errors.password" />
                     </div>
 
@@ -79,14 +113,28 @@ const breadcrumbItems: BreadcrumbItem[] = [
                         <Label for="password_confirmation"
                             >Confirm password</Label
                         >
-                        <Input
-                            id="password_confirmation"
-                            name="password_confirmation"
-                            type="password"
-                            class="mt-1 block w-full"
-                            autocomplete="new-password"
-                            placeholder="Confirm password"
-                        />
+                        <div class="relative">
+                            <Input
+                                id="password_confirmation"
+                                name="password_confirmation"
+                                :type="isPasswordConfirmationVisible ? 'text' : 'password'"
+                                class="mt-1 block w-full pr-10"
+                                autocomplete="new-password"
+                                placeholder="Confirm password"
+                            />
+                            <button
+                                type="button"
+                                class="absolute inset-y-0 right-0 inline-flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+                                :aria-label="isPasswordConfirmationVisible ? 'Hide confirm password' : 'Show confirm password'"
+                                :aria-pressed="isPasswordConfirmationVisible"
+                                @click="isPasswordConfirmationVisible = !isPasswordConfirmationVisible"
+                            >
+                                <component
+                                    :is="isPasswordConfirmationVisible ? EyeOff : Eye"
+                                    class="size-4"
+                                />
+                            </button>
+                        </div>
                         <InputError :message="errors.password_confirmation" />
                     </div>
 

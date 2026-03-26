@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Form, Head, usePage } from '@inertiajs/vue3';
+import { Eye, EyeOff } from 'lucide-vue-next';
 import { computed } from 'vue';
+import { ref } from 'vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -61,6 +63,8 @@ const oauthErrorMessage = computed(() => {
 
     return errors?.password ?? errors?.socialite ?? null;
 });
+
+const isPasswordVisible = ref<boolean>(false);
 </script>
 
 <template>
@@ -115,15 +119,29 @@ const oauthErrorMessage = computed(() => {
             <div class="space-y-6">
                 <div class="grid gap-2">
                     <Label htmlFor="password">Password</Label>
-                    <Input
-                        id="password"
-                        type="password"
-                        name="password"
-                        class="mt-1 block w-full"
-                        required
-                        autocomplete="current-password"
-                        autofocus
-                    />
+                    <div class="relative">
+                        <Input
+                            id="password"
+                            :type="isPasswordVisible ? 'text' : 'password'"
+                            name="password"
+                            class="mt-1 block w-full pr-10"
+                            required
+                            autocomplete="current-password"
+                            autofocus
+                        />
+                        <button
+                            type="button"
+                            class="absolute inset-y-0 right-0 inline-flex items-center px-3 text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none"
+                            :aria-label="isPasswordVisible ? 'Hide password' : 'Show password'"
+                            :aria-pressed="isPasswordVisible"
+                            @click="isPasswordVisible = !isPasswordVisible"
+                        >
+                            <component
+                                :is="isPasswordVisible ? EyeOff : Eye"
+                                class="size-4"
+                            />
+                        </button>
+                    </div>
 
                     <InputError :message="errors.password" />
                 </div>
