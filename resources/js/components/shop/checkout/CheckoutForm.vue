@@ -31,7 +31,7 @@ const stepIndex = ref(checkoutStore.stepIndex);
 const isSubmitting = ref(false);
 const formRef = ref<any>(null);
 const { clearCart } = useCart();
-const initialValues = computed(() => checkoutStore.initialValues);
+const initialValues = checkoutStore.initialValues;
 
 const step1Schema = z.object({
     full_name: z.string().min(2, 'Name is required'),
