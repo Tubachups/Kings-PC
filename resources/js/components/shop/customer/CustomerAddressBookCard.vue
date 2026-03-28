@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { usePsgc } from '@/composables/usePsgc';
 import addresses from '@/routes/addresses';
 import type { CustomerPageProps, DashboardAddress } from './types';
 
@@ -30,10 +32,39 @@ const addressForm = useForm({
 
 const isEditingAddress = computed(() => editingAddressId.value !== null);
 
+const {
+    regions,
+    provinces,
+    cities,
+    barangays,
+    selectedRegionCode,
+    selectedProvinceCode,
+    selectedCityCode,
+    selectedBarangayCode,
+    isRegionWithoutProvinces,
+    hydrateSelections,
+    onRegionChange,
+    onProvinceChange,
+    onCityChange,
+    onBarangayChange,
+} = usePsgc((field, value) => {
+    if (field === 'region' || field === 'province' || field === 'city' || field === 'barangay') {
+        addressForm[field] = value;
+    }
+});
+
+const clearLocationSelections = (): void => {
+    selectedRegionCode.value = '';
+    selectedProvinceCode.value = '';
+    selectedCityCode.value = '';
+    selectedBarangayCode.value = '';
+};
+
 const resetAddressForm = (): void => {
     editingAddressId.value = null;
     addressForm.reset();
     addressForm.clearErrors();
+    clearLocationSelections();
 };
 
 const startEditAddress = (address: DashboardAddress): void => {
@@ -46,6 +77,13 @@ const startEditAddress = (address: DashboardAddress): void => {
     addressForm.city = address.city;
     addressForm.barangay = address.barangay;
     addressForm.is_default = address.is_default;
+
+    void hydrateSelections({
+        region: address.region,
+        province: address.province,
+        city: address.city,
+        barangay: address.barangay,
+    });
 };
 
 const submitAddressForm = (): void => {
@@ -138,25 +176,92 @@ const formatAddress = (address: DashboardAddress): string => {
 
                 <div class="grid gap-2">
                     <Label for="dashboard-address-region">Region</Label>
-                    <Input id="dashboard-address-region" v-model="addressForm.region" placeholder="Region" />
+                    <Select
+                        :model-value="selectedRegionCode"
+                        @update:model-value="(value) => {
+                            if (typeof value === 'string' && value.length > 0) {
+                                onRegionChange(value);
+                            }
+                        }"
+                    >
+                        <SelectTrigger id="dashboard-address-region" class="w-full">
+                            <SelectValue placeholder="Select region" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="region in regions" :key="region.code" :value="region.code">
+                                {{ region.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                     <p v-if="addressForm.errors.region" class="text-xs text-red-500">{{ addressForm.errors.region }}</p>
                 </div>
 
                 <div class="grid gap-2">
                     <Label for="dashboard-address-province">Province</Label>
-                    <Input id="dashboard-address-province" v-model="addressForm.province" placeholder="Province (optional)" />
+                    <Select
+                        :model-value="selectedProvinceCode"
+                        :disabled="isRegionWithoutProvinces || !provinces.length"
+                        @update:model-value="(value) => {
+                            if (typeof value === 'string' && value.length > 0) {
+                                onProvinceChange(value);
+                            }
+                        }"
+                    >
+                        <SelectTrigger id="dashboard-address-province" class="w-full">
+                            <SelectValue :placeholder="isRegionWithoutProvinces ? 'N/A' : 'Select province'" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="province in provinces" :key="province.code" :value="province.code">
+                                {{ province.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                     <p v-if="addressForm.errors.province" class="text-xs text-red-500">{{ addressForm.errors.province }}</p>
                 </div>
 
                 <div class="grid gap-2">
                     <Label for="dashboard-address-city">City</Label>
-                    <Input id="dashboard-address-city" v-model="addressForm.city" placeholder="City / Municipality" />
+                    <Select
+                        :model-value="selectedCityCode"
+                        :disabled="!cities.length"
+                        @update:model-value="(value) => {
+                            if (typeof value === 'string' && value.length > 0) {
+                                onCityChange(value);
+                            }
+                        }"
+                    >
+                        <SelectTrigger id="dashboard-address-city" class="w-full">
+                            <SelectValue placeholder="Select city / municipality" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="city in cities" :key="city.code" :value="city.code">
+                                {{ city.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                     <p v-if="addressForm.errors.city" class="text-xs text-red-500">{{ addressForm.errors.city }}</p>
                 </div>
 
                 <div class="grid gap-2">
                     <Label for="dashboard-address-barangay">Barangay</Label>
-                    <Input id="dashboard-address-barangay" v-model="addressForm.barangay" placeholder="Barangay" />
+                    <Select
+                        :model-value="selectedBarangayCode"
+                        :disabled="!barangays.length"
+                        @update:model-value="(value) => {
+                            if (typeof value === 'string' && value.length > 0) {
+                                onBarangayChange(value);
+                            }
+                        }"
+                    >
+                        <SelectTrigger id="dashboard-address-barangay" class="w-full">
+                            <SelectValue placeholder="Select barangay" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem v-for="barangay in barangays" :key="barangay.code" :value="barangay.code">
+                                {{ barangay.name }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
                     <p v-if="addressForm.errors.barangay" class="text-xs text-red-500">{{ addressForm.errors.barangay }}</p>
                 </div>
 

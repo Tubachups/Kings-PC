@@ -79,7 +79,7 @@ const filteredImageUrl = (imageUrl: string): string => {
                         class="text-xs tracking-wide text-muted-foreground uppercase sm:hidden"
                         >Price</span
                     >
-                    <span>{{ formatCurrency(item.product.price) }}</span>
+                    <span>{{ item.quantity }} x {{ formatCurrency(item.product.price) }}</span>
                 </div>
             </div>
         </div>

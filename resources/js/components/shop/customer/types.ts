@@ -14,9 +14,32 @@ export type DashboardAddress = {
 
 export type DashboardOrder = {
     id: number;
+    order_number?: string;
     total: number;
     status: string;
     created_at: string;
+    order_items?: DashboardOrderItem[];
+    shipping_address?: DashboardOrderAddress | null;
+    billing_address?: DashboardOrderAddress | null;
+};
+
+export type DashboardOrderAddress = {
+    address?: string;
+    region?: string;
+    province?: string | null;
+    city?: string;
+    barangay?: string;
+};
+
+export type DashboardOrderItem = {
+    id: number;
+    quantity: number;
+    unit_price: number;
+    product?: {
+        id: number;
+        name: string;
+        image_url: string | null;
+    } | null;
 };
 
 export type CustomerSummary = {

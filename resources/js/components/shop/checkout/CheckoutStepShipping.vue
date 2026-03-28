@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3'
 import { useFormContext } from 'vee-validate'
-import { onMounted, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -13,50 +13,117 @@ const { setFieldValue, values } = useFormContext()
 const page = usePage()
 const checkoutStore = useCheckoutStore()
 const authenticatedUserName = page.props.auth?.user?.name
-const defaultAddress = page.props.defaultAddress as {
+const selectedAddressId = ref('')
+
+type CheckoutAddress = {
+    id?: number
     full_name?: string
     address?: string
     region?: string
     province?: string | null
     city?: string
     barangay?: string
-} | null
+    label?: string | null
+    is_default?: boolean
+}
+
+const defaultAddress = computed(() => page.props.defaultAddress as CheckoutAddress | null)
+const customerAddresses = computed<CheckoutAddress[]>(() => {
+    const customerData = page.props.customerData as { addresses?: CheckoutAddress[] } | undefined
+    const addresses = customerData?.addresses
+
+    return Array.isArray(addresses) ? addresses : []
+})
 
 const {
     regions, provinces, cities, barangays,
     selectedRegionCode, selectedProvinceCode, selectedCityCode, selectedBarangayCode,
     isRegionWithoutProvinces,
+    hydrateSelections,
     onRegionChange, onProvinceChange, onCityChange, onBarangayChange,
 } = usePsgc((field, value, shouldValidate = false) => {
     setFieldValue(field, value, shouldValidate)
 }, values)
 
+const applyAddressToFields = (address: CheckoutAddress): void => {
+    setFieldValue('full_name', address.full_name ?? '', false)
+    setFieldValue('address', address.address ?? '', false)
+    setFieldValue('region', address.region ?? '', false)
+    setFieldValue('province', address.province ?? '', false)
+    setFieldValue('city', address.city ?? '', false)
+    setFieldValue('barangay', address.barangay ?? '', false)
+    void hydrateSelections({
+        region: address.region,
+        province: address.province,
+        city: address.city,
+        barangay: address.barangay,
+    })
+}
+
+const selectSavedAddress = (addressId: string): void => {
+    selectedAddressId.value = addressId
+
+    const parsedAddressId = Number(addressId)
+    if (!Number.isFinite(parsedAddressId)) {
+        return
+    }
+
+    const selectedAddress = customerAddresses.value.find((address) => address.id === parsedAddressId)
+
+    if (!selectedAddress) {
+        return
+    }
+
+    applyAddressToFields(selectedAddress)
+}
+
 onMounted(() => {
-    if (!values.full_name && defaultAddress?.full_name) {
-        setFieldValue('full_name', defaultAddress.full_name, false)
+    const address = defaultAddress.value
+
+    if (!values.full_name && address?.full_name) {
+        setFieldValue('full_name', address.full_name, false)
     } else if (!values.full_name && typeof authenticatedUserName === 'string' && authenticatedUserName.length > 0) {
         setFieldValue('full_name', authenticatedUserName, false)
     }
 
-    if (!values.address && defaultAddress?.address) {
-        setFieldValue('address', defaultAddress.address, false)
+    if (!values.address && address?.address) {
+        setFieldValue('address', address.address, false)
     }
 
-    if (!values.region && defaultAddress?.region) {
-        setFieldValue('region', defaultAddress.region, false)
+    if (!values.region && address?.region) {
+        setFieldValue('region', address.region, false)
     }
 
-    if (!values.province && defaultAddress?.province) {
-        setFieldValue('province', defaultAddress.province, false)
+    if (!values.province && address?.province) {
+        setFieldValue('province', address.province, false)
     }
 
-    if (!values.city && defaultAddress?.city) {
-        setFieldValue('city', defaultAddress.city, false)
+    if (!values.city && address?.city) {
+        setFieldValue('city', address.city, false)
     }
 
-    if (!values.barangay && defaultAddress?.barangay) {
-        setFieldValue('barangay', defaultAddress.barangay, false)
+    if (!values.barangay && address?.barangay) {
+        setFieldValue('barangay', address.barangay, false)
     }
+
+    if (address?.id) {
+        selectedAddressId.value = String(address.id)
+    }
+
+    void hydrateSelections({
+        region: typeof values.region === 'string' && values.region.length > 0 ? values.region : address?.region,
+        province: typeof values.province === 'string' && values.province.length > 0 ? values.province : address?.province,
+        city: typeof values.city === 'string' && values.city.length > 0 ? values.city : address?.city,
+        barangay: typeof values.barangay === 'string' && values.barangay.length > 0 ? values.barangay : address?.barangay,
+    })
+})
+
+watch(defaultAddress, (address) => {
+    if (!address?.id) {
+        return
+    }
+
+    selectedAddressId.value = String(address.id)
 })
 
 watch(() => [
@@ -88,6 +155,24 @@ watch(() => [
         </div>
 
         <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div class="md:col-span-2" v-if="customerAddresses.length">
+                <FormItem>
+                    <FormLabel>Saved address</FormLabel>
+                    <Select :model-value="selectedAddressId" @update:model-value="(value) => { if (typeof value === 'string') selectSavedAddress(value) }">
+                        <FormControl>
+                            <SelectTrigger class="w-full">
+                                <SelectValue placeholder="Select a saved address" />
+                            </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            <SelectItem v-for="savedAddress in customerAddresses" :key="savedAddress.id" :value="String(savedAddress.id)">
+                                {{ savedAddress.label || savedAddress.full_name || 'Saved address' }}
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                </FormItem>
+            </div>
+
             <div class="md:col-span-2">
                 <FormField v-slot="{ componentField }" name="full_name">
                     <FormItem>

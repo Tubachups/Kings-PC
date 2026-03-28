@@ -32,12 +32,20 @@ Route::get('/dashboard', function (PendingOrderService $pendingOrderService) {
             ]);
 
         $customerOrders = $user->orders()
+            ->with([
+                'order_items' => fn ($query) => $query
+                    ->select(['id', 'order_id', 'product_id', 'quantity', 'unit_price'])
+                    ->with(['product:id,name,image_url']),
+            ])
             ->latest('id')
             ->limit(8)
             ->get([
                 'id',
+                'order_number',
                 'total',
                 'status',
+                'shipping_address',
+                'billing_address',
                 'created_at',
             ]);
 

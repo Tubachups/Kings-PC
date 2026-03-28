@@ -46,7 +46,7 @@ export const formatAddress = (address?: Record<string, any>) => {
 };
 
 export const formatDate = (date: string): string => {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Date(date).toLocaleDateString('en-PH', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
