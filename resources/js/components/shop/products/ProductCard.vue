@@ -96,7 +96,7 @@ const toggleWishlist = (): void => {
                 <h2 class="leading-tight font-bold">
                     {{ product.name }}
                 </h2>
-                <p class="mb-2 text-lg font-semibold tracking-wider text-green-600">
+                <p class="mb-2 text-lg font-semibold tracking-wider">
                     ₱{{ product.price }}
                 </p>
 
@@ -149,7 +149,7 @@ const toggleWishlist = (): void => {
             <h2 class="mt-2 mb-2  leading-tight font-bold">
                 {{ product.name }}
             </h2>
-            <p class="mb-4 text-lg font-semibold tracking-wider text-green-600">
+            <p class="mb-4 text-lg font-semibold tracking-wider ">
                 ₱{{ product.price }}
             </p>
             <div class="mb-4 rounded bg-muted/60 p-3 text-sm">

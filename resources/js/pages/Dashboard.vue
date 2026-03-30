@@ -56,7 +56,11 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 <template>
     <Head title="Dashboard">
-        <meta head-key="description" name="description" content="View your King's PC dashboard, account activity, and quick actions." />
+        <meta
+            head-key="description"
+            name="description"
+            content="View your King's PC dashboard, account activity, and quick actions."
+        />
     </Head>
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -66,20 +70,25 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <h1 class="text-3xl font-bold tracking-tight">
                     Welcome back, {{ user?.name }}!
                 </h1>
-                <p class="text-muted-foreground">
+                <p v-if="user?.is_admin" class="text-muted-foreground">
                     Here's what's happening with your PC parts store.
+                </p>
+                <p v-else class="text-muted-foreground">
+                    Here's a quick overview of your account and recent activity.
                 </p>
             </div>
 
             <!-- Admin Quick Actions -->
-            <div v-if="user?.is_admin" >
+            <div v-if="user?.is_admin">
                 <DashboardMetricsGrid />
                 <DashboardRevenueChart class="mt-6" />
             </div>
 
             <!-- Customer View -->
             <div v-else>
-                <div class="mt-6 grid gap-4 md:grid-cols-3">
+                <div
+                    class="grid items-start gap-4 lg:grid-cols-2 xl:grid-cols-3"
+                >
                     <CustomerAddressBookCard />
                     <CustomerOrdersCard />
                     <CustomerWishlistCard />

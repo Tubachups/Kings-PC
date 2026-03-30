@@ -142,6 +142,7 @@ const isPasswordConfirmationVisible = ref<boolean>(false);
                         <Button
                             :disabled="processing"
                             data-test="update-password-button"
+                            class="cursor-pointer"
                             >Save password</Button
                         >
 

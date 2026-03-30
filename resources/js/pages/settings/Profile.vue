@@ -115,6 +115,7 @@ const user = page.props.auth.user;
                         <Button
                             :disabled="processing"
                             data-test="update-profile-button"
+                            class="cursor-pointer"
                             >Save</Button
                         >
 

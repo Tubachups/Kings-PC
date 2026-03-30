@@ -24,7 +24,7 @@ const tabs: AppearanceTab[] = [
 <template>
     <div class="inline-flex flex-wrap gap-1 rounded-xl border border-border/70 bg-card/80 p-1.5 shadow-sm">
         <button v-for="{ value, Icon, label } in tabs" :key="value" @click="updateAppearance(value)" :class="[
-            'flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm transition-all',
+            'flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm transition-all cursor-pointer',
             appearance === value
                 ? 'bg-background text-foreground shadow-xs ring-1 ring-border'
                 : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground',

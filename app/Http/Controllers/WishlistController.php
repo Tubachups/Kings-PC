@@ -11,22 +11,6 @@ use Inertia\Response as InertiaResponse;
 
 class WishlistController extends Controller
 {
-    public function index(Request $request): InertiaResponse
-    {
-        $products = Product::query()
-            ->whereHas('wishlistItems', function ($query) use ($request): void {
-                $query->where('user_id', $request->user()->id);
-            })
-            ->with('category')
-            ->where('is_active', true)
-            ->orderBy('name')
-            ->get();
-
-        return Inertia::render('shop/Wishlist', [
-            'products' => $products,
-        ]);
-    }
-
     public function toggle(Request $request, Product $product): RedirectResponse
     {
         $userId = $request->user()->id;

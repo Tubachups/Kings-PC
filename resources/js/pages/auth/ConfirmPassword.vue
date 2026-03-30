@@ -148,7 +148,7 @@ const isPasswordVisible = ref<boolean>(false);
 
                 <div class="flex items-center">
                     <Button
-                        class="w-full"
+                        class="w-full cursor-pointer"
                         :disabled="processing"
                         data-test="confirm-password-button"
                     >

@@ -4,6 +4,7 @@ import { BookOpen, CheckCircle2, Clock3, FolderKanban, Folder, LayoutGrid, Plus,
 import { computed } from 'vue';
 import { index as customersIndex } from '@/actions/App/Http/Controllers/Admin/CustomerController';
 import { create as productsCreate, deliveredOrders, index as productsIndex, pendingOrders, processedOrders, shippedOrders } from '@/actions/App/Http/Controllers/Admin/ProductController';
+import { components } from '@/actions/App/Http/Controllers/ShopController';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
@@ -16,7 +17,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard, shop } from '@/routes';
+import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import AppLogo from './AppLogo.vue';
 
@@ -30,9 +31,9 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-            title: 'View Shop',
-            href: shop().url,
-            icon: Store,
+        title: 'View Shop',
+        href: components().url,
+        icon: Store,
     },
 ];
 
@@ -133,7 +134,7 @@ const footerNavItems: NavItem[] = [
         </SidebarContent>
 
         <SidebarFooter>
-            <NavFooter :items="footerNavItems" />
+            <!-- <NavFooter :items="footerNavItems" /> -->
             <NavUser />
         </SidebarFooter>
     </Sidebar>

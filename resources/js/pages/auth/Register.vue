@@ -125,7 +125,7 @@ const isPasswordConfirmationVisible = ref<boolean>(false);
 
                 <Button
                     type="submit"
-                    class="mt-2 w-full"
+                    class="mt-2 w-full cursor-pointer"
                     tabindex="5"
                     :disabled="processing"
                     data-test="register-user-button"
