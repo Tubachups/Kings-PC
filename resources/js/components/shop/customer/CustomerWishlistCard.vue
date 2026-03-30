@@ -93,7 +93,7 @@ const toggleWishlist = (productId: number): void => {
                 >
                     <Button
                         size="sm"
-                        class="w-full cursor-pointer sm:w-34"
+                        class="w-full cursor-pointer sm:w-34 md:flex-1"
                         @click="handleAddToCart(product)"
                     >
                         <ShoppingCart class="mr-1 h-3.5 w-3.5" /> Add
