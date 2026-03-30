@@ -48,7 +48,7 @@ const toggleWishlist = (productId: number): void => {
             <div v-if="customerWishlist.length === 0" class="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
                 Wishlist is empty.
             </div>
-            <div v-for="product in customerWishlist" :key="`dashboard-wishlist-${product.id}`" class="rounded-lg border p-2">
+            <div v-for="product in customerWishlist" :key="`dashboard-wishlist-${product.id}`" class="rounded-lg border p-2 bg-background">
                 <div class="flex items-center gap-2">
                     <img :src="getFilteredImageUrl(product.image_url)" :alt="product.name" class="h-12 w-12 rounded object-cover" />
                     <div class="min-w-0 flex-1">

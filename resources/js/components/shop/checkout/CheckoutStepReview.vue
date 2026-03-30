@@ -26,7 +26,7 @@ const filteredImageUrl = (imageUrl: string): string => {
 
 <template>
     <div
-        class="rounded-xl border border-border/70 bg-card p-4 shadow-sm sm:p-6"
+        class="rounded-xl border border-border/70 bg-background p-4 shadow-sm sm:p-6"
     >
         <div>
             <h2 class="text-xl font-semibold tracking-tight sm:text-2xl">

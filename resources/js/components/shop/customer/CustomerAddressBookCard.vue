@@ -151,7 +151,7 @@ const formatAddress = (address: DashboardAddress): string => {
             </CardDescription>
         </CardHeader>
         <CardContent class="space-y-3">
-            <form class="space-y-2 rounded-lg border p-3" @submit.prevent="submitAddressForm">
+            <form class="space-y-2 rounded-lg border p-3 bg-background" @submit.prevent="submitAddressForm">
                 <p class="text-sm font-semibold">
                     {{ isEditingAddress ? 'Edit address' : 'Add address' }}
                 </p>
@@ -287,8 +287,8 @@ const formatAddress = (address: DashboardAddress): string => {
             <div v-if="customerAddresses.length === 0" class="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
                 No saved addresses yet.
             </div>
-            <div v-for="address in customerAddresses" :key="`dashboard-address-${address.id}`" class="rounded-lg border p-3">
-                <div class="mb-1 flex items-center gap-2">
+            <div v-for="address in customerAddresses" :key="`dashboard-address-${address.id}`" class="rounded-lg border p-3 bg-background">
+                <div class="mb-1 flex items-center gap-2 ">
                     <p class="text-sm font-semibold">{{ address.label || 'Saved address' }}</p>
                     <span v-if="address.is_default" class="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
                         <Star class="mr-1 h-3 w-3" /> Default

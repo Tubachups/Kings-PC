@@ -18,7 +18,7 @@ watch(() => values.payment_method, (paymentMethod) => {
 </script>
 
 <template>
-    <div class="rounded-xl border border-border/70 bg-card p-6 shadow-sm">
+    <div class="rounded-xl border border-border/70 bg-background p-6 shadow-sm">
         <div class="mb-5">
             <h2 class="text-xl font-semibold tracking-tight sm:text-2xl">Payment method</h2>
             <p class="text-sm leading-6 text-muted-foreground">

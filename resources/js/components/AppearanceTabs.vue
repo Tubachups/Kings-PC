@@ -1,33 +1,36 @@
 <script setup lang="ts">
-import { Monitor, Moon, Sun } from 'lucide-vue-next';
+import { Coffee, Monitor, Moon, Palette, Sun, Waves } from 'lucide-vue-next';
 import { useAppearance } from '@/composables/useAppearance';
 
 const { appearance, updateAppearance } = useAppearance();
 
-const tabs = [
+type AppearanceTab = {
+    value: 'light' | 'dark' | 'coffee' | 'ocean' | 'rose' | 'system';
+    Icon: typeof Sun;
+    label: string;
+    previewClass?: string;
+};
+
+const tabs: AppearanceTab[] = [
     { value: 'light', Icon: Sun, label: 'Light' },
     { value: 'dark', Icon: Moon, label: 'Dark' },
+    { value: 'coffee', Icon: Coffee, label: 'Coffee' },
+    { value: 'ocean', Icon: Waves, label: 'Ocean' },
+    { value: 'rose', Icon: Palette, label: 'Rose' },
     { value: 'system', Icon: Monitor, label: 'System' },
-] as const;
+];
 </script>
 
 <template>
-    <div
-        class="inline-flex gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800"
-    >
-        <button
-            v-for="{ value, Icon, label } in tabs"
-            :key="value"
-            @click="updateAppearance(value)"
-            :class="[
-                'flex items-center rounded-md px-3.5 py-1.5 transition-colors',
-                appearance === value
-                    ? 'bg-white shadow-xs dark:bg-neutral-700 dark:text-neutral-100'
-                    : 'text-neutral-500 hover:bg-neutral-200/60 hover:text-black dark:text-neutral-400 dark:hover:bg-neutral-700/60',
-            ]"
-        >
-            <component :is="Icon" class="-ml-1 h-4 w-4" />
-            <span class="ml-1.5 text-sm">{{ label }}</span>
+    <div class="inline-flex flex-wrap gap-1 rounded-xl border border-border/70 bg-card/80 p-1.5 shadow-sm">
+        <button v-for="{ value, Icon, label } in tabs" :key="value" @click="updateAppearance(value)" :class="[
+            'flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm transition-all',
+            appearance === value
+                ? 'bg-background text-foreground shadow-xs ring-1 ring-border'
+                : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground',
+        ]">
+            <component :is="Icon" class="h-4 w-4" />
+            <span>{{ label }}</span>
         </button>
     </div>
 </template>

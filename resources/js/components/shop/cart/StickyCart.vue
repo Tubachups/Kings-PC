@@ -16,12 +16,26 @@ const formattedSubtotal = computed(() => {
     return formatCurrency(subTotal.value);
 });
 
+const isCheckoutDisabled = computed(() => {
+    return totalItems.value === 0;
+});
+
 const toggleCart = (): void => {
     isExpanded.value = !isExpanded.value;
 };
 
 const collapseCart = (): void => {
     isExpanded.value = false;
+};
+
+const handleCheckoutClick = (event: MouseEvent): void => {
+    if (isCheckoutDisabled.value) {
+        event.preventDefault();
+
+        return;
+    }
+
+    collapseCart();
 };
 </script>
 
@@ -50,8 +64,14 @@ const collapseCart = (): void => {
                             <Trash2 class="h-4 w-4" />
                             Delete all
                         </Button>
-                        <Link href="/checkout" @click="collapseCart"
-                            class=" h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-medium transition hover:bg-accent sm:px-4 sm:text-base hidden md:inline-flex">
+                        <Link :href="isCheckoutDisabled ? '#' : '/checkout'" :aria-disabled="isCheckoutDisabled"
+                            :tabindex="isCheckoutDisabled ? -1 : 0" @click="handleCheckoutClick"
+                            :class="[
+                                'h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-medium transition sm:px-4 sm:text-base hidden md:inline-flex',
+                                isCheckoutDisabled
+                                    ? 'pointer-events-none cursor-not-allowed opacity-50'
+                                    : 'hover:bg-accent',
+                            ]">
                             <CreditCard class="h-4 w-4" />
                             <span>Checkout</span>
                         </Link>
