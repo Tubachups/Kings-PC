@@ -146,7 +146,7 @@ watch(() => [
 </script>
 
 <template>
-    <div class="rounded-xl border border-border/70 bg-card p-6 shadow-sm">
+    <div class="rounded-xl border border-border/70 p-6 shadow-sm bg-background ">
         <div >
             <h2 class="text-xl font-semibold tracking-tight sm:text-2xl">Shipping details</h2>
             <p class="text-sm leading-6 text-muted-foreground">

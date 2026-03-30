@@ -71,7 +71,7 @@ const promotions = [
         <CarouselContent>
             <CarouselItem v-for="promo in promotions" :key="promo.id" class="basis-full">
                 <div class="p-1 sm:p-0">
-                    <Card class="border-0 shadow-lg">
+                    <Card class="border-0 shadow-lg bg-colorless">
                         <CardContent class="relative flex h-75 md:h-96 w-full items-center p-0 overflow-hidden rounded-xl">
 
                             <img

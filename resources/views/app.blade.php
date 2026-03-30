@@ -1,34 +1,57 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"  @class(['dark' => ($appearance ?? 'system') == 'dark'])>
+@php
+    $appearance = $appearance ?? 'system';
+    $appearanceThemeClass = match ($appearance) {
+        'coffee' => 'theme-coffee',
+        'ocean' => 'theme-ocean',
+        'rose' => 'theme-rose',
+        default => null,
+    };
+@endphp
+<html
+    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    @class([
+        'dark' => $appearance === 'dark',
+        $appearanceThemeClass,
+    ])
+>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {{-- Inline script to detect system dark mode preference and apply it immediately --}}
-        <script>
-            (function() {
-                const appearance = '{{ $appearance ?? "system" }}';
+    <script>
+        (function() {
+            const appearance = '{{ $appearance }}';
+            const root = document.documentElement;
+            const themeClassMap = {
+                coffee: 'theme-coffee',
+                ocean: 'theme-ocean',
+                rose: 'theme-rose',
+            };
 
-                if (appearance === 'system') {
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            root.classList.remove('theme-coffee', 'theme-ocean', 'theme-rose');
 
-                    if (prefersDark) {
-                        document.documentElement.classList.add('dark');
-                    }
-                }
-            })();
-        </script>
-
-        {{-- Inline style to set the HTML background color based on our theme in app.css --}}
-        <style>
-            html {
-                background-color: oklch(1 0 0);
+            if (themeClassMap[appearance]) {
+                root.classList.add(themeClassMap[appearance]);
             }
 
-            html.dark {
-                background-color: oklch(0.145 0 0);
+            if (appearance === 'system') {
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                root.classList.toggle('dark', prefersDark);
+
+                return;
             }
-        </style>
+
+            root.classList.toggle('dark', appearance === 'dark');
+        })();
+    </script>
+
+    <style>
+        html {
+            background-color: var(--background, oklch(1 0 0));
+        }
+    </style>
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 

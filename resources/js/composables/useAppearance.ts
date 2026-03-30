@@ -4,6 +4,16 @@ import type { Appearance, ResolvedAppearance } from '@/types';
 
 export type { Appearance, ResolvedAppearance };
 
+const themeClassNames = ['theme-coffee', 'theme-ocean', 'theme-rose'] as const;
+const appearanceThemeClassMap: Record<Appearance, string | null> = {
+    light: null,
+    dark: null,
+    coffee: 'theme-coffee',
+    ocean: 'theme-ocean',
+    rose: 'theme-rose',
+    system: null,
+};
+
 export type UseAppearanceReturn = {
     appearance: Ref<Appearance>;
     resolvedAppearance: ComputedRef<ResolvedAppearance>;
@@ -13,6 +23,14 @@ export type UseAppearanceReturn = {
 export function updateTheme(value: Appearance): void {
     if (typeof window === 'undefined') {
         return;
+    }
+
+    document.documentElement.classList.remove(...themeClassNames);
+
+    const themeClassName = appearanceThemeClassMap[value];
+
+    if (themeClassName) {
+        document.documentElement.classList.add(themeClassName);
     }
 
     if (value === 'system') {
@@ -101,10 +119,10 @@ export function useAppearance(): UseAppearanceReturn {
             return prefersDark() ? 'dark' : 'light';
         }
 
-        return appearance.value;
+        return appearance.value === 'dark' ? 'dark' : 'light';
     });
 
-    function updateAppearance(value: Appearance) {
+    function updateAppearance(value: Appearance): void {
         appearance.value = value;
 
         // Store in localStorage for client-side persistence...

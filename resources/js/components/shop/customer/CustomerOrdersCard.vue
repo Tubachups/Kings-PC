@@ -60,7 +60,7 @@ const statusPillClass = (status: string): string => {
                 {{ customerSummary.ordersCount ?? 0 }} orders placed
             </CardDescription>
         </CardHeader>
-        <CardContent class="space-y-3">
+        <CardContent class="space-y-3 ">
             <div v-if="customerOrders.length === 0" class="rounded-lg border border-dashed p-3 text-sm text-muted-foreground">
                 No orders yet.
             </div>
@@ -68,7 +68,7 @@ const statusPillClass = (status: string): string => {
                 v-for="order in customerOrders"
                 :key="`dashboard-order-${order.id}`"
                 type="button"
-                class="w-full rounded-lg border p-3 text-left text-sm transition-colors hover:bg-muted/40"
+                class="w-full rounded-lg border bg-background cursor-pointer p-3 text-left text-sm transition-colors hover:bg-muted/40"
                 @click="openOrderDetails(order)"
             >
                 <div class="mb-1 flex items-center justify-between gap-2">

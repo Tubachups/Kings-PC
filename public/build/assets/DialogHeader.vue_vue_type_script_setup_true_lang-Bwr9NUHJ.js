@@ -1,0 +1,1 @@
+import{c as o}from"./index-DRNLPpX1.js";import{d as t,g as r,Q as l,x as n,A as c,o as p}from"./app-xmkFDsvi.js";const i=t({__name:"DialogHeader",props:{class:{}},setup(e){const s=e;return(a,m)=>(p(),r("div",{"data-slot":"dialog-header",class:n(c(o)("flex flex-col gap-2 text-center sm:text-left",s.class))},[l(a.$slots,"default")],2))}});export{i as _};

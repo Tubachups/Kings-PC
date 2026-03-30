@@ -48,6 +48,20 @@ const amountNeededForFreeShipping = computed(() => {
     return Math.max(0, freeShippingThreshold - subtotal.value);
 });
 
+const isCheckoutDisabled = computed(() => {
+    return subtotal.value <= 0;
+});
+
+const handleCheckoutClick = (event: MouseEvent): void => {
+    if (isCheckoutDisabled.value) {
+        event.preventDefault();
+
+        return;
+    }
+
+    emit('checkoutClick');
+};
+
 </script>
 
 <template>
@@ -90,9 +104,16 @@ const amountNeededForFreeShipping = computed(() => {
 
             <Link
                 v-if="showCheckoutButton"
-                href="/checkout"
-                @click="emit('checkoutClick')"
-                class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border bg-primary px-4 text-base font-semibold text-primary-foreground transition hover:bg-primary/90"
+                :href="isCheckoutDisabled ? '#' : '/checkout'"
+                :aria-disabled="isCheckoutDisabled"
+                :tabindex="isCheckoutDisabled ? -1 : 0"
+                @click="handleCheckoutClick"
+                :class="[
+                    'inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border bg-primary px-4 text-base font-semibold text-primary-foreground transition',
+                    isCheckoutDisabled
+                        ? 'pointer-events-none cursor-not-allowed opacity-50'
+                        : 'hover:bg-primary/90',
+                ]"
             >
                 <WalletCards class="h-4 w-4" />
                 Checkout
